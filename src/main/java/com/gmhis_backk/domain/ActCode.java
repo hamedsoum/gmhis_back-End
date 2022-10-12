@@ -46,7 +46,7 @@ public class ActCode implements Serializable{
 	private int value;
 	
 	@Column
-	private String active;
+	private Boolean active;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "created_at")
