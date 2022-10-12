@@ -106,6 +106,7 @@ public class ActCodeController {
 			actGroupsMap.put("id", actCodeDto.getId());
 			actGroupsMap.put("name", actCodeDto.getName());
 			actGroupsMap.put("active", actCodeDto.getActive());
+			actGroupsMap.put("value", actCodeDto.getValue());
 			actGroupsMap.put("createdAt", actCodeDto.getCreatedAt());
 			actGroupsMap.put("updatedAt", actCodeDto.getUpdatedAt());
 			actGroupsMap.put("createdByFirstName", ObjectUtils.isEmpty(createdBy) ? "--" : createdBy.getFirstName());

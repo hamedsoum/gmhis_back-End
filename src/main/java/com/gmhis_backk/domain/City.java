@@ -11,7 +11,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
-import java.util.List;
 
 
 /**
@@ -36,10 +35,10 @@ public class City implements Serializable {
 	private Date createdAt;
 
 	@Column
-	private float latitude;
+	private int latitude;
 
 	@Column
-	private float longitude;
+	private int longitude;
 
 	@Column
 	private String name;

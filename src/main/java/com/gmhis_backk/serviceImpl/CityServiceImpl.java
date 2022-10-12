@@ -66,12 +66,12 @@ public class CityServiceImpl implements CityService {
 	}
 
 	@Override
-	public Page<City> findAllCities(Long countryId, Pageable page) {
+	public Page<City> findAllCitiesByCountryId(Long countryId, Pageable page) {
 		return repo.findCitiesByCountryId(countryId, page);
 	}
 
 	@Override
-	public Page<City> findCityLike(String like, Long countryId, Pageable page) {
+	public Page<City> findCityLikeAndCountry(String like, Long countryId, Pageable page) {
 		return repo.findCitiesByNameContainingIgnoreCaseAndCountryId(like, countryId,page);
 	}
 

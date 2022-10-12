@@ -27,7 +27,7 @@ public interface CityService {
 
 	public Page<City> findCityLike(String like, Pageable page);
 	
-	public Page<City> findCityLike(String like, Long countryId,Pageable page);
+	public Page<City> findCityLikeAndCountry(String like, Long countryId,Pageable page);
 
 	public List<City> findCityLike(String like);
 
@@ -37,6 +37,6 @@ public interface CityService {
 
 	public List<City> findAllCities(Long countryId);
 
-	public Page<City> findAllCities(Long countryId, Pageable page);
+	public Page<City> findAllCitiesByCountryId(Long countryId, Pageable page);
 
 }

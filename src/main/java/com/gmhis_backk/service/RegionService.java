@@ -27,7 +27,7 @@ public interface RegionService {
 
 	public Page<Region> findRegionLike(String like, Pageable page);
 	
-	public Page<Region> findRegionLike(String like, Long countryId,Pageable page);
+	public Page<Region> findRegionLikeAndCountryId(String like, Long countryId,Pageable page);
 
 	public List<Region> findRegionLike(String like);
 
@@ -37,5 +37,5 @@ public interface RegionService {
 
 	public List<Region> findAllRegions(Long countryId);
 
-	public Page<Region> findAllRegions(Long countryId, Pageable page);
+	public Page<Region> findAllRegionsByCountryId(Long countryId, Pageable page);
 }

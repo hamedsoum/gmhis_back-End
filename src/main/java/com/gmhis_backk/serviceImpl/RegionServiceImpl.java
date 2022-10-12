@@ -66,12 +66,12 @@ public class RegionServiceImpl implements RegionService {
 	}
 
 	@Override
-	public Page<Region> findAllRegions(Long countryId, Pageable page) {
+	public Page<Region> findAllRegionsByCountryId(Long countryId, Pageable page) {
 		return repo.findRegionsByCountryId(countryId, page);
 	}
 
 	@Override
-	public Page<Region> findRegionLike(String like, Long countryId, Pageable page) {
+	public Page<Region> findRegionLikeAndCountryId(String like, Long countryId, Pageable page) {
 		return repo.findRegionsByNameContainingIgnoreCaseAndCountryId(like, countryId,page);
 	}
 
