@@ -1,0 +1,1 @@
+INSERT INTO `shipper` (`id`, `name`, `phone`, `address`, `email`, `interlocutor_name`, `interlocutor_phone`, `is_active`) VALUES (4, 'NINGO CHANGER ', '', '', '', '', '', 1) 

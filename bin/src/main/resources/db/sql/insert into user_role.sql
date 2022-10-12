@@ -1,0 +1,16 @@
+INSERT INTO `user_role`(`id`,`user_id`, `role_id`, `is_active`) VALUES (1, 0, 0, 1);
+INSERT INTO `user_role`(`id`,`user_id`, `role_id`, `is_active`) VALUES (2, 1, 12, 1);
+INSERT INTO `user_role`(`id`,`user_id`, `role_id`, `is_active`) VALUES (3, 2, 12, 1);
+INSERT INTO `user_role`(`id`,`user_id`, `role_id`, `is_active`) VALUES (4, 3, 12, 1);
+INSERT INTO `user_role`(`id`,`user_id`, `role_id`, `is_active`) VALUES (5, 4, 12, 1);
+INSERT INTO `user_role`(`id`,`user_id`, `role_id`, `is_active`) VALUES (6, 5, 12, 1);
+INSERT INTO `user_role`(`id`,`user_id`, `role_id`, `is_active`) VALUES (7, 6, 12, 1);
+INSERT INTO `user_role`(`id`,`user_id`, `role_id`, `is_active`) VALUES (8, 7, 12, 1);
+INSERT INTO `user_role`(`id`,`user_id`, `role_id`, `is_active`) VALUES (9, 8, 12, 1);
+INSERT INTO `user_role`(`id`,`user_id`, `role_id`, `is_active`) VALUES (10, 9, 12, 1);
+INSERT INTO `user_role`(`id`,`user_id`, `role_id`, `is_active`) VALUES (11, 112, 12, 1);
+INSERT INTO `user_role`(`id`,`user_id`, `role_id`, `is_active`) VALUES (12, 11, 12, 1);
+INSERT INTO `user_role`(`id`,`user_id`, `role_id`, `is_active`) VALUES (13, 12, 12, 1);
+INSERT INTO `user_role`(`id`,`user_id`, `role_id`, `is_active`) VALUES (14, 13, 12, 1);
+INSERT INTO `user_role`(`id`,`user_id`, `role_id`, `is_active`) VALUES (15, 14, 12, 1);
+INSERT INTO `user_role`(`id`,`user_id`, `role_id`, `is_active`) VALUES (16, 15, 12, 1);

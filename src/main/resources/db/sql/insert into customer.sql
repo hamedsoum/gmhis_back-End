@@ -1,0 +1,5 @@
+INSERT INTO `customer` (`id`, `customer_number`, `trade_name`, `phone`, `phone2`, `phone3`, `email`, `address`, `customer_family_id`, `delivery_address`, `interlocutor_name`, `interlocutor_phone`, `customer_account_id`, `trade_register_number`, `corporate_name`, `is_active`, `follow_up`, `inventory_state`, `guarantor_last_name`, `guarantor_first_name`, `guarantor_contact`, `guarantee_image_url`, `promotion_state`, `promotion_id`, `payment_deadline`, `centralized_branch_account`, `has_branch_office`, `type_customer`) VALUES
+(0, 'CL00000', 'client', NULL, NULL, NULL, NULL, NULL, 4, NULL, NULL, NULL, NULL, NULL, 'client', 0, 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, 1, 1, 0, 1);
+
+INSERT INTO `customer_account` (`id`, `customer_id`, `account_number`, `balance`, `ceiling_balance`, `cummulative_cash_sales`, `cummulative_payments`, `cummulative_credit_sale`, `cummulative_all_sales`, `cummulative_asset`, `initial_balance`) VALUES
+(1, 0, '41100000', 0, 0, 0, 0, 0, 0, 0, 0);

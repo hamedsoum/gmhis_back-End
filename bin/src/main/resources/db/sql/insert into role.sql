@@ -1,0 +1,13 @@
+INSERT INTO `role`(`id`, `name`, `authorities`, `is_active`) VALUES (0, "super admin", "", 1);
+INSERT INTO `role`(`id`, `name`, `authorities`, `is_active`) VALUES (1, "admin", "", 1);
+INSERT INTO `role`(`id`, `name`, `authorities`, `is_active`) VALUES (2, "Responsable achat F/s","",1);
+INSERT INTO `role`(`id`, `name`, `authorities`, `is_active`) VALUES (3, "chef magasinier","",1);
+INSERT INTO `role`(`id`, `name`, `authorities`, `is_active`) VALUES (4, "magasinier","",1);
+INSERT INTO `role`(`id`, `name`, `authorities`, `is_active`) VALUES (5, "Responsable commercial","",1);
+INSERT INTO `role`(`id`, `name`, `authorities`, `is_active`) VALUES (6, "commercial","",1);
+INSERT INTO `role`(`id`, `name`, `authorities`, `is_active`) VALUES (7, "Gerant depot","",1);
+INSERT INTO `role`(`id`, `name`, `authorities`, `is_active`) VALUES (8, "Inventoriste","",1);
+INSERT INTO `role`(`id`, `name`, `authorities`, `is_active`) VALUES (9, "Collecteur","",1);
+INSERT INTO `role`(`id`, `name`, `authorities`, `is_active`) VALUES (10, "Caissier","",1);
+INSERT INTO `role`(`id`, `name`, `authorities`, `is_active`) VALUES (11, "Operateur de saisie","",1);
+INSERT INTO `role`(`id`, `name`, `authorities`, `is_active`) VALUES (12, "Utilisateur","",1);
