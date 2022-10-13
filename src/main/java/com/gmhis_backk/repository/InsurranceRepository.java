@@ -29,7 +29,7 @@ public interface InsurranceRepository extends JpaRepository<Insurance, Long> {
 		Page<Insurance> findAllInsuranceByName(String name, Pageable pageable);
 		
 		@Query("SELECT i FROM Insurance i Where i.id =:id")
-		Insurance getActGroupDetails(Integer id);
+		Insurance getActGroupDetails(Long id);
 		
 		@Query("SELECT i FROM Insurance i")
 		List<Insurance>findAllinsuranceSimpleList();

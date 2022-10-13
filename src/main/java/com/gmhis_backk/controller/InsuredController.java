@@ -39,6 +39,7 @@ import com.gmhis_backk.repository.UserRepository;
 import com.gmhis_backk.service.InsuranceService;
 import com.gmhis_backk.service.InsuranceSuscriberService;
 import com.gmhis_backk.service.InsuredService;
+import com.gmhis_backk.service.PatientService;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -66,7 +67,7 @@ public class InsuredController {
 
 	
 //	@Autowired
-//	private PatientService patientService;
+	private PatientService patientService;
 
 	private Insured  insured= null;
 	private Insurance  insurance= null;
@@ -103,7 +104,7 @@ public class InsuredController {
 					"Le souscripteur n'existe pas en base !");
 		};
 	
-//		patient = patientService.findById(insuredDto.getPatient());
+		patient = patientService.findById(insuredDto.getPatient());
 		
 		
 		insured= new Insured();

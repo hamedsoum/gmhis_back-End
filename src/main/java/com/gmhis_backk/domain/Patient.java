@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.AllArgsConstructor;
@@ -16,7 +17,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * @author pascal
+ * @author Hamed soumahoro
  * 
  */
 @Entity
@@ -142,10 +143,12 @@ public class Patient implements Serializable {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "city_id", nullable = true)
-	private City city;
+	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+	public City city;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "country_id", nullable = true)
+	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 	public Country country;
 
 	@OneToMany(mappedBy = "patient", fetch = FetchType.LAZY)
