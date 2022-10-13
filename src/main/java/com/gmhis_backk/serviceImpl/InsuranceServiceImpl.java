@@ -100,4 +100,14 @@ Insurance updateInsurance = insuranceRepository.findById(id).orElse(null);
 		return insuranceRepository.save(updateInsurance);
 	}
 
+	@Override
+	public Optional<Insurance> findInsuranceById(Long id) {
+		return insuranceRepository.findById(id);
+	}
+
+	@Override
+	public List<Insurance> findInsurances() {
+		return insuranceRepository.findAll();
+	}
+
 }

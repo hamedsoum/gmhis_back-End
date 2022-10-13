@@ -23,6 +23,11 @@ public interface InsuranceService {
 	  List<Insurance> findAllInsurances();
 
 	  void deleteInsurance(Integer id);
+	  
+		public Optional<Insurance> findInsuranceById(Long id);
+
+		public List<Insurance> findInsurances();
+
 		
 	  Optional<Insurance> getInsuranceDetails(Long id); 
 	  

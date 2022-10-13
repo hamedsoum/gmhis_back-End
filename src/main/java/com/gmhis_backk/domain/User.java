@@ -71,6 +71,10 @@ public class User implements Serializable{
     
     private Long hotelId;
     
+    @Column
+	private String login;
+
+    
 //    @ManyToOne
 //    @JoinColumn(name = "police_id")
 //    private Polices police;

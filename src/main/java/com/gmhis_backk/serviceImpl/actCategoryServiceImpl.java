@@ -60,7 +60,7 @@ public class actCategoryServiceImpl implements ActCategoryService {
 	@Override
 	public ActCategory getActCategoryDetails(Integer id) {
 		// TODO Auto-generated method stub
-		return null;
+		return actCategoryRepo.getActCategoryDetails(id);
 	}
 	
 	protected com.gmhis_backk.domain.User getCurrentUserId() {

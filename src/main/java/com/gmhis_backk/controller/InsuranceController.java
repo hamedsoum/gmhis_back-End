@@ -50,7 +50,7 @@ public class InsuranceController {
 	UserRepository userRepository;
 
 	@GetMapping("/list")
-	@ApiOperation("liste paginee de toutes les familles d'acte dans le systeme")
+	@ApiOperation("liste paginee de toutes les assurance dans le systeme")
 	public ResponseEntity<Map<String, Object>>getAllInsurance(
 			
 			@RequestParam(required = false, defaultValue = "") String name,
