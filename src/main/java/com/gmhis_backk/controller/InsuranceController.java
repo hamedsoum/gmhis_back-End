@@ -97,9 +97,9 @@ public class InsuranceController {
 	}
 	
 	
-	protected List<Map<String, Object>> getMapFromInsuranceList(List<Insurance> actGroups) {
+	protected List<Map<String, Object>> getMapFromInsuranceList(List<Insurance> insurances) {
 		List<Map<String, Object>> insuranceList = new ArrayList<>();
-		actGroups.stream().forEach(insuranceDto -> {
+		insurances.stream().forEach(insuranceDto -> {
 
 			Map<String, Object> insurancesMap = new HashMap<>();
 			User createdBy = ObjectUtils.isEmpty(insuranceDto.getCreatedBy()) ? new User()
@@ -109,6 +109,9 @@ public class InsuranceController {
 			insurancesMap.put("id", insuranceDto.getId());
 			insurancesMap.put("name", insuranceDto.getName());
 			insurancesMap.put("active", insuranceDto.getActive());
+			insurancesMap.put("code", insuranceDto.getCode());
+			insurancesMap.put("compte", insuranceDto.getAccount());
+			insurancesMap.put("adresse", insuranceDto.getAddress());
 			insurancesMap.put("createdAt", insuranceDto.getCreatedAt());
 			insurancesMap.put("updatedAt", insuranceDto.getUpdatedAt());
 			insurancesMap.put("createdByFirstName", ObjectUtils.isEmpty(createdBy) ? "--" : createdBy.getFirstName());
