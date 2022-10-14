@@ -29,7 +29,7 @@ public class AntecedantType implements Serializable {
 	@Column
 	private String name;
 	
-	private String active;
+	private Boolean active;
 
 	@Column(nullable = true)
 	private String description;

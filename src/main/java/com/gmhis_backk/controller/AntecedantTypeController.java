@@ -106,6 +106,7 @@ public class AntecedantTypeController {
 			antecedantTypesMap.put("id", antecedantDto.getId());
 			antecedantTypesMap.put("name", antecedantDto.getName());
 			antecedantTypesMap.put("active", antecedantDto.getActive());
+			antecedantTypesMap.put("description", antecedantDto.getDescription());
 			antecedantTypesMap.put("createdAt", antecedantDto.getCreatedAt());
 			antecedantTypesMap.put("updatedAt", antecedantDto.getUpdatedAt());
 			antecedantTypesMap.put("createdByFirstName", ObjectUtils.isEmpty(createdBy) ? "--" : createdBy.getFirstName());
