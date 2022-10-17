@@ -71,12 +71,15 @@ public class PatientController {
 		
 		Pageable paging = PageRequest.of(page, size, Sort.by(dir, sort[0]));
 
-		//		Page<Patient> pPatients = pService.findAllContaining(firstName, lastName, patientExternalId, cellPhone,
-		//				cnamNumber, idCardNumber, pageable);
+//				Page<Patient> pPatients = patientService.findAll(firstName, lastName, patientExternalId, cellPhone,
+//						cnamNumber, idCardNumber, patientService);
 
-		Page<Patient> pPatients = null;
+		Page<Patient> pPatients;
+		
+		pPatients = patientService.findAll(paging);
 
-		pPatients = patientService.findByPatientExternalId("@@@@@@@######@@@@", paging);
+
+//		pPatients = patientService.findByPatientExternalId("@@@@@@@######@@@@", paging);
 
 		if (ObjectUtils.isNotEmpty(firstName) || ObjectUtils.isNotEmpty(lastName)) {
 			pPatients = patientService.findByFullName(firstName, lastName, paging);
@@ -101,7 +104,7 @@ public class PatientController {
 		List<Patient> lPatients = pPatients.getContent();
 
 
-	//	List<Map<String, Object>> patients = this.getMapFromPatientList(lPatients);
+//		List<Map<String, Object>> patients = this.getMapFromPatientList(lPatients);
 	
 		
 		response.put("items", lPatients);
