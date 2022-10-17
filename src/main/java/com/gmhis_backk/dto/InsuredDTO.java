@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class InsuredDTO {
 	private Long id;
-	private String active;
+	private Boolean active;
 	private int coverage;
 	private String cardNumber;
 	private String isPrincipalInsured;

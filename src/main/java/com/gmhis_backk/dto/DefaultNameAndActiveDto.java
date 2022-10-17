@@ -11,5 +11,5 @@ public class DefaultNameAndActiveDto {
 	private Long id;
 	private String name;
 	private Boolean active;
-	private int value;
+//	private int value;
 }

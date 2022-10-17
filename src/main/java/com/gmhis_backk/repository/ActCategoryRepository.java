@@ -34,6 +34,4 @@ public interface ActCategoryRepository extends JpaRepository<ActCategory, Long> 
 	@Query("SELECT a FROM ActCategory a")
 	List<ActCategory>findAllActCategorySimpleList();
 	
-	
-	
 }

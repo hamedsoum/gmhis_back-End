@@ -38,7 +38,7 @@ public class Patient implements Serializable {
 
 	@Column(name = "cnam_number")
 	private String cnamNumber;
-
+	
 	@Column(name = "cell_phone_1", nullable = true)
 	private String cellPhone1;
 
@@ -160,7 +160,7 @@ public class Patient implements Serializable {
 	@Column(name = "last_name")
 	private String lastName;
 	
-//	@OneToMany(mappedBy = "patient")
-//	private List<Insured> insurances;
+	@OneToMany(mappedBy = "patient", fetch = FetchType.LAZY)
+	private List<Insured> insurances;
 
 }

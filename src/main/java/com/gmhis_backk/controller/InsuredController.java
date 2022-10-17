@@ -132,7 +132,7 @@ public class InsuredController {
 		return new ResponseEntity<>(insuredList, HttpStatus.OK);
 	}
 	
-	@ApiOperation(value = "Lister la liste des assurance d'un dans le système")
+	@ApiOperation(value = "Lister la liste des assurance d'un assure dans le système")
 	@GetMapping("/list_by_patient/{patientId}")
 	public ResponseEntity<List<Map<String, Object>>> listByPatient(@PathVariable Long patientId) {
 		List<Map<String, Object>> insuredList = this.getMapFromInsuredList(insuredService.findInsuredByPatient(patientId));
@@ -292,7 +292,7 @@ public class InsuredController {
 		insured= insuredService.findInsuredById(id).orElseGet(() -> {
 			return null;
 		});
-		insured.setActive("N");
+		insured.setActive(false);
 		insured.setUpdatedAt(new Date());
 		insured.setUpdatedBy(this.getCurrentUserId());
 		insured= insuredService.saveInsured(insured);
@@ -306,7 +306,7 @@ public class InsuredController {
 		insured= insuredService.findInsuredById(id).orElseGet(() -> {
 			return null;
 		});
-		insured.setActive("Y");
+		insured.setActive(true);
 		insured.setUpdatedAt(new Date());
 		insured.setUpdatedBy(this.getCurrentUserId());
 		insured= insuredService.saveInsured(insured);

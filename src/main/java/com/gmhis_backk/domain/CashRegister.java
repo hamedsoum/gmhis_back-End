@@ -38,7 +38,7 @@ public class CashRegister implements Serializable {
 	private String name;
 
 	@Column
-	private String active = "Y";
+	private Boolean active ;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "updated_at")

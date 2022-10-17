@@ -115,6 +115,15 @@ public class PatientController {
 
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
+	
+
+	@ApiOperation(value = "Retourne les details d'un patient")
+	@GetMapping("/detail/{id}")
+	public Patient detail(@PathVariable Long id) {
+		Patient patient = patientService.findById(id);
+		return patient;
+	}
+
 
 	
 }

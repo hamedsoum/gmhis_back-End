@@ -30,7 +30,7 @@ public class Insured implements Serializable {
 	private Long id;
 
 	@Column
-	private String active;
+	private Boolean active;
 
 	@Column
 	private int coverage;
@@ -85,8 +85,10 @@ public class Insured implements Serializable {
 
 	@JsonBackReference
 	@ManyToOne
-	@JoinColumn(name = "patient_id", nullable = true)
+	@JoinColumn(name = "patient_id")
 	private Patient patient;
+	
+	
 	
 	
 	

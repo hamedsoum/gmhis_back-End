@@ -31,7 +31,7 @@ public interface ConventionRepository extends JpaRepository<Convention, Long> {
 	Page<Convention> findAllConventionByName(String name, Pageable pageable);
 	
 	@Query("SELECT c FROM Convention c Where c.id =:id")
-	ActGroup geConventionDetails(Integer id);
+	Convention geConventionDetails(Integer id);
 	
 	@Query("SELECT c FROM Convention c")
 	List<Convention>findAllConventionSimpleList();
