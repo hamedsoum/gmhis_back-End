@@ -26,30 +26,30 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gmhis_backk.domain.DrugDci;
+import com.gmhis_backk.domain.DrugTherapeuticClass;
 import com.gmhis_backk.domain.User;
 import com.gmhis_backk.dto.DefaultNameAndActiveDto;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
 import com.gmhis_backk.repository.UserRepository;
-import com.gmhis_backk.service.DrugDciService;
+import com.gmhis_backk.service.DrugTherapeuticClassService;
 
 import io.swagger.annotations.ApiOperation;
 
 @RestController
-@RequestMapping("/drugDci")
-public class DrugDciController {
+@RequestMapping("/drug_therapeutic_class")
+public class DrugTherapeuticClassController {
 	
 	@Autowired
 	UserRepository userRepository;
 	
 	@Autowired 
-	DrugDciService drugDciService;
+	DrugTherapeuticClassService drugTherapeuticClassService;
 	
 	@GetMapping("/list")
-	@ApiOperation("liste paginee de tous les drugDCI dans le systeme")
-	public ResponseEntity<Map<String, Object>> getAllDrugDci(
-			@RequestParam(name = "name", required = false, defaultValue = "") String drugName,
+	@ApiOperation("liste paginee de toutes les classes theraptic dans le systeme")
+	public ResponseEntity<Map<String, Object>> getAllTherapetic(
+			@RequestParam(name = "name", required = false, defaultValue = "") String name,
 			@RequestParam(required = false, defaultValue = "") String active,
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size,
@@ -61,33 +61,33 @@ public class DrugDciController {
 
 		Pageable paging = PageRequest.of(page, size, Sort.by(dir, sort[0]));
 
-		Page<DrugDci> pageDrugDci;
+		Page<DrugTherapeuticClass> pageDrugTherapeuticClass;
 		
-		pageDrugDci = drugDciService.findAllDrugDci(paging);
+		pageDrugTherapeuticClass = drugTherapeuticClassService.findAllDrugTherapeuticClass(paging);
 		
 		if (StringUtils.isNotBlank(active)) {
-			pageDrugDci = drugDciService.findAllDrugDciByActiveAndName(active.trim(), Boolean.parseBoolean(active), paging);
-		} else if(StringUtils.isNotBlank(drugName)) {
-			pageDrugDci = drugDciService.findAllDrugDciByName(drugName.trim(), paging);
+			pageDrugTherapeuticClass = drugTherapeuticClassService.findAllDrugTherapeuticClassByActiveAndName(active.trim(), Boolean.parseBoolean(active), paging);
+		} else if(StringUtils.isNotBlank(name)) {
+			pageDrugTherapeuticClass = drugTherapeuticClassService.findAllDrugTherapeuticClassByName(name.trim(), paging);
 		}
 
-		List<DrugDci> pageDrugDciList = pageDrugDci.getContent();
+		List<DrugTherapeuticClass> pageDrugDciList = pageDrugTherapeuticClass.getContent();
 		
-		List<Map<String, Object>> drugDcis= this.getMapFromDrugDciList(pageDrugDciList);
+		List<Map<String, Object>> drugTherapeuticClasses= this.getMapFromDrugTherapeuticClassList(pageDrugDciList);
 
-		response.put("items", drugDcis);
-		response.put("currentPage", pageDrugDci.getNumber());
-		response.put("totalItems", pageDrugDci.getTotalElements());
-		response.put("totalPages", pageDrugDci.getTotalPages());
-		response.put("size", pageDrugDci.getSize());
-		response.put("first", pageDrugDci.isFirst());
-		response.put("last", pageDrugDci.isLast());
-		response.put("empty", pageDrugDci.isEmpty());
+		response.put("items", drugTherapeuticClasses);
+		response.put("currentPage", pageDrugTherapeuticClass.getNumber());
+		response.put("totalItems", pageDrugTherapeuticClass.getTotalElements());
+		response.put("totalPages", pageDrugTherapeuticClass.getTotalPages());
+		response.put("size", pageDrugTherapeuticClass.getSize());
+		response.put("first", pageDrugTherapeuticClass.isFirst());
+		response.put("last", pageDrugTherapeuticClass.isLast());
+		response.put("empty", pageDrugTherapeuticClass.isEmpty());
 
 		return new ResponseEntity<>(response, OK);
 	}
 	
-	protected List<Map<String, Object>> getMapFromDrugDciList(List<DrugDci> drugDcis) {
+	protected List<Map<String, Object>> getMapFromDrugTherapeuticClassList(List<DrugTherapeuticClass> drugDcis) {
 		List<Map<String, Object>> drugDciList = new ArrayList<>();
 		drugDcis.stream().forEach(drugDciDto -> {
 
@@ -110,25 +110,26 @@ public class DrugDciController {
 		return drugDciList;
 	}
 	
+	
 	@PostMapping("/add")
-	@ApiOperation("Ajouter un DCI dans le systeme")
-	public ResponseEntity<DrugDci> addDci(@RequestBody DefaultNameAndActiveDto dciDto) throws ResourceNameAlreadyExistException,
+	@ApiOperation("Ajouter une classe dans le systeme")
+	public ResponseEntity<DrugTherapeuticClass> addDci(@RequestBody DefaultNameAndActiveDto dciDto) throws ResourceNameAlreadyExistException,
 	ResourceNotFoundByIdException {
-		DrugDci drugDci = drugDciService.addDrugDci(dciDto);
-		return new ResponseEntity<DrugDci>(drugDci, HttpStatus.OK);
+		DrugTherapeuticClass drugDci = drugTherapeuticClassService.addDrugTherapeuticClass(dciDto);
+		return new ResponseEntity<DrugTherapeuticClass>(drugDci, HttpStatus.OK);
 	}
 	
 	@PutMapping("/update/{id}")
 	@ApiOperation("Modifier un dci dans le systeme")
-	public ResponseEntity<DrugDci>updateDci(@PathVariable("id") Long id,@RequestBody DefaultNameAndActiveDto defaultNameAndActiveDto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException{
-		DrugDci updateDci = drugDciService.updateDrugDci(id, defaultNameAndActiveDto);
-		return new ResponseEntity<>(updateDci,HttpStatus.OK);
+	public ResponseEntity<DrugTherapeuticClass>updateDci(@PathVariable("id") Long id,@RequestBody DefaultNameAndActiveDto defaultNameAndActiveDto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException{
+		DrugTherapeuticClass updateTherapeuticClass = drugTherapeuticClassService.updateDrugTherapeuticClass(id, defaultNameAndActiveDto);
+		return new ResponseEntity<>(updateTherapeuticClass,HttpStatus.OK);
 	}
 
 	@GetMapping("/get-detail/{id}")
 	@ApiOperation("detail d'un dci")
-	public  ResponseEntity<Optional<DrugDci>> getDetail(@PathVariable Long id){
-		Optional<DrugDci> drugDci = drugDciService.getDrugDciDetails(id);
+	public  ResponseEntity<Optional<DrugTherapeuticClass>> getDetail(@PathVariable Long id){
+		Optional<DrugTherapeuticClass> drugDci = drugTherapeuticClassService.getDrugTherapeuticClassDetails(id);
 		return new ResponseEntity<>(drugDci,HttpStatus.OK);
 	}
 
