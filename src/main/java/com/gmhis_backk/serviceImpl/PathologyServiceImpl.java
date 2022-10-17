@@ -63,8 +63,8 @@ public class PathologyServiceImpl implements PathologyService {
 	@Override @Transactional
 	public Pathology addPathology(DefaultNameAndActiveDto defaultNameAndActiveDto)
 			throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException {
-		Pathology pathologyByNAME = pathologyRepository.findByName(defaultNameAndActiveDto.getName());
-		if(pathologyByNAME!= null) {
+		Pathology pathologyByName= pathologyRepository.findByName(defaultNameAndActiveDto.getName());
+		if(pathologyByName!= null) {
 			throw new ResourceNameAlreadyExistException("Le nom de la pathologie existe déjà ");  
 		} 
 		Pathology pathology = new Pathology();		

@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gmhis_backk.domain.Pathology;
-import com.gmhis_backk.domain.UnitOfMeasure;
 import com.gmhis_backk.domain.User;
 import com.gmhis_backk.dto.DefaultNameAndActiveDto;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
@@ -73,9 +72,9 @@ public ResponseEntity<Map<String, Object>>getAllPathology(
 		pagePathology = pathologyService.findAllPathologyByName(pathologyName.trim(), paging);
 	}
 
-	List<Pathology> unitOfMeasueList = pagePathology.getContent();
+	List<Pathology> PathologyList = pagePathology.getContent();
 	
-	List<Map<String, Object>> unitOfMeasures= this.getMapFromPathologyList(unitOfMeasueList);
+	List<Map<String, Object>> unitOfMeasures= this.getMapFromPathologyList(PathologyList);
 
 	response.put("items", unitOfMeasures);
 	response.put("currentPage", pagePathology.getNumber());
@@ -113,7 +112,7 @@ protected List<Map<String, Object>> getMapFromPathologyList(List<Pathology> path
 }
 
 @PostMapping("/add")
-@ApiOperation("Ajouter une pathologie dans")
+@ApiOperation("Ajouter une pathologie")
 public ResponseEntity<Pathology> addPathology(@RequestBody DefaultNameAndActiveDto PathologyDto) throws ResourceNameAlreadyExistException,
 ResourceNotFoundByIdException {
 	Pathology pathology = pathologyService.addPathology(PathologyDto);
