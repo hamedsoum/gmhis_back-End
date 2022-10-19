@@ -1,6 +1,7 @@
 package com.gmhis_backk.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,7 +22,7 @@ public interface InsuredRepository extends JpaRepository<Insured, Long> {
 	@Query(value = "select i from Insured i where i.cardNumber = :cardNumber")
 	public Insured findInsuredByCardNumber(@Param("cardNumber") String cardNumber);
 	
-	@Query(value = "select i from Insured i where i.active = 'Y'")
+	@Query(value = "select i from Insured i where i.active = 1")
 	public List<Insured> findActiveInsureds();
 	
 	@Query(value = "select i from Insured i where i.active = :active")
@@ -40,4 +41,7 @@ public interface InsuredRepository extends JpaRepository<Insured, Long> {
 	@Transactional
 	@Query(value = "delete from Insured  i where i.patient.id = :patient")
 	public void deleteByPatientId(@Param("patient") Long patient);
+	
+	@Query(value = "SELECT i FROM Insured i where id= :id")
+	Optional<Insured> findById(Long id);
 }

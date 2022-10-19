@@ -145,5 +145,20 @@ public class InsuranceController {
 		Optional<Insurance> insurance= insuranceServcie.getInsuranceDetails(id);
 		return new ResponseEntity<>(insurance,HttpStatus.OK);
 	}
+	
+	@ApiOperation(value = "Lister la liste des ids et noms des assurances actives dans le système")
+	@GetMapping("/active_insurances_name")
+	public ResponseEntity<List<Map<String, Object>>> activeInsuranceName() {
+		List<Map<String, Object>> insuranceList = new ArrayList<>();
+
+		insuranceServcie.findAllActiveInsurances().stream().forEach(insuranceDto -> {
+			Map<String, Object> insuranceMap = new HashMap<>();
+			insuranceMap.put("id", insuranceDto.getId());
+			insuranceMap.put("name", insuranceDto.getName());
+			insuranceList.add(insuranceMap);
+		});
+
+		return new ResponseEntity<>(insuranceList, HttpStatus.OK);
+	}
 
 }

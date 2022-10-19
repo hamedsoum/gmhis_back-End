@@ -20,6 +20,9 @@ public interface InsuranceService {
 	    
 	  Page<Insurance> findAllInsuranceByName(String name, Pageable pageable);
 	  
+	  List<Insurance> findAllActiveInsurances();
+
+	  
 	  List<Insurance> findAllInsurances();
 
 	  void deleteInsurance(Integer id);

@@ -33,7 +33,7 @@ public class Act implements Serializable {
 	private Long id;
 
 	@Column
-	private String active;
+	private Boolean active;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "created_at")

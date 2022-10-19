@@ -18,7 +18,7 @@ public class ActDTO {
 
 	private Long id;
 	private String name;
-	private String active;	
+	private Boolean active;	
 	private String description;
 	private String codification;
 	private int coefficient;

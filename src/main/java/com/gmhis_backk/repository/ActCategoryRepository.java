@@ -1,6 +1,7 @@
 package com.gmhis_backk.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,7 +30,7 @@ public interface ActCategoryRepository extends JpaRepository<ActCategory, Long> 
 	Page<ActCategory> findAllActCategoryByName(String name, Pageable pageable);
 	
 	@Query("SELECT a FROM ActCategory a Where a.id =:id")
-	ActCategory getActCategoryDetails(Integer id);
+	Optional<ActCategory> getActCategoryDetails(Long id);
 	
 	@Query("SELECT a FROM ActCategory a")
 	List<ActCategory>findAllActCategorySimpleList();

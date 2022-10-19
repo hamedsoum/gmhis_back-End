@@ -4,6 +4,7 @@ package com.gmhis_backk.serviceImpl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -58,7 +59,7 @@ public class actCategoryServiceImpl implements ActCategoryService {
 	}
 
 	@Override
-	public ActCategory getActCategoryDetails(Integer id) {
+	public Optional<ActCategory> getActCategoryDetails(Long id) {
 		// TODO Auto-generated method stub
 		return actCategoryRepo.getActCategoryDetails(id);
 	}
@@ -100,7 +101,7 @@ ActCategory updateActCategory = actCategoryRepo.findById(id).orElse(null);
 			ActCategory actCategoryByName = actCategoryRepo.findByName(actCategoryDto.getName());
 			if(actCategoryByName != null) {
 				if(actCategoryByName.getId() != updateActCategory.getId()) {
-					throw new ResourceNameAlreadyExistException("Le nom de la commune existe déjà");
+					throw new ResourceNameAlreadyExistException("Le nom du groupe existe déjà");
 				}
 			}
 		}

@@ -84,7 +84,7 @@ public class Insured implements Serializable {
 	private InsuranceSuscriber insuranceSuscriber;
 
 	@JsonBackReference
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "patient_id")
 	private Patient patient;
 	

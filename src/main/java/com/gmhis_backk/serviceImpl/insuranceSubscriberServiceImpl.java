@@ -101,6 +101,12 @@ public class insuranceSubscriberServiceImpl implements InsuranceSuscriberService
 		return insuranceSubscriberRepository.save(updateInsuranceSubscriber);
 	}
 
+	@Override
+	public List<InsuranceSuscriber> findAllActiveInsuranceSuscribers() {
+		// TODO Auto-generated method stub
+		return insuranceSubscriberRepository.findAllActive();
+	}
+
 	
 	
 

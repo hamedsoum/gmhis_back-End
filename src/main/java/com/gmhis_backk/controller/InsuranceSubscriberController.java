@@ -140,4 +140,19 @@ public class InsuranceSubscriberController {
 		Optional<InsuranceSuscriber> insuranceSubscriber= insuranceSubscriberService.getInsuranceSuscriberDetails(id);
 		return new ResponseEntity<>(insuranceSubscriber,HttpStatus.OK);
 	}
+	
+	@ApiOperation(value = "Lister la liste des ids et noms des etablissements souscripteur actifs dans le système")
+	@GetMapping("/active_subscribers_name")
+	public ResponseEntity<List<Map<String, Object>>> activeInsuranceSubscriberName() {
+		List<Map<String, Object>> subscriberList = new ArrayList<>();
+
+		insuranceSubscriberService.findAllActiveInsuranceSuscribers().stream().forEach(subscriber -> {
+			Map<String, Object> subscriberMap = new HashMap<>();
+			subscriberMap.put("id", subscriber.getId());
+			subscriberMap.put("name", subscriber.getName());
+			subscriberList.add(subscriberMap);
+		});
+
+		return new ResponseEntity<>(subscriberList, HttpStatus.OK);
+	}
 }

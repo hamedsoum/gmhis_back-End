@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 
 /**
  * 
- * @author dabre
+ * @author hamed
  *
  */
 @Entity
@@ -40,7 +40,7 @@ public class Convention implements Serializable {
 	private Long id;
 
 	@Column
-	private String active;
+	private Boolean active;
 
 	@Column
 	private String name;

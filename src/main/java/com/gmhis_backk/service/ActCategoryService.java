@@ -2,6 +2,7 @@ package com.gmhis_backk.service;
 
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,7 +27,7 @@ public interface ActCategoryService {
 
 	  void deleteActCategory(Integer id);
 		
-	  ActCategory getActCategoryDetails(Integer id); 
+	  Optional<ActCategory> getActCategoryDetails(Long id); 
 	  
 	  ActCategory addActCategory(ActCategoryDto actCategoryDto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException;
 		

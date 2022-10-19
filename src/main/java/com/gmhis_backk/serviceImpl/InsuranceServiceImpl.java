@@ -110,4 +110,10 @@ Insurance updateInsurance = insuranceRepository.findById(id).orElse(null);
 		return insuranceRepository.findAll();
 	}
 
+	@Override
+	public List<Insurance> findAllActiveInsurances() {
+		// TODO Auto-generated method stub
+		return insuranceRepository.findAllActive();
+	}
+
 }

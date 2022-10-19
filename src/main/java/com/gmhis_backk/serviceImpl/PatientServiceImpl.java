@@ -90,6 +90,7 @@ public class PatientServiceImpl implements PatientService {
 		 if(!isPhone2Used) throw new ResourceNotFoundByIdException("Deuxieme numero de telephone est deja utilisé");
 		
 		 Boolean isPatientExternalId2Used =	patientRepository.findByPatientExternalId(patientdto.getPatientExternalId()).isEmpty();
+		 System.out.print(isPatientExternalId2Used);
 		 if(!isPatientExternalId2Used) throw new ResourceNotFoundByIdException("Numero patient deja utilisé");
 		 
 		 Patient patient = new Patient();
@@ -243,7 +244,7 @@ public class PatientServiceImpl implements PatientService {
 
 	@Override
 	public Page<Patient> findByIdCardNumber(String idCardNumber, Pageable pageable) {
-		return patientRepository.findByIdCardNumber(idCardNumber, pageable);
+		return patientRepository.findByIdCardNumberContainingIgnoreCase(idCardNumber, pageable);
 	}
 
 	@Override
@@ -295,7 +296,7 @@ public class PatientServiceImpl implements PatientService {
 						if(insuredDTO.getId()  == 0) {
 							insured = new Insured();
 						} else {
-							insured = insuredRepository.getOne(insuredDTO.getId());
+							insured = insuredRepository.findById(insuredDTO.getId()).orElse(null);
 						}
 						Insurance insurance = new Insurance();
 						InsuranceSuscriber iSubscriber = new InsuranceSuscriber();

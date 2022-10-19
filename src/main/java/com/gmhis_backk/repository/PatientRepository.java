@@ -60,7 +60,7 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
 
 	public Page<Patient> findByCnamNumberContainingIgnoreCase(@Param("cnamNumber") String cnamNumber, Pageable pageable);
 
-	public Page<Patient> findByIdCardNumber(@Param("idCardNumber") String idCardNumber, Pageable pageable);
+	public Page<Patient> findByIdCardNumberContainingIgnoreCase(@Param("idCardNumber") String idCardNumber, Pageable pageable);
 
 	@Query(value="select p from Patient p where p.firstName like %:firstName% and ( p.lastName like %:lastName% or p.maidenName like %:lastName%)")
 	public Page<Patient> findByFullName(@Param("firstName") String firstName, @Param("lastName") String lastName, Pageable pageable);

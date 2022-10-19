@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.gmhis_backk.domain.Insurance;
 import com.gmhis_backk.domain.InsuranceSuscriber;
 import com.gmhis_backk.dto.InsuranceSubscriberDto;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
@@ -19,6 +20,9 @@ public interface InsuranceSuscriberService {
 	  Page<InsuranceSuscriber> findAllInsuranceSuscriberByActiveAndName(String name,Boolean active, Pageable pageable);
 	    
 	  Page<InsuranceSuscriber> findAllInsuranceSuscriberByName(String name, Pageable pageable);
+	  
+	  List<InsuranceSuscriber> findAllActiveInsuranceSuscribers();
+
 	  
 	  List<InsuranceSuscriber> findAllInsuranceSuscribers();
 
