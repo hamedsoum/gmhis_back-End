@@ -2,7 +2,6 @@ package com.gmhis_backk.serviceImpl;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,13 +70,13 @@ public class ActServiceImpl implements ActService{
 	}
 
 	@Override
-	public Page<Act> findByActive(String name, Boolean active, Pageable pageable) {
-		return actRepository.findByActive(name, active, pageable);
+	public Page<Act> findByActive(String name, Boolean active,Long category, Pageable pageable) {
+		return actRepository.findByActive(name, active,category, pageable);
 	}
 
 	@Override
-	public List<Act> findActiveActsByCategory(String name, Long category) {
-		return actRepository.findByCategory(name, category);
+	public Page<Act> findActiveActsByCategory(String name, Long category, Pageable pageable) {
+		return actRepository.findByCategory(name, category,pageable);
 	}
 
 	@Override
@@ -102,8 +101,8 @@ public class ActServiceImpl implements ActService{
 	}
 
 	@Override
-	public Optional<Act> findActById(Long id) {
-		return actRepository.findById(id);
+	public Act findActById(Long id) {
+		return actRepository.findById(id).orElse(null);
 	}
 	
 	protected com.gmhis_backk.domain.User getCurrentUserId() {
@@ -175,8 +174,8 @@ public class ActServiceImpl implements ActService{
 			updateActe.setActCategory(actCategory);
 			updateActe.setActGroup(actGroup);
 			updateActe.setActCode(actCode);
-			updateActe.setCreatedAt(new Date());
-			updateActe.setCreatedBy(getCurrentUserId().getId());
+			updateActe.setUpdatedAt(new Date());
+			updateActe.setUpdatedBy(getCurrentUserId().getId());
 			return actRepository.save(updateActe);
 		
 	}

@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,7 +14,6 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 /**
  * 
@@ -63,21 +63,22 @@ public class Act implements Serializable {
 	
 
 	@JsonBackReference
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="act_category_id")
-	private ActCategory actCategory;
+	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+	public ActCategory actCategory;
 	
 
 	@JsonBackReference
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="act_code_id")
-	private ActCode actCode;
+	public ActCode actCode;
 	
 
 	@JsonBackReference
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="act_group_id")
-	private ActGroup actGroup;
+	public ActGroup actGroup;
 
 
 	@JsonBackReference

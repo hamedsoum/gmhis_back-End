@@ -27,12 +27,12 @@ public interface ActRepository extends JpaRepository<Act, Long> {
 
 	public Page<Act> findByNameContainingIgnoreCase(String name, Pageable pageable);
 	
-	@Query(value = "select a from Act a where a.name like %:name% and a.active = :active")
+	@Query(value = "select a from Act a where a.name like %:name% and actCategory.id = :category and a.active = :active")
 	public Page<Act> findByActive(@Param("name") String name,
-			@Param("active") Boolean active, Pageable p);
+			@Param("active") Boolean active,@Param("category") Long category, Pageable p);
 	
-	@Query(value = "select a from Act a where name like %:name% and actCategory.id = :category and active = 'Y'")
-	public List<Act> findByCategory(@Param("name") String name, @Param("category") Long category);
+	@Query(value = "select a from Act a where name like %:name% and actCategory.id = :category and active = 1")
+	public Page<Act> findByCategory(@Param("name") String name, @Param("category") Long category, Pageable p);
 	
 	@Query(value = "select a from Act a where name like %:name% and actGroup.id = :group and active = 'Y'")
 	public List<Act> findByGroup(@Param("name") String name, @Param("group") Long group);

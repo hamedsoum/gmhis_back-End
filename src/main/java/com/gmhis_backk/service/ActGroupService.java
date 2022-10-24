@@ -21,6 +21,9 @@ public interface ActGroupService {
 	  Page<ActGroup> findAllActGroupByName(String name, Pageable pageable);
 	  
 	  List<ActGroup> findAllActGroups();
+	  
+	  List<ActGroup> findAllActive();
+
 
 	  void deleteActGroup(Integer id);
 		

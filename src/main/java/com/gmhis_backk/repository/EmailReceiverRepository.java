@@ -2,7 +2,6 @@ package com.gmhis_backk.repository;
 
 import java.util.List;
 
-import javax.validation.constraints.Email;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

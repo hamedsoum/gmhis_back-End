@@ -111,4 +111,9 @@ ActCategory updateActCategory = actCategoryRepo.findById(id).orElse(null);
 		return actCategoryRepo.save(updateActCategory);
 	}
 
+	@Override
+	public List<ActCategory> findAllActive() {
+		return actCategoryRepo.findAllActive();
+	}
+
 }

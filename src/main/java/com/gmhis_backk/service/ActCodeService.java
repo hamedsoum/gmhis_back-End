@@ -22,6 +22,9 @@ public interface ActCodeService {
 	  Page<ActCode> findAllActCodeByName(String name, Pageable pageable);
 	  
 	  List<ActCode> findAllActCodes();
+	  
+		List<ActCode> findAllActive();
+
 
 	  void deleteActCode(Integer id);
 		

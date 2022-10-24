@@ -43,6 +43,7 @@ public class PatientDTO {
 	private String cellPhone1;
 	private String cellPhone2;
 	private String motherProfession;
+	private String fatherName;
 	private List<InsuredDTO> insurances;
 
 }

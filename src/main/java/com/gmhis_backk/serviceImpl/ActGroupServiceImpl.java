@@ -102,4 +102,10 @@ public class ActGroupServiceImpl implements ActGroupService {
 		return actGroupRepository.save(updateActGroup);
 	}
 
+	@Override
+	public List<ActGroup> findAllActive() {
+		// TODO Auto-generated method stub
+		return actGroupRepository.findAllActive();
+	}
+
 }

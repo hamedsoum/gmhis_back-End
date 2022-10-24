@@ -18,6 +18,8 @@ import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
 public interface ActCategoryService {
 
 	  Page<ActCategory> findAllActCategory(Pageable pageable);
+	  
+		List<ActCategory> findAllActive();
 	    
 	  Page<ActCategory> findAllActCategoryByActiveAndName(String name,Boolean active, Pageable pageable);
 	    

@@ -94,9 +94,9 @@ public class ActCodeController {
 		return new ResponseEntity<>(response, OK);
 	}
 	
-	protected List<Map<String, Object>> getMapFromActCodeList(List<ActCode> actGroups) {
+	protected List<Map<String, Object>> getMapFromActCodeList(List<ActCode> actCodes) {
 		List<Map<String, Object>> actCodeList = new ArrayList<>();
-		actGroups.stream().forEach(actCodeDto -> {
+		actCodes.stream().forEach(actCodeDto -> {
 
 			Map<String, Object> actGroupsMap = new HashMap<>();
 			User createdBy = ObjectUtils.isEmpty(actCodeDto.getCreatedBy()) ? new User()
@@ -138,6 +138,21 @@ public class ActCodeController {
 	public  ResponseEntity<Optional<ActCode>> getDetail(@PathVariable Long id){
 		Optional<ActCode> actCode= actCodeService.getActCodeDetails(id);
 		return new ResponseEntity<>(actCode,HttpStatus.OK);
+	}
+	
+	@ApiOperation(value = "Lister la liste des ids et noms des codes d'actes actives dans le système")
+	@GetMapping("/active_actCode_name")
+	public ResponseEntity<List<Map<String, Object>>>  activeActCategoryName() {
+		List<Map<String, Object>>  actCodeList = new ArrayList<>();
+
+		actCodeService.findAllActive().forEach(actCodeDto -> {
+			Map<String, Object> actCodeMap = new HashMap<>();
+			actCodeMap.put("id", actCodeDto.getId());
+			actCodeMap.put("name", actCodeDto.getName());
+			actCodeList.add(actCodeMap);
+		});
+		
+		return new ResponseEntity<>(actCodeList, HttpStatus.OK);
 	}
 
 }

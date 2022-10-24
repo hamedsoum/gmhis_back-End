@@ -141,4 +141,19 @@ public class ActGroupController {
 		Optional<ActGroup> actGroup= actGroupService.getActGroupDetails(id);
 		return new ResponseEntity<>(actGroup,HttpStatus.OK);
 	}
+	
+	@ApiOperation(value = "Lister la liste des ids et noms des familles d'actes actives dans le système")
+	@GetMapping("/active_actGroup_name")
+	public ResponseEntity<List<Map<String, Object>>>  activeActCategoryName() {
+		List<Map<String, Object>>  actGroupList = new ArrayList<>();
+
+		actGroupService.findAllActive().forEach(actGroupto -> {
+			Map<String, Object> actGroupMap = new HashMap<>();
+			actGroupMap.put("id", actGroupto.getId());
+			actGroupMap.put("name", actGroupto.getName());
+			actGroupList.add(actGroupMap);
+		});
+		
+		return new ResponseEntity<>(actGroupList, HttpStatus.OK);
+	}
 }

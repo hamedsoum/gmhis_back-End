@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -52,6 +51,7 @@ public class ActController {
 	public ResponseEntity<Map<String, Object>> getAllAct(
 			@RequestParam(required = false, defaultValue = "") String name,
 			@RequestParam(required = false, defaultValue = "") String active,
+			@RequestParam(required = false, defaultValue = "") String category,
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size,
 			@RequestParam(defaultValue = "id,desc") String[] sort){
@@ -67,12 +67,16 @@ public class ActController {
 
 		if (StringUtils.isNotBlank(active)) {
 
-			pageAct = actService.findByActive(name.trim(), Boolean.parseBoolean(active), paging);
+			pageAct = actService.findByActive(name.trim(), Boolean.parseBoolean(active), Long.parseLong(category), paging);
 
 		} else if (StringUtils.isNotBlank(name)) {
 
 			pageAct = actService.findActsContaining(name.trim(), paging);
-		}else {
+		}
+		else if(StringUtils.isNotBlank(category)) {
+			pageAct = actService.findActiveActsByCategory(name.trim(), Long.parseLong(category), paging);
+		}
+		else {
 			pageAct = actService.findActs(paging);
 		}
 		
@@ -135,14 +139,28 @@ public class ActController {
 	@ApiOperation("Modifier un acte dans le systeme")
 	public ResponseEntity<Act>updateGroup(@PathVariable("id") Long id,@RequestBody ActDTO actDto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException{
 		Act updateact = actService.updateAct(id, actDto);
+		updateact.getActCategory().getId();
 		return new ResponseEntity<>(updateact,HttpStatus.OK);
 	}
 	
 	@GetMapping("/get-detail/{id}")
 	@ApiOperation("detail d'un acte ")
-	public  ResponseEntity<Optional<Act>> getDetail(@PathVariable Long id){
-		Optional<Act> act= actService.findActById(id);
-		return new ResponseEntity<>(act,HttpStatus.OK);
+	public  ResponseEntity<Map<String, Object>> getDetail(@PathVariable Long id){
+		Map<String, Object> response = new HashMap<>();
+
+		Act act= actService.findActById(id);
+		System.out.print(act.getActCategory().getId());
+		response.put("actCategory", act.getActCategory().getId());
+		response.put("id", act.getId());
+		response.put("name", act.getName());
+		response.put("codification", act.getCodification());
+		response.put("coefficient", act.getCoefficient());
+		response.put("amount", act.getActCode().getValue() * act.getCoefficient());
+		response.put("actCategory", act.getActCategory().getId());
+		response.put("actCode", act.getActCode().getId());
+		response.put("actGroup", act.getActGroup().getId());
+		response.put("active", act.getActive());
+		return new ResponseEntity<>(response,HttpStatus.OK);
 	}
 	
 	@ApiOperation(value = "Lister la liste des ids et noms des actes actifs dans le système")

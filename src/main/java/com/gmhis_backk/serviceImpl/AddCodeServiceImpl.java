@@ -76,7 +76,9 @@ public class AddCodeServiceImpl implements ActCodeService {
 		BeanUtils.copyProperties(actCodeDto,actCode,"id");
 		actCode.setCreatedAt(new Date());
 		actCode.setCreatedBy(getCurrentUserId().getId());
-		return actCodeRepository.save(actCode);	}
+		return actCodeRepository.save(actCode);	
+		
+	}
 
 	@Override @Transactional
 	public ActCode updateActCode(Long id, ActCodeDto actCodeDto)
@@ -97,6 +99,11 @@ public class AddCodeServiceImpl implements ActCodeService {
 		updateActCode.setUpdatedAt(new Date());
 		updateActCode.setUpdatedBy(getCurrentUserId().getId());
 		return actCodeRepository.save(updateActCode);
+	}
+
+	@Override
+	public List<ActCode> findAllActive() {
+		return actCodeRepository.findAllActive();
 	}
 
 }

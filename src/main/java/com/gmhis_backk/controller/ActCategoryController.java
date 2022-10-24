@@ -142,4 +142,19 @@ public class ActCategoryController {
 		List<ActCategory> ActCategoryList = actCategoryService.findAllActCategories();
 		return new ResponseEntity<>(ActCategoryList,HttpStatus.OK);
 	}
+	
+	@ApiOperation(value = "Lister la liste des ids et noms des catégories d'actes actives dans le système")
+	@GetMapping("/active_categries_name")
+	public ResponseEntity<List<Map<String, Object>>>  activeActCategoryName() {
+		List<Map<String, Object>>  actCategoryList = new ArrayList<>();
+
+		actCategoryService.findAllActive().forEach(actDto -> {
+			Map<String, Object> actMap = new HashMap<>();
+			actMap.put("id", actDto.getId());
+			actMap.put("name", actDto.getName());
+			actCategoryList.add(actMap);
+		});
+		
+		return new ResponseEntity<>(actCategoryList, HttpStatus.OK);
+	}
 }
