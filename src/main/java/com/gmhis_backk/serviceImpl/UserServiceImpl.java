@@ -476,7 +476,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		String asciiValue = RandomStringUtils.randomAlphabetic(17);
 		String code = initialValue+asciiValue+finalValue;
 		user.setCode(code);
-		user.setTime(new Time(System.currentTimeMillis()));
+//		user.setTime(new Time(System.currentTimeMillis()));
 		userRepository.save(user);
 		return code;
 	}

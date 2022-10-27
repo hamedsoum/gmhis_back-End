@@ -29,7 +29,7 @@ public interface AdmissionService {
 	
 	public String getAdmissionNumber();
 	
-	public Admission updateAdmission(AdmissionDTO a)throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException;
+	public Admission updateAdmission(Long id, AdmissionDTO a)throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException;
 
 	public Admission findAdmissionByPatient(Long patient);
 	

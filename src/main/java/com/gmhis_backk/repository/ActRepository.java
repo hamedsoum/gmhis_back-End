@@ -34,6 +34,9 @@ public interface ActRepository extends JpaRepository<Act, Long> {
 	@Query(value = "select a from Act a where name like %:name% and actCategory.id = :category and active = 1")
 	public Page<Act> findByCategory(@Param("name") String name, @Param("category") Long category, Pageable p);
 	
+	@Query(value = "select a from Act a where actCategory.id = :category and active = 1")
+	public List<Act> findNamesAndIdsByCategory(@Param("category") Long category);
+	
 	@Query(value = "select a from Act a where name like %:name% and actGroup.id = :group and active = 'Y'")
 	public List<Act> findByGroup(@Param("name") String name, @Param("group") Long group);
 	

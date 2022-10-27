@@ -2,6 +2,7 @@ package com.gmhis_backk.serviceImpl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,8 +102,8 @@ public class ActServiceImpl implements ActService{
 	}
 
 	@Override
-	public Act findActById(Long id) {
-		return actRepository.findById(id).orElse(null);
+	public Optional<Act> findActById(Long id) {
+		return actRepository.findById(id);
 	}
 	
 	protected com.gmhis_backk.domain.User getCurrentUserId() {
@@ -178,6 +179,11 @@ public class ActServiceImpl implements ActService{
 			updateActe.setUpdatedBy(getCurrentUserId().getId());
 			return actRepository.save(updateActe);
 		
+	}
+
+	@Override
+	public List<Act> findActiveNamesAndIdsActsByCategory(Long category) {
+		return actRepository.findNamesAndIdsByCategory(category);
 	}
 
 	

@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import com.gmhis_backk.domain.Act;
 import com.gmhis_backk.domain.ActGroup;
 import com.gmhis_backk.domain.CashRegister;
 
@@ -16,6 +17,10 @@ import com.gmhis_backk.domain.CashRegister;
 public interface CashRegisterRepository extends JpaRepository<CashRegister, Long> {
 	
 	CashRegister findByName(String name);
+	
+	@Query(value = "select c from CashRegister c where active = 1")
+	public List<CashRegister> findActiveActs();
+	
 	
 	@Query(value = "SELECT c FROM CashRegister c WHERE active=1")
 	List<CashRegister> findAllActive();

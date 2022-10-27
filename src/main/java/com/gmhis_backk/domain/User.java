@@ -69,7 +69,7 @@ public class User implements Serializable{
     
     private boolean passwordMustBeChange;
     
-    private Long hotelId;
+//    private Long hotelId;
     
     @Column
 	private String login;
@@ -81,7 +81,6 @@ public class User implements Serializable{
     
     private String code;
     
-    private Time time;
       
     public String getEmail() {
 		return StringUtils.capitalize(email).trim();

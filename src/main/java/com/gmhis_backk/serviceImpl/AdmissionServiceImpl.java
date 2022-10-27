@@ -62,7 +62,6 @@ public class AdmissionServiceImpl implements AdmissionService{
 	
 	@Override @Transactional
 	public Admission saveAdmission(AdmissionDTO admissionDto)throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException{
-		
 		Patient patient = patientService.findById(admissionDto.getPatient());
 		
 		if (patient == null) {
@@ -74,7 +73,7 @@ public class AdmissionServiceImpl implements AdmissionService{
 			throw new ResourceNotFoundByIdException("aucune service trouvé pour l'identifiant " );
 		}
 //		
-	    Act act = actService.findActById(admissionDto.getAct());
+	    Act act = actService.findActById(admissionDto.getAct()).orElse(null);
 		
 		if (act == null) {
 			throw new ResourceNotFoundByIdException("aucun act trouvé pour l'identifiant " );
@@ -95,8 +94,8 @@ public class AdmissionServiceImpl implements AdmissionService{
 		admission.setService(service);
 		admission.setAdmissionStartDate(new Date());
         admission.setAdmissionStatus("R");
-		act.setCreatedAt(new Date());
-		act.setCreatedBy(getCurrentUserId().getId());
+        admission.setCreatedAt(new Date());
+		admission.setCreatedBy(getCurrentUserId().getId());
 		return repo.save(admission);
 		
 	}
@@ -104,7 +103,7 @@ public class AdmissionServiceImpl implements AdmissionService{
 	
 	
 	@Override
-	public Admission updateAdmission(AdmissionDTO a)throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException{
+	public Admission updateAdmission(Long id, AdmissionDTO a)throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException{
 
 		
 		return null;
@@ -127,7 +126,7 @@ public class AdmissionServiceImpl implements AdmissionService{
 	
 	@Override
 	public void addActToAdmission(AdmisionHasActDTO admissionHasActDto, int actCost, Bill bill) {
-		repo.addActToAdmission(admissionHasActDto.getAdmission(), admissionHasActDto.getAct(), admissionHasActDto.getPractician(), actCost, bill.getId());	
+		repo.addActToAdmission(admissionHasActDto.getAdmission(), admissionHasActDto.getAct(), admissionHasActDto.getPratician(), actCost, bill.getId());	
 	}
 		
 	

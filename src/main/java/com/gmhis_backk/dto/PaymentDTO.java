@@ -1,21 +1,27 @@
 package com.gmhis_backk.dto;
 
 
+
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
  * 
- * @author Adjara
+ * @author Hamed soumahoro
  *
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AdmisionHasActDTO {
+public class PaymentDTO {
 
-	 private long admission;
-	 private long act;
-	 private long pratician;
+	private Long id;
+	private int amount;
+	private Long cashRegister;
+	private Long bill;
+	private Long paymentType;
+
+
 }

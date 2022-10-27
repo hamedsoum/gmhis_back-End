@@ -1,7 +1,6 @@
 package com.gmhis_backk.controller;
 
 
-import java.awt.Window;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -18,7 +17,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -49,6 +50,14 @@ public class AdmissionController {
 	public ResponseEntity<Admission> addAdmission(@RequestBody AdmissionDTO admissionDto) throws ResourceNameAlreadyExistException,
 	ResourceNotFoundByIdException{
 		Admission admission = admissionService.saveAdmission(admissionDto);
+		return new ResponseEntity<Admission>(admission, HttpStatus.OK);
+	}
+	
+	@PutMapping("/update/{id}")
+	@ApiOperation("/Modifier une admission")
+	public ResponseEntity<Admission> updateAdmission(@PathVariable("id") Long id,  @RequestBody AdmissionDTO admissionDto) throws ResourceNameAlreadyExistException,
+	ResourceNotFoundByIdException{
+		Admission admission = admissionService.updateAdmission(id, admissionDto);
 		return new ResponseEntity<Admission>(admission, HttpStatus.OK);
 	}
 	
@@ -193,6 +202,23 @@ public class AdmissionController {
 			admissionList.add(admissionsMap);
 		});
 		return admissionList;
+	}
+	
+	@GetMapping("/get-detail/{id}")
+	@ApiOperation("detail d'une admission ")
+	public  ResponseEntity<Map<String, Object>> getDetail(@PathVariable Long id){
+		Map<String, Object> response = new HashMap<>();
+
+		Admission admission= admissionService.findAdmissionById(id).orElse(null);
+		response.put("id", admission.getId());
+		response.put("patientId", admission.getPatient().getId());
+		response.put("patientName", admission.getPatient().getFirstName());
+		response.put("patientExternalId", admission.getPatient().getPatientExternalId());
+		response.put("act", admission.getAct().getId());
+		response.put("admissionDate", admission.getAdmissionStartDate());
+		response.put("service", admission.getService().getId());
+		response.put("practician", admission.getPractician().getId());
+		return new ResponseEntity<>(response,HttpStatus.OK);
 	}
 
 }

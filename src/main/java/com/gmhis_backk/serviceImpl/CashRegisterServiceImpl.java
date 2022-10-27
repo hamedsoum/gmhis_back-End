@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import com.gmhis_backk.AppUtils;
 import com.gmhis_backk.domain.CashRegister;
+import com.gmhis_backk.domain.User;
 import com.gmhis_backk.dto.DefaultNameAndActiveDto;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
@@ -55,7 +56,7 @@ public class CashRegisterServiceImpl implements CashRegisterService {
 		// TODO Auto-generated method stub
 	}
 	
-	protected com.gmhis_backk.domain.User getCurrentUserId() {
+	protected User getCurrentUserId() {
 		return this.userRepository.findUserByUsername(AppUtils.getUsername());
 	}
 
@@ -97,6 +98,17 @@ public class CashRegisterServiceImpl implements CashRegisterService {
 		updatecashRegister.setUpdatedAt(new Date());
 		updatecashRegister.setUpdatedBy(getCurrentUserId().getId());
 		return cashRegisterRepository.save(updatecashRegister);
+	}
+
+	@Override
+	public List<CashRegister> findActiveActs() {
+		
+		return cashRegisterRepository.findActiveActs();
+	}
+
+	@Override
+	public Optional<CashRegister> findCashRegisterById(Long id) {
+		return cashRegisterRepository.findById(id);
 	}
 
 }

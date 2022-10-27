@@ -43,7 +43,7 @@ public class PaymentType implements Serializable {
 	private String name;
 
 	@Column
-	private String active = "Y";
+	private Boolean active ;
 	
 	@OneToMany(mappedBy = "paymentType")
 	private List<Payment> payments;

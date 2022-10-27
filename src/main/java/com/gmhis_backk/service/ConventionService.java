@@ -8,25 +8,38 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.gmhis_backk.domain.Convention;
-import com.gmhis_backk.dto.DefaultNameAndActiveDto;
+import com.gmhis_backk.domain.ConventionHasAct;
+import com.gmhis_backk.domain.ConventionHasActCode;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
 
 @Service
 public interface ConventionService {
-	 Page<Convention> findAllConvention(Pageable pageable);
-	    
-	  Page<Convention> findAllConventionByActiveAndName(String name,Boolean active, Pageable pageable);
-	    
-	  Page<Convention> findAllConventionByName(String name, Pageable pageable);
-	  
-	  List<Convention> findAllConventions();
+	public Convention saveConvention(Convention c) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException;
+	
+	public Convention findConventionByName(String Convention);
+	
+	public Optional<Convention> findConventionById(Long id);
 
-	  void deleteConvention(Integer id);
-		
-	  Optional<Convention> getConventionDetails(Long id); 
-	  
-	  Convention addConvention(DefaultNameAndActiveDto defaultNameAndActiveDto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException;
-		
-	  Convention updateConvention(Long id,DefaultNameAndActiveDto defaultNameAndActiveDto) throws ResourceNotFoundByIdException, ResourceNameAlreadyExistException;
+	public List<Convention> findConventions();
+	
+	public Page<Convention> findConventions(Pageable pageable);
+	
+	public Page<Convention> findConventionsContaining(String name,Pageable pageable);
+	
+	public List<Convention> findActiveConventions();
+	
+	public Page<Convention> findByActive(String namme, Boolean active, Pageable pageable);
+	
+	public void addActToConvention(ConventionHasAct conventionAct);
+	
+	public void removeActToConvention(Convention convention, ConventionHasAct conventionAct);
+	
+	public void removeAllActs(Convention convention);
+	
+	public void addActCodeToConvention(ConventionHasActCode conventionActCode);
+	
+	public void removeActCodeToConvention(Convention convention, ConventionHasActCode conventionActCode);
+	
+	public void removeAllActCodes(Convention convention);
 }

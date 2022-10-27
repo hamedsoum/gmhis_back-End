@@ -3,10 +3,13 @@ package com.gmhis_backk.controller;
 import static org.springframework.http.HttpStatus.OK;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -26,13 +29,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gmhis_backk.AppUtils;
 import com.gmhis_backk.domain.Convention;
+import com.gmhis_backk.domain.ConventionHasAct;
+import com.gmhis_backk.domain.ConventionHasActCode;
 import com.gmhis_backk.domain.User;
-import com.gmhis_backk.dto.DefaultNameAndActiveDto;
+import com.gmhis_backk.dto.ConventionDTO;
+import com.gmhis_backk.dto.ConventionHasActCodeDTO;
+import com.gmhis_backk.dto.ConventionHasActDTO;
 import com.gmhis_backk.exception.domain.ApplicationErrorException;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
 import com.gmhis_backk.repository.UserRepository;
+import com.gmhis_backk.service.ActCodeService;
+import com.gmhis_backk.service.ActService;
 import com.gmhis_backk.service.ConventionService;
 
 import io.swagger.annotations.ApiOperation;
@@ -44,8 +54,20 @@ public class ConventionController {
 	@Autowired
 	ConventionService conventionService;
 	
+	@Autowired
+	private ActService actService;
+
+	@Autowired
+	private ActCodeService actCodeService;
+	
 	@Autowired 
 	UserRepository userRepository;
+	
+	private Convention convention = null;
+
+	private ConventionHasActCode conventionActCode = null;
+	
+	private ConventionHasAct conventionAct = null;
 
 	
 	@GetMapping("/list")
@@ -65,17 +87,17 @@ public class ConventionController {
 		
 		Page<Convention> pageConvention;
 		
-		pageConvention = conventionService.findAllConvention(paging);
+		pageConvention = conventionService.findConventions(paging);
 		
 		if (StringUtils.isNotBlank(active)) {
 
-			pageConvention = conventionService.findAllConventionByActiveAndName(name.trim(), Boolean.parseBoolean(active), paging);
+			pageConvention = conventionService.findByActive(name.trim(), Boolean.parseBoolean(active), paging);
 
 		} else if (StringUtils.isNotBlank(name)) {
 
-			pageConvention = conventionService.findAllConventionByName(name.trim(), paging);
+			pageConvention = conventionService.findConventionsContaining(name.trim(), paging);
 		}else {
-			pageConvention = conventionService.findAllConvention(paging);
+			pageConvention = conventionService.findConventions(paging);
 		}
 		
 		List<Convention> conventionList = pageConvention.getContent();
@@ -120,25 +142,134 @@ public class ConventionController {
 	
 	@PostMapping("/add")
 	@ApiOperation("Ajouter une convnetion")
-	public ResponseEntity<Convention> addConvnetion(@RequestBody DefaultNameAndActiveDto defaultNameAndActiveDto) throws ResourceNameAlreadyExistException,
+	@Transactional
+	public ResponseEntity<String> addConvnetion(@RequestBody ConventionDTO conventionDto) throws ResourceNameAlreadyExistException,
 	ResourceNotFoundByIdException {
-		Convention convention = conventionService.addConvention(defaultNameAndActiveDto);
+		convention = conventionService.findConventionByName(conventionDto.getName());
+		if (convention != null) {
+			throw new ResourceNameAlreadyExistException("Le nom de la convention existe déjà "); 
+		}	
+		convention = new Convention();
+		convention.setName(conventionDto.getName());
+		convention.setActive(conventionDto.getActive());
+		convention.setCreatedAt(new Date());
+		convention.setCreatedBy(this.getCurrentUserId().getId());
+		convention = conventionService.saveConvention(convention);
+		//add acts Codes to convention
+		if (ObjectUtils.isNotEmpty(conventionDto.getActCodes())) {
+			this.addActCodesToConvention(conventionDto.getActCodes());
+		};
 		
-		return new ResponseEntity<Convention>(convention,HttpStatus.OK);
+		//add acts to convention
+		if (ObjectUtils.isNotEmpty(conventionDto.getActs())) {
+			this.addActsToConvention(conventionDto.getActs());
+		}
+
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
 	@PutMapping("/update/{id}")
 	@ApiOperation("Modifier une convnetion dans le systeme")
-	public ResponseEntity<Convention>updateConvention(@PathVariable("id") Long id,@RequestBody DefaultNameAndActiveDto defaultNameAndActiveDto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException{
-		Convention updateConvention = conventionService.updateConvention(id, defaultNameAndActiveDto);
-		return new ResponseEntity<>(updateConvention,HttpStatus.OK);
+	@Transactional
+
+	public Convention updateConvention(@PathVariable("id") Long id,@RequestBody ConventionDTO conventionDto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException{
+		conventionService.findConventionById(id).ifPresent(updateConvention -> {
+			convention = new Convention();
+			updateConvention.setName(conventionDto.getName());
+			updateConvention.setActive(conventionDto.getActive());
+			updateConvention.setUpdatedAt(new Date());
+			updateConvention.setUpdatedBy(this.getCurrentUserId().getId());
+			conventionService.removeAllActCodes(updateConvention);
+			conventionService.removeAllActs(updateConvention);
+			try {
+				convention = conventionService.saveConvention(updateConvention);
+			} catch (ResourceNameAlreadyExistException | ResourceNotFoundByIdException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			//add acts Codes to convention
+			if (ObjectUtils.isNotEmpty(conventionDto.getActCodes())) {
+				this.addActCodesToConvention(conventionDto.getActCodes());
+			};
+			
+			//add acts to convention
+			if (ObjectUtils.isNotEmpty(conventionDto.getActs())) {
+				this.addActsToConvention(conventionDto.getActs());
+			}
+		});
+
+		return convention;
 	}
 	
 	@GetMapping("/get-detail/{id}")
 	@ApiOperation("detail d'une convnetion ")
 	public  ResponseEntity<Optional<Convention>> getDetail(@PathVariable Long id){
-		Optional<Convention> convention = conventionService.getConventionDetails(id);
+		Optional<Convention> convention = conventionService.findConventionById(id);
 		return new ResponseEntity<>(convention,HttpStatus.OK);
+	}
+	
+	@ApiOperation(value = "Lister la liste des ids et noms des conventions actifs dans le système")
+	@GetMapping("/active_convention_name_and_Id")
+	public ResponseEntity<List<Map<String, Object>>> activeActName() {
+
+		List<Map<String, Object>> conventionList = new ArrayList<>();
+
+		conventionService.findActiveConventions().stream().forEach(conventionDto -> {
+			Map<String, Object> conventionMap = new HashMap<>();
+			conventionMap.put("id", conventionDto.getId());
+			conventionMap.put("name", conventionDto.getName());
+			conventionList.add(conventionMap);
+		});
+
+		return new ResponseEntity<>(conventionList, HttpStatus.OK);
+	}
+	
+	protected User getCurrentUserId() {
+		return this.userRepository.findUserByUsername(AppUtils.getUsername());
+	}
+	
+	@ApiOperation(value = "Ajouter des codes d'actes a une convention")
+	@PostMapping("/add_act_codes")
+	public ResponseEntity<String> addActCodesToConvention(@RequestBody List<ConventionHasActCodeDTO> actCodes){
+		actCodes.forEach(ac -> {
+			if(ac.getActCode() != null && ac.getValue() != 0) {
+			actCodeService.getActCodeDetails(ac.getActCode()).ifPresent(actCode -> {
+				conventionActCode = new ConventionHasActCode();
+				conventionActCode.setActCode(actCode);
+				conventionActCode.setConvention(convention);
+				conventionActCode.setValue(ac.getValue());
+				conventionActCode.setActive("Y");
+				conventionActCode.setCreatedAt(new Date());
+				conventionActCode.setCreatedBy(this.getCurrentUserId().getId());
+				conventionService.addActCodeToConvention(conventionActCode);
+			});
+			};
+		});
+		
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+	
+	@ApiOperation(value = "Ajouter des actes a une convention")
+	@PostMapping("/add_acts")
+	public ResponseEntity<String> addActsToConvention(@RequestBody List<ConventionHasActDTO> acts){
+		acts.forEach(a -> {
+			if(a.getAct() != null && a.getCoefficient() != 0) {
+				
+			actService.findActById(a.getAct()).ifPresent(act -> {
+				conventionAct = new ConventionHasAct();
+				conventionAct.setAct(act);
+				conventionAct.setConvention(convention);
+				conventionAct.setCoefficient(a.getCoefficient());
+				conventionAct.setActive("Y");
+				conventionAct.setCreatedAt(new Date());
+				conventionAct.setCreatedBy(this.getCurrentUserId().getId());
+				conventionService.addActToConvention(conventionAct);
+			});
+			};
+		});
+
+		
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 }

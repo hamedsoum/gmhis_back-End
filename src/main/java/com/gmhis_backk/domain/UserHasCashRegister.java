@@ -30,7 +30,7 @@ public class UserHasCashRegister implements Serializable {
 	private Long id;
 
 	@Column
-	private String active = "Y";
+	private Boolean active ;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "created_at")
@@ -49,7 +49,7 @@ public class UserHasCashRegister implements Serializable {
 	@JsonBackReference
 	@ManyToOne
 	@JoinColumn(name = "user_id")
-	private AppUser user;
+	private User user;
 
 	@JsonBackReference
 	@ManyToOne

@@ -10,9 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  * @author Pascal
@@ -31,7 +29,7 @@ public class Pratician implements Serializable {
 	private Long id;
 
 	@Column
-	private String active;
+	private Boolean active;
 
 //	@JoinColumn(name = "signature", nullable = true)
 //	@OneToOne
@@ -47,7 +45,7 @@ public class Pratician implements Serializable {
 	@JsonBackReference
 	@OneToOne
 	@JoinColumn(name = "user_id", nullable = true)
-	private AppUser user = null;
+	private User user = null;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "updated_at")

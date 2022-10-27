@@ -141,5 +141,20 @@ public class CashRegisterController {
 			Optional<CashRegister> cashRegister= cashRegisterService.getCashRegisterDetails(id);
 			return new ResponseEntity<>(cashRegister,HttpStatus.OK);
 		}
+		
+		@ApiOperation(value = "Lister la liste des ids et noms des caisse actifs dans le système")
+		@GetMapping("/active_cash_register_name")
+		public ResponseEntity<List<Map<String, Object>>> activeActName() {
+			List<Map<String, Object>> cashRegisterList = new ArrayList<>();
+
+			cashRegisterService.findActiveActs().stream().forEach(CashRegisterDto -> {
+				Map<String, Object> cashRegisterMap = new HashMap<>();
+				cashRegisterMap.put("id", CashRegisterDto.getId());
+				cashRegisterMap.put("name", CashRegisterDto.getName());
+				cashRegisterList.add(cashRegisterMap);
+			});
+
+			return new ResponseEntity<>(cashRegisterList, HttpStatus.OK);
+		}
 
 }

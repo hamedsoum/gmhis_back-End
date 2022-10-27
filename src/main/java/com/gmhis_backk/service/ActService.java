@@ -2,6 +2,7 @@ package com.gmhis_backk.service;
 
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,6 +34,9 @@ public List<Act> findActs();
 	
 	public Page<Act> findActiveActsByCategory(String name, Long category, Pageable pageable);
 	
+	public List <Act> findActiveNamesAndIdsActsByCategory(Long category);
+
+	
 	public List<Act> findActiveActsByGroup(String name, Long group);
 	
 	public List<Act> findActiveActsByCriteria(String name,Long group, Long category);
@@ -41,7 +45,7 @@ public List<Act> findActs();
 	
 	public List<AdmissionHasAct> findActsByBill(Long bill);
 		
-	public Act findActById(Long id); 
+	public Optional<Act> findActById(Long id); 
 	  
 	 public Act addAct(ActDTO actDto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException;
 	

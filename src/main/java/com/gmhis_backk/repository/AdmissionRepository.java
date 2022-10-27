@@ -29,7 +29,7 @@ public interface AdmissionRepository extends JpaRepository<Admission, Long> {
 
 	@Modifying
 	@Transactional
-	@Query(value = "insert into admission_has_act ( admission_id, act_id, user_id, act_cost, bill_id ) values (:admission_id, :act_id, :pratician_id, :act_cost, :bill_id)", nativeQuery = true)
+	@Query(value = "insert into admission_has_act ( admission_id, act_id,pratician_id, act_cost, bill_id ) values (:admission_id, :act_id, :pratician_id, :act_cost, :bill_id)", nativeQuery = true)
 	public void addActToAdmission(@Param("admission_id") Long admissionId, @Param("act_id") Long actId,
 			@Param("pratician_id") Long particianId,  @Param("act_cost") int actCost,  @Param("bill_id") Long billId);
 

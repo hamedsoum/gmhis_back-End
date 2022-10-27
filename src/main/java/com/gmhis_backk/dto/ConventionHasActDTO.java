@@ -1,6 +1,5 @@
 package com.gmhis_backk.dto;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,9 +12,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AdmisionHasActDTO {
+public class ConventionHasActDTO {
 
-	 private long admission;
-	 private long act;
-	 private long pratician;
+	private Long act;
+	private int coefficient;
+
 }

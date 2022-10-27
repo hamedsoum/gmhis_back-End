@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.gmhis_backk.domain.ActCode;
+import com.gmhis_backk.domain.ConventionHasActCode;
 
 @Repository
 public interface ActCodeRepository extends JpaRepository<ActCode, Long> {
@@ -35,5 +36,8 @@ public interface ActCodeRepository extends JpaRepository<ActCode, Long> {
 	
 	@Query(value = "SELECT a FROM ActCode a where id= :id")
 	Optional<ActCode> findById(Long id);
+	
+	@Query(value = "select a from ConventionHasActCode a where a.convention.id = :convention and a.actCode.id = :actCode")
+	public ConventionHasActCode findActCodeByConventionAndAct(Long convention, Long actCode);
 	
 }

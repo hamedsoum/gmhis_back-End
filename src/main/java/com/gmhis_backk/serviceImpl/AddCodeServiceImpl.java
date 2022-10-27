@@ -14,6 +14,9 @@ import org.springframework.stereotype.Service;
 
 import com.gmhis_backk.AppUtils;
 import com.gmhis_backk.domain.ActCode;
+import com.gmhis_backk.domain.Convention;
+import com.gmhis_backk.domain.ConventionHasActCode;
+import com.gmhis_backk.domain.User;
 import com.gmhis_backk.dto.ActCodeDto;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
@@ -56,7 +59,7 @@ public class AddCodeServiceImpl implements ActCodeService {
 		
 	}
 	
-	protected com.gmhis_backk.domain.User getCurrentUserId() {
+	protected User getCurrentUserId() {
 		return this.userRepository.findUserByUsername(AppUtils.getUsername());
 	}
 
@@ -104,6 +107,11 @@ public class AddCodeServiceImpl implements ActCodeService {
 	@Override
 	public List<ActCode> findAllActive() {
 		return actCodeRepository.findAllActive();
+	}
+
+	@Override
+	public ConventionHasActCode findActCodeByConventionAndAct(Convention convention, ActCode actCode) {
+		return actCodeRepository.findActCodeByConventionAndAct(convention.getId(), actCode.getId());
 	}
 
 }

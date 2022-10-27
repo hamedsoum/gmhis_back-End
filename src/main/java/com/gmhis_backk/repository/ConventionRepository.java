@@ -30,12 +30,12 @@ public interface ConventionRepository extends JpaRepository<Convention, Long> {
 	Page<Convention> findAllConventionByName(String name, Pageable pageable);
 	
 	@Query("SELECT c FROM Convention c Where c.id =:id")
-	Convention geConventionDetails(Integer id);
+	Convention geConventionDetails(Long id);
 	
 	@Query("SELECT c FROM Convention c")
 	List<Convention>findAllConventionSimpleList();
 	
-	@Query(value = "SELECT c FROM ActGroup c where id= :id")
+	@Query(value = "SELECT c FROM Convention c where id= :id")
 	Optional<Convention> findById(Long id);
 
 }

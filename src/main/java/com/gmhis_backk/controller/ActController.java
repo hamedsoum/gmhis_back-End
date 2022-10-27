@@ -26,11 +26,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gmhis_backk.domain.Act;
+import com.gmhis_backk.domain.ActGroup;
 import com.gmhis_backk.domain.User;
 import com.gmhis_backk.dto.ActDTO;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
 import com.gmhis_backk.repository.UserRepository;
+import com.gmhis_backk.service.ActGroupService;
 import com.gmhis_backk.service.ActService;
 
 import io.swagger.annotations.ApiOperation;
@@ -45,6 +47,9 @@ public class ActController {
 	
 	@Autowired
 	UserRepository userRepository;
+	
+	@Autowired
+	ActGroupService actGroupService;
 	
 	@GetMapping("/list")
 	@ApiOperation("liste paginee de tous les codes d'acte dans le systeme")
@@ -148,7 +153,7 @@ public class ActController {
 	public  ResponseEntity<Map<String, Object>> getDetail(@PathVariable Long id){
 		Map<String, Object> response = new HashMap<>();
 
-		Act act= actService.findActById(id);
+		Act act= actService.findActById(id).orElse(null);
 		System.out.print(act.getActCategory().getId());
 		response.put("actCategory", act.getActCategory().getId());
 		response.put("id", act.getId());
@@ -169,6 +174,26 @@ public class ActController {
 		List<Map<String, Object>> actList = new ArrayList<>();
 
 		actService.findActiveActs().stream().forEach(actDto -> {
+			Map<String, Object> actMap = new HashMap<>();
+			actMap.put("id", actDto.getId());
+			actMap.put("name", actDto.getName());
+			actList.add(actMap);
+		});
+
+		return new ResponseEntity<>(actList, HttpStatus.OK);
+	}
+	
+	@ApiOperation(value = "Lister la liste des ids et noms des actes actifs dans le système")
+	@GetMapping("/active_acts_name_by_Category/{categoryId}")
+	public ResponseEntity<List<Map<String, Object>>> activeActNameAndIdByCategory(@PathVariable Long categoryId) throws ResourceNotFoundByIdException {
+		System.out.print(categoryId);
+		ActGroup actGroup = actGroupService.getActGroupDetails(categoryId).orElse(null);
+			if (actGroup == null) {
+				throw new ResourceNotFoundByIdException("aucune famille d'acte trouvé pour l'identifiant" );
+			}
+		List<Map<String, Object>> actList = new ArrayList<>();
+
+		actService.findActiveNamesAndIdsActsByCategory(categoryId).stream().forEach(actDto -> {
 			Map<String, Object> actMap = new HashMap<>();
 			actMap.put("id", actDto.getId());
 			actMap.put("name", actDto.getName());
