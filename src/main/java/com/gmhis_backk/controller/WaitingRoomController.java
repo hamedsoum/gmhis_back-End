@@ -143,7 +143,7 @@ public class WaitingRoomController {
 	}
 	
 	@ApiOperation(value = "Lister la liste des ids et noms des salles d'attentes actives dans le système")
-	@GetMapping("/active_waiting_roomk_name")
+	@GetMapping("/active_waiting_room_name")
 	public ResponseEntity<List<Map<String, Object>>>  activeActCategoryName() {
 		List<Map<String, Object>>  waitingRoomList = new ArrayList<>();
 

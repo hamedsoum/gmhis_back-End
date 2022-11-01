@@ -1,6 +1,7 @@
 package com.gmhis_backk.serviceImpl;
 
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -74,7 +75,7 @@ public class PatientServiceImpl implements PatientService {
 		return this.userRepository.findUserByUsername(AppUtils.getUsername());
 	}
 	
-	@Override 
+	@Override @Transactional
 	public Patient save(PatientDTO patientdto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException,EmailExistException {
 		if(ObjectUtils.isEmpty(patientdto.getEmail()) || patientdto.getEmail() == null) {
 			throw new ResourceNotFoundByIdException("l'adresse email est requise");
@@ -88,15 +89,16 @@ public class PatientServiceImpl implements PatientService {
 		 
 		 Boolean isPhone2Used =	patientRepository.findByCellPhone1OrCellPhone2(patientdto.getCellPhone2(), patientdto.getCellPhone2()).isEmpty();
 		 if(!isPhone2Used) throw new ResourceNotFoundByIdException("Deuxieme numero de telephone est deja utilisé");
-		
-		 Boolean isPatientExternalId2Used =	patientRepository.findByPatientExternalId(patientdto.getPatientExternalId()).isEmpty();
-		 System.out.print(isPatientExternalId2Used);
-		 if(!isPatientExternalId2Used) throw new ResourceNotFoundByIdException("Numero patient deja utilisé");
+				
 		 
 		 Patient patient = new Patient();
 		
+		 
 			BeanUtils.copyProperties(patientdto, patient, "id");
 			
+		    String patientNumber = this.getPatientNumber();
+		    patient.setPatientExternalId(patientNumber);
+
 			if (patientdto.getCountry() != null) {
 				patient.setCountry(countryRepository.getOne(patientdto.getCountry()));
 			}
@@ -331,5 +333,36 @@ public class PatientServiceImpl implements PatientService {
 		
 		return patient;
 	}
+	
+	public String getPatientNumber() {
+		
+		Patient lPatient = patientRepository.findLastPatient();
+		Calendar calendar = Calendar.getInstance();
+		String month= String.format("%02d", calendar.get( Calendar.MONTH ) + 1) ;
+		String year = String.format("%02d",calendar.get( Calendar.YEAR ) % 100);
+		String lPatientYearandMonth = "";
+		String lPatientNb = "";
+		int  number= 0;
+		
+		if(lPatient ==  null) {
+			lPatientYearandMonth = year + month;
+			lPatientNb = "0000000";
+		}else {
+			 String an = lPatient.getPatientExternalId().substring(2);
+			 lPatientYearandMonth = an.substring(0, 4);
+			 lPatientNb = an.substring(4);	
+		}
+		
+		
+		if(lPatientYearandMonth.equals( year + month)) {
+			number = Integer.parseInt(lPatientNb) + 1 ;
+		} else {
+			number = number +1;
+		}
+		
+		return "PT" + year + month +String.format("%04d", number);
+			
+	}
+
 	
 }

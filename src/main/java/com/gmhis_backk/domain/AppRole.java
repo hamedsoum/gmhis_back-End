@@ -71,7 +71,7 @@ public class AppRole implements Serializable {
 	@JoinTable(name = "app_user_has_role", joinColumns = {
 			@JoinColumn(name = "app_role_id", referencedColumnName = "id") }, inverseJoinColumns = {
 					@JoinColumn(name = "app_user_id", referencedColumnName = "id") })
-	private List<AppUser> appUsers;
+	private List<User> appUsers;
 
 	
 	@JsonManagedReference

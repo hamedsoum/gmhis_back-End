@@ -40,7 +40,7 @@ public class AdmissionHasAct {
 	@JsonBackReference
 	@ManyToOne
 	@JoinColumn(name = "user_id")
-	private AppUser practician;
+	private User practician;
 	
 	@JsonBackReference
 	@ManyToOne

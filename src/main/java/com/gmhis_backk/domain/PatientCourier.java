@@ -55,7 +55,7 @@ public class PatientCourier implements Serializable {
 	
 	@ManyToOne
 	@JoinColumn(name = "pratician_id")
-	private AppUser pratician;
+	private User pratician;
 	
 	@ManyToOne
 	@JoinColumn(name = "courier_type_id")

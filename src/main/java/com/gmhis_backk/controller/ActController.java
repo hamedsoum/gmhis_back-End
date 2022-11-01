@@ -26,14 +26,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gmhis_backk.domain.Act;
+import com.gmhis_backk.domain.ActCategory;
 import com.gmhis_backk.domain.ActGroup;
+import com.gmhis_backk.domain.Bill;
 import com.gmhis_backk.domain.User;
 import com.gmhis_backk.dto.ActDTO;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
 import com.gmhis_backk.repository.UserRepository;
+import com.gmhis_backk.service.ActCategoryService;
 import com.gmhis_backk.service.ActGroupService;
 import com.gmhis_backk.service.ActService;
+import com.gmhis_backk.service.BillService;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -49,7 +53,10 @@ public class ActController {
 	UserRepository userRepository;
 	
 	@Autowired
-	ActGroupService actGroupService;
+	ActCategoryService actCategoryService;
+	
+	@Autowired
+	BillService billService;
 	
 	@GetMapping("/list")
 	@ApiOperation("liste paginee de tous les codes d'acte dans le systeme")
@@ -183,13 +190,13 @@ public class ActController {
 		return new ResponseEntity<>(actList, HttpStatus.OK);
 	}
 	
-	@ApiOperation(value = "Lister la liste des ids et noms des actes actifs dans le système")
+	@ApiOperation(value = "Lister la liste des ids et noms des actes actifs par category dans le système")
 	@GetMapping("/active_acts_name_by_Category/{categoryId}")
 	public ResponseEntity<List<Map<String, Object>>> activeActNameAndIdByCategory(@PathVariable Long categoryId) throws ResourceNotFoundByIdException {
 		System.out.print(categoryId);
-		ActGroup actGroup = actGroupService.getActGroupDetails(categoryId).orElse(null);
-			if (actGroup == null) {
-				throw new ResourceNotFoundByIdException("aucune famille d'acte trouvé pour l'identifiant" );
+		ActCategory actCategory = actCategoryService.getActCategoryDetails(categoryId).orElse(null);
+			if (actCategory == null) {
+				throw new ResourceNotFoundByIdException("aucune specialite d'acte trouvé pour l'identifiant" );
 			}
 		List<Map<String, Object>> actList = new ArrayList<>();
 
@@ -201,6 +208,35 @@ public class ActController {
 		});
 
 		return new ResponseEntity<>(actList, HttpStatus.OK);
+	}
+	
+	@ApiOperation(value = "Retourne la liste des actes d'une facture")
+	@GetMapping("/find-by-bill/{bill_id}")
+	public ResponseEntity<List<Map<String, Object>>> findActsByBill( @PathVariable Long bill_id) {
+		  System.out.print(bill_id);
+
+		Bill bill = billService.findBillById(bill_id).orElse(null);
+	  List<Map<String, Object>> actList = new ArrayList<>();
+	  
+	  if(bill != null ) {
+
+			actService.findActsByBill(bill.getId()).stream().forEach(actDto -> {
+				Map<String, Object> actMap = new HashMap<>();
+				actMap.put("id", actDto.getId());
+				actMap.put("practicianFirstName", actDto.getPractician().getFirstName());
+				actMap.put("practicianLastName", actDto.getPractician().getLastName());
+				actMap.put("practicianName", actDto.getPractician().getId());
+				actMap.put("bill", actDto.getBill().getId());
+				actMap.put("admission", actDto.getAdmission().getId());
+				actMap.put("act", actDto.getAct().getId());
+				actMap.put("actName", actDto.getAct().getName());
+				actMap.put("actCost", actDto.getAct().getActCode().getValue() * actDto.getAct().getCoefficient());
+				actList.add(actMap);
+			});
+	  }
+	  
+		return new ResponseEntity<>(actList, HttpStatus.OK);
+
 	}
 
 }

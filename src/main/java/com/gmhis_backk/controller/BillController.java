@@ -214,6 +214,7 @@ public class BillController {
 	public Object getBillCost(@RequestBody BillDTO billDto) throws ResourceNotFoundByIdException {
 
 		if (billDto.getConvention() != null) {
+			System.out.print(billDto.getConvention());
 			this.convention = conventionService.findConventionById(billDto.getConvention()).orElse(null);					
 			if (this.convention == null) {
 				throw new ResourceNotFoundByIdException("La convention n'existe pas en base !");
@@ -232,7 +233,7 @@ public class BillController {
 		if (billDto.getInsured() != null) {
 			this.insured = insuredService.findInsuredById(billDto.getInsured()).orElse(null);
 			if (this.insured == null) {
-				throw new ResourceNotFoundByIdException("La convention n'existe pas en base !");
+				throw new ResourceNotFoundByIdException("l'assure n'existe pas en base !");
 			}	
 		
 			int cost = this.getActCostWhithoutConvention(billDto.getActs());
@@ -242,18 +243,24 @@ public class BillController {
 		}
 
 		if (billDto.getDiscountInCfa() != 0) {
-			this.discount = billDto.getDiscountInCfa();
-			this.patientPart = this.patientPart - this.discount;
+			System.out.println(billDto.getDiscountInCfa());
+			int discount = billDto.getDiscountInCfa();
+			this.patientPart = this.patientPart - discount;
 		}
 
-		if (billDto.getDiscountInPercentage() != 0) {
-			int cost = this.getActCostWhithoutConvention(billDto.getActs());
-			this.discount = cost * billDto.getDiscountInPercentage() / 100;
-			this.patientPart = this.patientPart - this.discount;
-		}
+//		if (billDto.getDiscountInPercentage() != 0) {
+//			int cost = this.getActCostWhithoutConvention(billDto.getActs());
+//			int discount = cost * billDto.getDiscountInPercentage() / 100;
+//			this.patientPart = this.patientPart - discount;
+//		}
+		
+		System.out.println(this.patientPart);
+		System.out.println(this.partTakenCareOf);
+		System.out.println(discount);
 
-		this.totalAmount = this.patientPart + this.partTakenCareOf - this.discount;
-
+		
+		this.totalAmount = this.patientPart + this.partTakenCareOf - discount;
+		
 		Map<String, Object> billCostMap = new HashMap<>();
 		billCostMap.put("patientPart", this.patientPart);
 		billCostMap.put("partTakenCareOf", this.partTakenCareOf);
@@ -340,14 +347,16 @@ public class BillController {
 			if (conventionAct != null) {
 				int ac = conventionAct.getCoefficient() * conventionAct.getAct().getActCode().getValue();
 				this.actCosts = this.actCosts + ac;
-			} else if (conventionActCode != null) {
-				int ac = act.getCoefficient() * conventionActCode.getValue();
-				this.actCosts = this.actCosts + ac;
-			} else {
-
-				int ac = act.getCoefficient() * act.getActCode().getValue();
-				this.actCosts = this.actCosts + ac;
-			}
+			} 
+//			else if (conventionActCode != null) {
+//				int ac = act.getCoefficient() * conventionActCode.getValue();
+//				this.actCosts = this.actCosts + ac;
+//			}
+//			else {
+//
+//				int ac = act.getCoefficient() * act.getActCode().getValue();
+//				this.actCosts = this.actCosts + ac;
+//			}
 		});
 
 		return this.actCosts;
@@ -452,13 +461,15 @@ public class BillController {
 			@RequestParam(required = false ) Long conventionId ) {
 		
 		int cost = 0;
-		
-		if(ObjectUtils.isEmpty(conventionId)) {
 		   cost = this.getOneActCostWhithoutConvention(actId);
-		} else {
-			Convention convention= this.conventionService.findConventionById(conventionId).orElse(null);
-			if(convention != null)  cost = this.getOneActWithConvention(actId, convention) ;
-		}
+
+		
+//		if(ObjectUtils.isEmpty(conventionId)) {
+//		   cost = this.getOneActCostWhithoutConvention(actId);
+//		} else {
+//			Convention convention= this.conventionService.findConventionById(conventionId).orElse(null);
+//			if(convention != null)  cost = this.getOneActWithConvention(actId, convention) ;
+//		}
 		
 		return cost;
 	}
@@ -481,7 +492,7 @@ public class BillController {
 			@RequestParam(required = false, defaultValue = "") String toDate,
 			@RequestParam(required = true, defaultValue = "") String billStatus,
 			@RequestParam(defaultValue = "id,desc") String[] sort, @RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "10") int size) {
+			@RequestParam(defaultValue = "50") int size) {
 
 		Map<String, Object> response = new HashMap<>();
 		Sort.Direction dir = sort[1].equalsIgnoreCase("asc") ? dir = Sort.Direction.ASC : Sort.Direction.DESC;
@@ -660,10 +671,13 @@ public class BillController {
 		billMap.put("accountNumber", bill.getAccountNumber());
 		billMap.put("admissionNumber", bill.getAdmission().getAdmissionNumber());
 		billMap.put("admissionId", bill.getAdmission().getId());
+		billMap.put("admissionStartDate", bill.getAdmission().getAdmissionStartDate());
+		billMap.put("admissionEndDate", bill.getAdmission().getAdmissionEndDate());
 		billMap.put("serviceId", bill.getAdmission().getService().getId());
 		billMap.put("serviceName", bill.getAdmission().getService().getName());
 		billMap.put("billStatus", bill.getBillStatus());
 		billMap.put("billType", bill.getBillType());
+		billMap.put("billId", bill.getId());
 		billMap.put("discountInCfa", bill.getDiscountInCfa());
 		billMap.put("discountInPercentage", bill.getDiscountInPercentage());
 		if (userHascashRegister != null) {
@@ -687,6 +701,8 @@ public class BillController {
 			billMap.put("insuranceId", bill.getInsured().getInsurance().getId());
 			billMap.put("subscriberId", bill.getInsured().getInsuranceSuscriber().getId());
 			billMap.put("subscriberName", bill.getInsured().getInsuranceSuscriber().getName());
+			billMap.put("subscriberAdress", bill.getInsured().getInsuranceSuscriber().getAddress());
+
 		} else {
 			billMap.put("coverage", 0);
 			billMap.put("insuranceName", null);
@@ -859,7 +875,7 @@ public class BillController {
 					
 
 			Payment payment = new Payment();
-			payment.setAmount(bill.getPatientPart());
+			payment.setAmount(bill.getTotalAmount());
 			payment.setBill(bill);
 			payment.setCashRegister(cashRegister);
 			payment.setCreatedAt(new Date());

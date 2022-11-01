@@ -63,7 +63,7 @@ public class PatientDocument implements Serializable {
 	
 	@ManyToOne
 	@JoinColumn(name = "pratician_id")
-	private AppUser pratician;
+	private User pratician;
 	
 	@ManyToOne
 	@JoinColumn(name = "doc_id", insertable = false, updatable = false)

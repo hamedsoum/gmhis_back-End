@@ -35,7 +35,7 @@ public class AnalysisRequest implements Serializable {
 	
 	@ManyToOne
 	@JoinColumn(name="pratician_id")
-	private AppUser pratician;
+	private User pratician;
 	
 	@Column(columnDefinition = "json")
 	@JsonRawValue

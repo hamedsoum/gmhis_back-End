@@ -65,5 +65,6 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
 	@Query(value="select p from Patient p where p.firstName like %:firstName% and ( p.lastName like %:lastName% or p.maidenName like %:lastName%)")
 	public Page<Patient> findByFullName(@Param("firstName") String firstName, @Param("lastName") String lastName, Pageable pageable);
 
-	
+	@Query(value = "select * from  patient p order by p.created_at desc LIMIT 0,1", nativeQuery = true)
+	public Patient findLastPatient();
 }
