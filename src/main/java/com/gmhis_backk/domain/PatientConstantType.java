@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author pascal
@@ -61,11 +62,11 @@ public class PatientConstantType implements Serializable {
 	@JoinColumn(name = "patient_constant_domain_id")
 	private PatientConstantDomain patientConstantDomain;
 
-//	@ManyToOne
-//	@JoinColumn(name = "unit_of_mesure_id")
-//	private UnitOfMeasure unitOfMesure;
-//
-//	@OneToMany(mappedBy = "patientConstantType")
-//    private List<PatientConstantValues> options;
+	@ManyToOne
+	@JoinColumn(name = "unit_of_mesure_id")
+	private UnitOfMeasure unitOfMesure;
+
+	@OneToMany(mappedBy = "patientConstantType")
+    private List<PatientConstantValues> options;
 	
 }

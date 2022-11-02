@@ -26,7 +26,7 @@ public class PatientConstantDomain implements Serializable {
 	private Long id;
 
 	@Column
-	private String active = "Y";
+	private Boolean active ;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "created_at")

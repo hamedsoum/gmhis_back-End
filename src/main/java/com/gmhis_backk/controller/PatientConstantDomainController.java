@@ -106,6 +106,7 @@ public class PatientConstantDomainController {
 					: userRepository.findById(constantDomainDto.getUpdatedBy()).orElse(null);
 			constantDomainsMap.put("id", constantDomainDto.getId());
 			constantDomainsMap.put("name", constantDomainDto.getName());
+			constantDomainsMap.put("description", constantDomainDto.getDescription());
 			constantDomainsMap.put("active", constantDomainDto.getActive());
 			constantDomainsMap.put("createdAt", constantDomainDto.getCreatedAt());
 			constantDomainsMap.put("updatedAt", constantDomainDto.getUpdatedAt());
