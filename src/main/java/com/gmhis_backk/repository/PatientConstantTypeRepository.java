@@ -22,7 +22,7 @@ public interface PatientConstantTypeRepository extends JpaRepository<PatientCons
 
 	public PatientConstantType findByName(String name);
 
-	@Query(value = "select ct from PatientConstantType ct where active = 'Y'")
+	@Query(value = "select ct from PatientConstantType ct where active = 1")
 	public List<PatientConstantType> findActivePatientConstantTypes();
 
 	@Query(value = "select ct from PatientConstantType ct join ct.patientConstantDomain d where ct.active = 'Y' and d.id = :domain")

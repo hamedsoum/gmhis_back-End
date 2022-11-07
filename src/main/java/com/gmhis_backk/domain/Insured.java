@@ -78,6 +78,8 @@ public class Insured implements Serializable {
 	@JoinColumn(name="insurance_id")
 	private Insurance insurance;
 
+	
+	//suite a une reunion ce champs correspond desormais au courtier
 	@JsonBackReference
 	@ManyToOne
 	@JoinColumn(name = "insurance_suscriber_id")
@@ -89,7 +91,7 @@ public class Insured implements Serializable {
 	private Patient patient;
 	
 	
-	
-	
+	@Column(name = "society",nullable = true)
+	private String society;
 	
 }

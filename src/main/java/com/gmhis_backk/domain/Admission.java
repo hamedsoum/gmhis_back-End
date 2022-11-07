@@ -15,7 +15,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * @author pascal
+ * @author Hamed soumahoro
  */
 @Data
 @NoArgsConstructor
@@ -77,7 +77,7 @@ public class Admission implements Serializable {
 	@JsonBackReference
 	@ManyToOne
 	@JoinColumn(name = "user_id")
-	private User practician;
+	private Pratician practician;
 //
 	@JsonBackReference
 	@ManyToOne

@@ -24,12 +24,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gmhis_backk.AppUtils;
+import com.gmhis_backk.domain.Act;
+import com.gmhis_backk.domain.Admission;
 import com.gmhis_backk.domain.Patient;
 import com.gmhis_backk.domain.PatientConstant;
+import com.gmhis_backk.domain.PatientConstantType;
+import com.gmhis_backk.domain.Pratician;
 import com.gmhis_backk.domain.User;
 import com.gmhis_backk.dto.PatientConstantDTO;
 import com.gmhis_backk.repository.UserRepository;
 import com.gmhis_backk.service.PatientConstantService;
+import com.gmhis_backk.service.PatientConstantTypeService;
 import com.gmhis_backk.service.PatientService;
 
 import io.swagger.annotations.ApiOperation;
@@ -51,19 +56,26 @@ public class PatientConstantController  {
 	
 	@Autowired PatientService pService;
 	
+	@Autowired
+	PatientConstantTypeService patientConstantTypeService;
+	
 	private Patient patient= null;
 
 	@ApiOperation(value = "Ajouter une constante ")
 	@PostMapping("/add")
-	public PatientConstant addConstant(@RequestBody PatientConstantDTO constantDto) {
-		PatientConstant constant = new PatientConstant();
-
-		constant.setObservation(constantDto.getObservation());
-		constant.setValue(constantDto.getValue());
-		constant.setPatient(pService.findById(constantDto.getPatient()));
-		constant.setTakenAt(new Date());
-		constant.setTakenBy(this.getCurrentUserId().getId());
-		return constant;
+	public ResponseEntity<String> addConstant(@RequestBody List<PatientConstantDTO>  constantDto) {
+		constantDto.forEach(constantDTO -> {
+			PatientConstant constant = new PatientConstant();
+			constant.setObservation(constantDTO.getObservation());
+			constant.setValue(constantDTO.getValue());
+			constant.setPatient(pService.findById(constantDTO.getPatient()));
+			PatientConstantType patientConstant = patientConstantTypeService.findById(constantDTO.getConstant()).orElse(null);
+			constant.setConstant(patientConstant);
+			constant.setTakenAt(new Date());
+			constant.setTakenBy(this.getCurrentUserId().getId());
+			constService.save(constant);
+		});
+		return new ResponseEntity<>( HttpStatus.OK);
 	}
 
 	
@@ -110,7 +122,7 @@ public class PatientConstantController  {
 		
 
 		List<Map<String, Object>> roles = this.getMapFromConstList(lConstantes);
-		response.put("content", roles);
+		response.put("items", roles);
 		response.put("currentPage", pConstantes.getNumber());
 		response.put("totalItems", pConstantes.getTotalElements());
 		response.put("totalPages", pConstantes.getTotalPages());
@@ -129,7 +141,8 @@ public class PatientConstantController  {
 			
 			Map<String, Object> constsMap = new HashMap<>();
 			constsMap.put("id", constant.getId());
-			constsMap.put("values", constant.getValue());
+			constsMap.put("value", constant.getValue());
+			constsMap.put("constant", constant.getConstant().getName());
 			constsMap.put("observation", constant.getObservation());
 			constsMap.put("takenAt", constant.getTakenAt());
 			constsMap.put("takenByLogin", constant.getTakenBy());

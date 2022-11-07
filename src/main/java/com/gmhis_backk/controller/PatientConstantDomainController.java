@@ -141,5 +141,19 @@ public class PatientConstantDomainController {
 		Optional<PatientConstantDomain> constantDomain = patientConstantDomainService.getConstatDomainDetails(id);
 		return new ResponseEntity<>(constantDomain,HttpStatus.OK);
 	}
+	@ApiOperation(value = "Lister la liste des ids et noms des groupes de contante actifs dans le système")
+	@GetMapping("/active_constante_domain_name_id")
+	public ResponseEntity<List<Map<String, Object>>> activeActName() {
+		List<Map<String, Object>> actList = new ArrayList<>();
+
+		patientConstantDomainService.findActivePatientConstantDomaines().stream().forEach(domain -> {
+			Map<String, Object> domainMap = new HashMap<>();
+			domainMap.put("id", domain.getId());
+			domainMap.put("name", domain.getName());
+			actList.add(domainMap);
+		});
+
+		return new ResponseEntity<>(actList, HttpStatus.OK);
+	}
  
 }

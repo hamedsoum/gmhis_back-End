@@ -16,16 +16,19 @@ import com.gmhis_backk.domain.Act;
 import com.gmhis_backk.domain.Admission;
 import com.gmhis_backk.domain.Bill;
 import com.gmhis_backk.domain.Patient;
+import com.gmhis_backk.domain.Pratician;
 import com.gmhis_backk.domain.User;
 import com.gmhis_backk.dto.AdmisionHasActDTO;
 import com.gmhis_backk.dto.AdmissionDTO;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
 import com.gmhis_backk.repository.AdmissionRepository;
+import com.gmhis_backk.repository.PracticianRepository;
 import com.gmhis_backk.repository.UserRepository;
 import com.gmhis_backk.service.ActService;
 import com.gmhis_backk.service.AdmissionService;
 import com.gmhis_backk.service.PatientService;
+import com.gmhis_backk.service.PracticianService;
 import com.gmhis_backk.service.ServiceService;
 
 
@@ -55,6 +58,13 @@ public class AdmissionServiceImpl implements AdmissionService{
 	@Autowired 
 	private UserRepository userRepo;
 	
+	@Autowired
+	private PracticianRepository practicianRepo;
+	
+	
+	@Autowired
+	private PracticianService practicianService;
+	
 	protected User getCurrentUserId() {
 		return this.userRepo.findUserByUsername(AppUtils.getUsername());
 	}
@@ -79,11 +89,14 @@ public class AdmissionServiceImpl implements AdmissionService{
 			throw new ResourceNotFoundByIdException("aucun act trouvé pour l'identifiant " );
 		}
 //		
-		User praticien = userRepo.findById(admissionDto.getPractician()).orElse(null);
+		Pratician praticien = practicianService.findPracticianById(admissionDto.getPractician()).orElse(null);
 			
 			if (praticien == null) {
 				throw new ResourceNotFoundByIdException("le practicien n'existe pas en base " );
 			}
+			
+			
+		System.out.print(praticien.getId());
 		Admission admission = new Admission();
 		
 		BeanUtils.copyProperties(admissionDto, admission, "id");
@@ -126,7 +139,7 @@ public class AdmissionServiceImpl implements AdmissionService{
 	
 	@Override
 	public void addActToAdmission(AdmisionHasActDTO admissionHasActDto, int actCost, Bill bill) {
-		repo.addActToAdmission(admissionHasActDto.getAdmission(), admissionHasActDto.getAct(), admissionHasActDto.getPratician(), actCost, bill.getId());	
+		repo.addActToAdmission(admissionHasActDto.getAdmission(), admissionHasActDto.getAct(), admissionHasActDto.getPratician(), actCost, bill.getId(), getCurrentUserId().getId());	
 	}
 		
 	

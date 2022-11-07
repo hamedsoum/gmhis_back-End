@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.transaction.Transactional;
+
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,6 +31,7 @@ import com.gmhis_backk.AppUtils;
 import com.gmhis_backk.domain.Act;
 import com.gmhis_backk.domain.Admission;
 import com.gmhis_backk.domain.Bill;
+import com.gmhis_backk.domain.BillHasInsured;
 import com.gmhis_backk.domain.CashRegister;
 import com.gmhis_backk.domain.Convention;
 import com.gmhis_backk.domain.ConventionHasAct;
@@ -37,12 +40,14 @@ import com.gmhis_backk.domain.Insured;
 import com.gmhis_backk.domain.Patient;
 import com.gmhis_backk.domain.Payment;
 import com.gmhis_backk.domain.PaymentType;
+import com.gmhis_backk.domain.Pratician;
 import com.gmhis_backk.domain.User;
 import com.gmhis_backk.domain.UserHasCashRegister;
 import com.gmhis_backk.dto.AdmisionHasActDTO;
 import com.gmhis_backk.dto.BillDTO;
 import com.gmhis_backk.dto.PaymentDTO;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
+import com.gmhis_backk.repository.BillHasInsuredRepository;
 import com.gmhis_backk.repository.UserRepository;
 import com.gmhis_backk.service.ActCodeService;
 import com.gmhis_backk.service.ActService;
@@ -52,6 +57,7 @@ import com.gmhis_backk.service.CashRegisterService;
 import com.gmhis_backk.service.ConventionService;
 import com.gmhis_backk.service.InsuredService;
 import com.gmhis_backk.service.PaymentTypeService;
+import com.gmhis_backk.service.PracticianService;
 import com.gmhis_backk.service.UserHasCashRegisterService;
 import com.gmhis_backk.service.UserService;
 
@@ -100,6 +106,12 @@ public class BillController {
 	
 	@Autowired
 	private UserService praticianService;
+	
+	@Autowired 
+	BillHasInsuredRepository billHasInsuredRepository;
+	
+	@Autowired
+	private PracticianService practicianService;
 
 	private Admission admission = null;
 	private Convention convention = null;
@@ -113,55 +125,59 @@ public class BillController {
 
 	@ApiOperation(value = "Ajouter une facture ")
 	@PostMapping("/add")
+	@Transactional
 	public ResponseEntity<Bill> addBill(@RequestBody BillDTO billDto) throws ResourceNotFoundByIdException {
-
+//
 		admission = admissionService.findAdmissionById(billDto.getAdmission()).orElse(null);
 			if (admission == null) {
 				throw new ResourceNotFoundByIdException("L'admission n'existe pas en base !");
 			}	
-	
-
-		if (ObjectUtils.isNotEmpty(billDto.getConvention())) {
-			Convention convention = conventionService.findConventionById(billDto.getConvention()).orElseGet(null);
-			if (convention == null) {
-				throw new ResourceNotFoundByIdException("la convention n'existe pas en base !");
-			}
+//	
+//
+//		if (ObjectUtils.isNotEmpty(billDto.getConvention())) {
+//			Convention convention = conventionService.findConventionById(billDto.getConvention()).orElseGet(null);
+//			if (convention == null) {
+//				throw new ResourceNotFoundByIdException("la convention n'existe pas en base !");
+//			}
+//		
+//			int costWithConvention = this.getActWithConvention(billDto.getActs(), convention);
+//			this.patientPart = costWithConvention;
+//
+//		} else {
+//
+//			int costWhithoutConvention = this.getActCostWhithoutConvention(billDto.getActs());
+//			this.patientPart = costWhithoutConvention;
+//
+//		}
+			
+	        
 		
-			int costWithConvention = this.getActWithConvention(billDto.getActs(), convention);
-			this.patientPart = costWithConvention;
 
-		} else {
+//		if (ObjectUtils.isNotEmpty(billDto.getInsured())) {
+//			this.insured = insuredService.findInsuredById(billDto.getInsured()).orElse(null);
+//					
+//		if (this.insured == null) {
+//			throw new ResourceNotFoundByIdException("L'assuré n'existe pas en base !");
+//		}
+//
+//			int cost = this.getActCostWhithoutConvention(billDto.getActs());
+//			this.patientPart = this.getPatientPart(cost, insured);
+//			this.partTakenCareOf = this.getPartTakenCareOf(cost, insured);
+//
+//		}
 
-			int costWhithoutConvention = this.getActCostWhithoutConvention(billDto.getActs());
-			this.patientPart = costWhithoutConvention;
+//		if (billDto.getDiscountInCfa() != 0) {
+//			this.discount = billDto.getDiscountInCfa();
+//			this.patientPart = this.patientPart - this.discount;
+//		}
+//
+//		if (billDto.getDiscountInPercentage() != 0) {
+//			int cost = this.getActCostWhithoutConvention(billDto.getActs());
+//			this.discount = cost * billDto.getDiscountInPercentage() / 100;
+//			this.patientPart = this.patientPart - this.discount;
+//		}
 
-		}
-
-		if (ObjectUtils.isNotEmpty(billDto.getInsured())) {
-			this.insured = insuredService.findInsuredById(billDto.getInsured()).orElse(null);
-					
-		if (this.insured == null) {
-			throw new ResourceNotFoundByIdException("L'assuré n'existe pas en base !");
-		}
-
-			int cost = this.getActCostWhithoutConvention(billDto.getActs());
-			this.patientPart = this.getPatientPart(cost, insured);
-			this.partTakenCareOf = this.getPartTakenCareOf(cost, insured);
-
-		}
-
-		if (billDto.getDiscountInCfa() != 0) {
-			this.discount = billDto.getDiscountInCfa();
-			this.patientPart = this.patientPart - this.discount;
-		}
-
-		if (billDto.getDiscountInPercentage() != 0) {
-			int cost = this.getActCostWhithoutConvention(billDto.getActs());
-			this.discount = cost * billDto.getDiscountInPercentage() / 100;
-			this.patientPart = this.patientPart - this.discount;
-		}
-
-		this.totalAmount = this.patientPart + this.partTakenCareOf + this.discount;
+//		this.totalAmount = this.patientPart + this.partTakenCareOf + this.discount;
 
 		String billNumber = this.getBillNumber();
 		bill = new Bill();
@@ -170,28 +186,53 @@ public class BillController {
 		bill.setBillNumber(billNumber);
 		bill.setBillStatus("R");
 		bill.setBillType(billDto.getBillType());
-		if (this.convention != null)
-			bill.setConvention(convention);
-		bill.setDiscountInCfa(billDto.getDiscountInCfa());
-		bill.setDiscountInPercentage(billDto.getDiscountInPercentage());
-		if (this.insured != null)
-			bill.setInsured(insured);
-		bill.setPartTakenCareOf(this.partTakenCareOf);
-		bill.setPatientPart(this.patientPart);
+//		if (this.convention != null)
+//		bill.setConvention(convention);
+//		bill.setDiscountInCfa(billDto.getDiscountInCfa());
+//		bill.setDiscountInPercentage(billDto.getDiscountInPercentage());
+//		if (this.insured != null)
+//			bill.setInsured(insured);
+//		bill.setPartTakenCareOf(this.partTakenCareOf);
+//		bill.setPatientPart(this.patientPart);
+		bill.setPartTakenCareOf(billDto.getPartTakenCareOf());
+		bill.setPatientPart(billDto.getPatientPart());
 		bill.setPatientType(billDto.getPatientType());
-		bill.setTotalAmount(this.totalAmount);
+		bill.setTotalAmount(billDto.getPatientPart() + billDto.getPartTakenCareOf());
 		bill.setCreatedAt(new Date());
 		bill.setCreatedBy(this.getCurrentUserId().getId());
 		bill = billService.saveBill(bill);
+		
+		billDto.getInsuredList().forEach(billHasInsuredDto -> {
+			
+			System.out.println(billHasInsuredDto.getAdmission());
+			System.out.println(billHasInsuredDto.getInsured());
+			System.out.println(billHasInsuredDto.getInsuredCoverage());
+			System.out.println(billHasInsuredDto.getInsuredPart());
+			System.out.println(billHasInsuredDto.getBill());
+			Admission admission = admissionService.findAdmissionById(billHasInsuredDto.getAdmission()).orElse(null);
+			Insured Insured = insuredService.findInsuredById(billHasInsuredDto.getInsured()).orElse(null);
+
+			BillHasInsured billHasInsured = new BillHasInsured();
+			billHasInsured.setAdmission(admission);
+			billHasInsured.setInsured(Insured);
+			billHasInsured.setInsuredCoverage(billHasInsuredDto.getInsuredCoverage());
+			billHasInsured.setInsuredPart(billHasInsuredDto.getInsuredPart());
+			billHasInsured.setBill(bill);
+			billHasInsured.setCreatedAt(new Date());
+			billHasInsured.setCreatedBy(this.getCurrentUserId().getId());
+
+			billHasInsuredRepository.save(billHasInsured);
+
+		});
         
 		billDto.getActs().forEach(admissionHasAct -> {
 			System.out.print(admissionHasAct.getPratician());
 
 			Admission admission = admissionService.findAdmissionById(admissionHasAct.getAdmission()).orElse(null);
 			Act act = actService.findActById(admissionHasAct.getAct()).orElse(null);
-			User practician  = userRepository.findById( admissionHasAct.getPratician()).orElse(null);
+			Pratician pratician = practicianService.findPracticianById(admissionHasAct.getPratician()).orElse(null);
 			int actCost = 0;
-			if( admission != null && act != null && practician != null) {
+			if( admission != null && act != null && pratician != null) {
 				if (ObjectUtils.isEmpty(this.convention)) {
 					actCost = this.getOneActCostWhithoutConvention(admissionHasAct.getAct());
 				} else {

@@ -27,7 +27,7 @@ public class PatientConstantType implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	private String active;
+	private Boolean active;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "created_at")

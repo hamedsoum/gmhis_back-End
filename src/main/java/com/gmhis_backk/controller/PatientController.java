@@ -1,6 +1,7 @@
 package com.gmhis_backk.controller;
 
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ import com.gmhis_backk.dto.PatientDTO;
 import com.gmhis_backk.exception.domain.EmailExistException;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
+import com.gmhis_backk.repository.PatientRepository;
 import com.gmhis_backk.service.PatientService;
 
 import io.swagger.annotations.ApiOperation;
@@ -38,6 +40,10 @@ public class PatientController {
 	
 	@Autowired
 	PatientService patientService;
+	
+	@Autowired 
+	PatientRepository patientRepository ;
+	
 	
 	@PostMapping("/add")
 	@ApiOperation("Ajouter un Patient")
@@ -128,5 +134,34 @@ public class PatientController {
 	}
 
 
-	
+	@ApiOperation(value = "Retourne le numero du  patient")
+	@GetMapping("/patientNumber")
+	public String generatePatientNumber(){
+		Patient lPatient = patientRepository.findLastPatient();
+		Calendar calendar = Calendar.getInstance();
+		String month= String.format("%02d", calendar.get( Calendar.MONTH ) + 1) ;
+		String year = String.format("%02d",calendar.get( Calendar.YEAR ) % 100);
+		String lPatientYearandMonth = "";
+		String lPatientNb = "";
+		int  number= 0;
+		
+		if(lPatient ==  null) {
+			lPatientYearandMonth = year + month;
+			lPatientNb = "0000000";
+		}else {
+			 String an = lPatient.getPatientExternalId().substring(2);
+			 lPatientYearandMonth = an.substring(0, 4);
+			 lPatientNb = an.substring(4);	
+		}
+		
+		
+		if(lPatientYearandMonth.equals( year + month)) {
+			number = Integer.parseInt(lPatientNb) + 1 ;
+		} else {
+			number = number +1;
+		}
+		
+		return "PT" + year + month +String.format("%04d", number);
+		
+	}
 }

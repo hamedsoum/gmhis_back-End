@@ -37,11 +37,14 @@ public interface InsuredRepository extends JpaRepository<Insured, Long> {
 	@Query(value = "select i from Insured i where i.patient.id = :patient")
 	public List<Insured> findInsuredByPatient(@Param("patient") Long patient);
 	
+	
 	@Modifying
 	@Transactional
 	@Query(value = "delete from Insured  i where i.patient.id = :patient")
 	public void deleteByPatientId(@Param("patient") Long patient);
 	
+	public List<Insured> findByCardNumber(String cardNumber);
+
 	@Query(value = "SELECT i FROM Insured i where id= :id")
 	Optional<Insured> findById(Long id);
 }

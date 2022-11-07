@@ -160,6 +160,9 @@ public class Patient implements Serializable {
 	@Column(name = "last_name")
 	private String lastName;
 	
+	@Column(name = "is_assured")
+	private Boolean isAssured;
+	
 	@OneToMany(mappedBy = "patient", fetch = FetchType.LAZY)
 	private List<Insured> insurances;
 

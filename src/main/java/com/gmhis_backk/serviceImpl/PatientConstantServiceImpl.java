@@ -3,6 +3,8 @@ package com.gmhis_backk.serviceImpl;
 import java.util.Date;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +27,7 @@ public class PatientConstantServiceImpl implements PatientConstantService {
 	private PatientConstantRepository repo;
 
 	@Override
+	@Transactional
 	public PatientConstant save(PatientConstant patientConstant) {
 		return repo.save(patientConstant);
 	}

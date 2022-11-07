@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.gmhis_backk.AppUtils;
 import com.gmhis_backk.domain.Admission;
+import com.gmhis_backk.domain.Patient;
 import com.gmhis_backk.domain.User;
 import com.gmhis_backk.dto.AdmissionDTO;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
@@ -191,11 +192,15 @@ public class AdmissionController {
 			admissionsMap.put("patientFirstName", admissionDto.getPatient().getFirstName());
 			admissionsMap.put("patientLastName", admissionDto.getPatient().getLastName());
 			admissionsMap.put("patientMaidenName", admissionDto.getPatient().getMaidenName());
+			admissionsMap.put("patientType", admissionDto.getPatient().getIsAssured());
 			admissionsMap.put("admissionDate", admissionDto.getCreatedAt());
 			admissionsMap.put("act", admissionDto.getAct().getName());
+			admissionsMap.put("actId", admissionDto.getAct().getId());
+			admissionsMap.put("actCost", (admissionDto.getAct().getCoefficient() * admissionDto.getAct().getActCode().getValue()));
 			admissionsMap.put("service", admissionDto.getService().getName());
-//			admissionsMap.put("practicianFirstName", admissionDto.getPractician().getFirstName());
-//			admissionsMap.put("practicianLastName", admissionDto.getPractician().getLastName());
+			admissionsMap.put("practicianFirstName", admissionDto.getPractician().getUser().getFirstName());
+			admissionsMap.put("practicianLastName", admissionDto.getPractician().getUser().getLastName());
+			admissionsMap.put("practicianId", admissionDto.getPractician().getId());
 			admissionsMap.put("createdAt", admissionDto.getCreatedAt());
 			admissionsMap.put("updatedAt", admissionDto.getUpdatedAt());
 			admissionsMap.put("createdByLogin", ObjectUtils.isEmpty(createdBy) ? "--" : createdBy.getLogin());
@@ -341,5 +346,7 @@ public class AdmissionController {
 		
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
+	
+
 
 }

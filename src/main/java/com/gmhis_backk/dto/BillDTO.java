@@ -22,10 +22,13 @@ public class BillDTO {
 //	private String partTakenCareOfNumber;
 	private String patientType;
 	private int discountInCfa;
+	private int patientPart;
+	private int partTakenCareOf;
 	private int discountInPercentage;
 //	private String accountNumber;
 	private Long convention;
 	private String billType;
 	private Long admission;
 	private List<AdmisionHasActDTO> acts;
+	private List <BillHasInsuredDto> insuredList;
 }

@@ -29,7 +29,10 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
 
 	public List<Patient> findByPatientExternalId(String patientExternalId);
 
-	public List<Patient> findByCellPhone1OrCellPhone2(String cellPhone1, String cellPhone2);
+	public List<Patient> findByCellPhone1(String cellPhone1);
+	
+	public List<Patient> findByCellPhone2(String cellPhone2);
+
 
 	public List<Patient> findByCnamNumber(String cnamNumber);
 

@@ -22,6 +22,9 @@ public interface PatientConstantDomainService {
 	  Page<PatientConstantDomain> findAllConstatDomainByName(String name, Pageable pageable);
 	  
 	  List<PatientConstantDomain> findAllConstatDomains();
+	  
+		public List<PatientConstantDomain> findActivePatientConstantDomaines();
+
 
 	  void deleteConstatDomain(Integer id);
 		

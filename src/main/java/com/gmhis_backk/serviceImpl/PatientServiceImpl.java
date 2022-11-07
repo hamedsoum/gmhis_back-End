@@ -75,7 +75,9 @@ public class PatientServiceImpl implements PatientService {
 		return this.userRepository.findUserByUsername(AppUtils.getUsername());
 	}
 	
-	@Override @Transactional
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+
 	public Patient save(PatientDTO patientdto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException,EmailExistException {
 		if(ObjectUtils.isEmpty(patientdto.getEmail()) || patientdto.getEmail() == null) {
 			throw new ResourceNotFoundByIdException("l'adresse email est requise");
@@ -84,20 +86,30 @@ public class PatientServiceImpl implements PatientService {
 		 if(!isEmailUsed) throw new ResourceNotFoundByIdException("Email deja utilise");
 		}
 		
-		 Boolean isPhone1Used =	patientRepository.findByCellPhone1OrCellPhone2(patientdto.getCellPhone1(), patientdto.getCellPhone1()).isEmpty();
-		 if(!isPhone1Used) throw new ResourceNotFoundByIdException("Premier numero de telephone est deja utilisé");
-		 
-		 Boolean isPhone2Used =	patientRepository.findByCellPhone1OrCellPhone2(patientdto.getCellPhone2(), patientdto.getCellPhone2()).isEmpty();
-		 if(!isPhone2Used) throw new ResourceNotFoundByIdException("Deuxieme numero de telephone est deja utilisé");
-				
-		 
+		
+		if(ObjectUtils.isEmpty(patientdto.getCellPhone1()) || patientdto.getCellPhone1() == null) {
+			throw new ResourceNotFoundByIdException("le numero de telephone est requis");
+		}else {
+			 Boolean isPhone1Used =	patientRepository.findByCellPhone1(patientdto.getCellPhone1()).isEmpty();
+			 if(!isPhone1Used) throw new ResourceNotFoundByIdException("le premier numero de telephone est deja utilisé");	
+		}
+		
+		if(ObjectUtils.isEmpty(patientdto.getIdCardNumber()) || patientdto.getIdCardNumber() == null) {
+			throw new ResourceNotFoundByIdException("le numero de la piece d'identé est requis");
+		}else {
+			 Boolean isIdCardNumberUsed =	patientRepository.findByIdCardNumber(patientdto.getIdCardNumber()).isEmpty();
+			 if(!isIdCardNumberUsed) throw new ResourceNotFoundByIdException("le numero de la piece d'identé est deja utilisé");	
+		}
+			 
 		 Patient patient = new Patient();
 		
 		 
 			BeanUtils.copyProperties(patientdto, patient, "id");
-			
+			if (patientdto.getInsurances().size() != 0) patient.setIsAssured(true);
 		    String patientNumber = this.getPatientNumber();
+		    System.out.print(patientNumber);
 		    patient.setPatientExternalId(patientNumber);
+		    
 
 			if (patientdto.getCountry() != null) {
 				patient.setCountry(countryRepository.getOne(patientdto.getCountry()));
@@ -120,14 +132,20 @@ public class PatientServiceImpl implements PatientService {
 					Insurance insurance = new Insurance();
 					InsuranceSuscriber iSubscriber = new InsuranceSuscriber();
 
-					insurance = insuranceRepository.getActGroupDetails(insuredDTO.getInsurance());
+					insurance = insuranceRepository.getActInsurranceDetails(insuredDTO.getInsurance());
 					iSubscriber = insuranceSubScriberRepository.getInsuranceSuscriberDetails(insuredDTO.getInsuranceSuscriber());
 						;
 
 					if (insurance == null || iSubscriber == null) {
+//						throw new ResourceNotFoundByIdException(
+//								"L'assurance et/ou le souscripteur n'existe(nt) pas en base !");
+						
 						throw new ResourceNotFoundByIdException(
-								"L'assurance et/ou le souscripteur n'existe(nt) pas en base !");
+								"L'assurance et/ou le courtier n'existe(nt) pas en base !");
 					}
+					
+					 Boolean isCardNumberUsed = insuredRepository.findByCardNumber(insuredDTO.getCardNumber()).isEmpty();
+					 if(!isCardNumberUsed) throw new ResourceNotFoundByIdException("le numero de carte de l' assurance " +insurance.getName() +  " est deja utilisé");
 
 					insured.setCardNumber(insuredDTO.getCardNumber());
 					insured.setCoverage(insuredDTO.getCoverage());
@@ -140,11 +158,12 @@ public class PatientServiceImpl implements PatientService {
 					insured.setPrincipalInsuredAffiliation(insuredDTO.getPrincipalInsuredAffiliation());
 					insured.setPrincipalInsuredContact(insuredDTO.getPrincipalInsuredContact());
 					insured.setPrincipalInsuredName(insuredDTO.getPrincipalInsuredName());
+					insured.setSociety(insuredDTO.getSociety());
 					insuredRepository.save(insured);
 				}
 			}
 
-		return newPatient;
+		return null;
 	}
 
 	@Override
@@ -169,7 +188,7 @@ public class PatientServiceImpl implements PatientService {
 
 	@Override
 	public List<Patient> findByCellPhone(String s) {
-		return patientRepository.findByCellPhone1OrCellPhone2(s, s);
+		return patientRepository.findByCellPhone1(s);
 	}
 
 	@Override
@@ -275,6 +294,12 @@ public class PatientServiceImpl implements PatientService {
 		    if (updatePatient != null) {
 				BeanUtils.copyProperties(patientdto, updatePatient, "id", "cityId");
 				
+				if (patientdto.getInsurances().size() != 0) {
+					updatePatient.setIsAssured(true);
+				} else {
+					updatePatient.setIsAssured(false);
+				}
+
 				if (patientdto.getCountry() != null) {
 					updatePatient.setCountry(countryRepository.getOne(patientdto.getCountry()));
 				}
@@ -295,7 +320,7 @@ public class PatientServiceImpl implements PatientService {
 				if (patientdto.getInsurances().size() != 0) {
 					for (InsuredDTO insuredDTO : patientdto.getInsurances()) {
 						Insured insured = null;
-						if(insuredDTO.getId()  == 0) {
+						if(insuredDTO.getId()  == null) {
 							insured = new Insured();
 						} else {
 							insured = insuredRepository.findById(insuredDTO.getId()).orElse(null);
@@ -303,7 +328,7 @@ public class PatientServiceImpl implements PatientService {
 						Insurance insurance = new Insurance();
 						InsuranceSuscriber iSubscriber = new InsuranceSuscriber();
 
-						insurance = insuranceRepository.getActGroupDetails(insuredDTO.getInsurance());
+						insurance = insuranceRepository.getActInsurranceDetails(insuredDTO.getInsurance());
 						iSubscriber = insuranceSubScriberRepository.getInsuranceSuscriberDetails(insuredDTO.getInsuranceSuscriber());
 
 						if (insurance == null || iSubscriber == null) {
@@ -324,6 +349,10 @@ public class PatientServiceImpl implements PatientService {
 							insured.setPrincipalInsuredAffiliation(insuredDTO.getPrincipalInsuredAffiliation());
 							insured.setPrincipalInsuredContact(insuredDTO.getPrincipalInsuredContact());
 							insured.setPrincipalInsuredName(insuredDTO.getPrincipalInsuredName());
+							insured.setSociety(insuredDTO.getSociety());
+							insured.setDeleted("N");
+							insured.setUpdatedAt(new Date());
+							insured.setUpdatedBy(this.getCurrentUserId().getId());
 							insuredRepository.save(insured);
 						}
 						
@@ -337,6 +366,7 @@ public class PatientServiceImpl implements PatientService {
 	public String getPatientNumber() {
 		
 		Patient lPatient = patientRepository.findLastPatient();
+		System.out.print(lPatient.getFirstName());
 		Calendar calendar = Calendar.getInstance();
 		String month= String.format("%02d", calendar.get( Calendar.MONTH ) + 1) ;
 		String year = String.format("%02d",calendar.get( Calendar.YEAR ) % 100);
@@ -361,7 +391,8 @@ public class PatientServiceImpl implements PatientService {
 		}
 		
 		return "PT" + year + month +String.format("%04d", number);
-			
+//			
+//		return null;
 	}
 
 	

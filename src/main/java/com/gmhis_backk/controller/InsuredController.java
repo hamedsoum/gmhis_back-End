@@ -121,6 +121,7 @@ public class InsuredController {
 		insured.setDeleted("N");
 		insured.setCreatedAt(new Date());
 		insured.setCreatedBy(this.getCurrentUserId());
+		insured.setSociety(insuredDto.getSociety());
 		insured= insuredService.saveInsured(insured);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
@@ -208,6 +209,7 @@ public class InsuredController {
 			insuredsMap.put("principalInsuredAffiliation", insured.getPrincipalInsuredAffiliation());
 			insuredsMap.put("principalInsuredContact", insured.getPrincipalInsuredContact());
 			insuredsMap.put("principalInsuredName", insured.getPrincipalInsuredName());
+			insuredsMap.put("society", insured.getSociety());
 			insuredsMap.put("deleted", insured.getDeleted());
 			insuredsMap.put("createdAt", insured.getCreatedAt());
 			insuredsMap.put("updatedAt", insured.getUpdatedAt());
@@ -244,6 +246,7 @@ public class InsuredController {
 		insuredMap.put("principalInsuredAffiliation", insured.getPrincipalInsuredAffiliation());
 		insuredMap.put("principalInsuredContact", insured.getPrincipalInsuredContact());
 		insuredMap.put("principalInsuredName", insured.getPrincipalInsuredName());
+		insuredMap.put("society", insured.getSociety());
 		insuredMap.put("deleted", insured.getDeleted());
 		insuredMap.put("createdAt", insured.getCreatedAt());
 		insuredMap.put("updatedAt", insured.getUpdatedAt());
@@ -345,9 +348,8 @@ public class InsuredController {
 			updateInsured.setPrincipalInsuredAffiliation(insuredDto.getPrincipalInsuredAffiliation());
 			updateInsured.setPrincipalInsuredContact(insuredDto.getPrincipalInsuredContact());
 			updateInsured.setPrincipalInsuredName(insuredDto.getPrincipalInsuredName());
+			updateInsured.setSociety(insuredDto.getSociety());
 			updateInsured.setDeleted("N");
-			updateInsured.setCreatedAt(new Date());
-			updateInsured.setCreatedBy(this.getCurrentUserId());
 			updateInsured.setUpdatedAt(new Date());
 			updateInsured.setUpdatedBy(this.getCurrentUserId());
 			insured= insuredService.saveInsured(updateInsured);

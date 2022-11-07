@@ -138,8 +138,8 @@ public class PatientConstantTypeController {
 		return constantTypeList;
 	}
 	
-	@ApiOperation(value = "Lister la liste des ids et noms des actes actifs dans le système")
-	@GetMapping("/active_acts_name")
+	@ApiOperation(value = "Lister la liste des ids et noms des types contantes actifs dans le système")
+	@GetMapping("/active_constante_type_name")
 	public ResponseEntity<List<Map<String, Object>>> activeActName() {
 		List<Map<String, Object>> actList = new ArrayList<>();
 

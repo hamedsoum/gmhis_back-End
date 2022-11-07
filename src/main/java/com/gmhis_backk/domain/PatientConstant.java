@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonRawValue;
 
 import lombok.AllArgsConstructor;
@@ -44,5 +45,10 @@ public class PatientConstant implements Serializable {
 
 	@ManyToOne
 	private Patient patient;
+	
+	@JsonBackReference
+	@ManyToOne
+	@JoinColumn(name = "patient_constant_type_id")
+	private PatientConstantType constant;
 
 }

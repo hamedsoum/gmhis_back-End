@@ -16,5 +16,6 @@ public class PatientConstantDTO {
 	private Long id;
 	private String value;
 	private Long patient;
+	private Long constant;
 	private String observation;
 }

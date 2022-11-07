@@ -108,4 +108,10 @@ public class PatientConstantDomainServiceImpl implements PatientConstantDomainSe
 		return patientConstantDomainRepository.save(updateConstDomain);
 	}
 
+	@Override
+	public List<PatientConstantDomain> findActivePatientConstantDomaines() {
+		// TODO Auto-generated method stub
+		return patientConstantDomainRepository.findAllActive();
+	}
+
 }

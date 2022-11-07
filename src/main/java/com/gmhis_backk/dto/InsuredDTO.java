@@ -19,5 +19,5 @@ public class InsuredDTO {
 	private Long insurance;
 	private Long insuranceSuscriber;
 	private Long patient;
-
+	private String society;
 }

@@ -25,7 +25,7 @@ public class PatientDTO {
 	private String cnamNumber = "";
 	private String correspondant;
 	private String correspondantCellPhone;
-	private String patientExternalId;
+//	private String patientExternalId;
 	private Date birthDate;
 	private String email;
 	private String address;
