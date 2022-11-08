@@ -117,13 +117,13 @@ public class PatientConstantTypeController {
 			constantTypeMap.put("id", constType.getId());
 			constantTypeMap.put("name", constType.getName());
 			constantTypeMap.put("active", constType.getActive());
-			constantTypeMap.put("constantDomain", constType.getPatientConstantDomain().getName());
-			constantTypeMap.put("UnitOfMesure", constType.getUnitOfMesure().getName());
-//			constantTypeMap.put("resultType", constType.getResultType());
+			constantTypeMap.put("constantDomainName", constType.getPatientConstantDomain().getName());
+			constantTypeMap.put("constantDomain", constType.getPatientConstantDomain().getId());
+			constantTypeMap.put("UnitOfMesureName", constType.getUnitOfMesure().getName());
+			constantTypeMap.put("UnitOfMesure", constType.getUnitOfMesure().getId());
 			constantTypeMap.put("description", constType.getDescription());
 			constantTypeMap.put("shortName", constType.getShortName());
 			constantTypeMap.put("significantDigits", constType.getSignificantDigits());
-//			constantTypeMap.put("resultType", constType.getResultType().getCode());
 			constantTypeMap.put("createdAt", constType.getCreatedAt());
 			constantTypeMap.put("options", constType.getOptions());
 			constantTypeMap.put("updatedAt", constType.getUpdatedAt());
