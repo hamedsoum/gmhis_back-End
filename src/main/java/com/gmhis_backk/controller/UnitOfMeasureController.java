@@ -151,7 +151,6 @@ public class UnitOfMeasureController {
 			uMap.put("name", uOmDto.getName());
 			practicianList.add(uMap);
 		});
-
 		return new ResponseEntity<>(practicianList, HttpStatus.OK);
 	}
 }
