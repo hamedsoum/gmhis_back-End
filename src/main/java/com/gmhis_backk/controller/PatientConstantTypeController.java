@@ -119,8 +119,8 @@ public class PatientConstantTypeController {
 			constantTypeMap.put("active", constType.getActive());
 			constantTypeMap.put("constantDomainName", constType.getPatientConstantDomain().getName());
 			constantTypeMap.put("constantDomain", constType.getPatientConstantDomain().getId());
-			constantTypeMap.put("UnitOfMesureName", constType.getUnitOfMesure().getName());
-			constantTypeMap.put("UnitOfMesure", constType.getUnitOfMesure().getId());
+			constantTypeMap.put("unitOfMesureName", constType.getUnitOfMesure().getName());
+			constantTypeMap.put("unitOfMesure", constType.getUnitOfMesure().getId());
 			constantTypeMap.put("description", constType.getDescription());
 			constantTypeMap.put("shortName", constType.getShortName());
 			constantTypeMap.put("significantDigits", constType.getSignificantDigits());
