@@ -104,4 +104,9 @@ public class UnitOfMeasureServiceImpl implements UnitOfMeasureService {
 		return unitOfMeasureRepository.save(updateUnitOfMeasure);
 	}
 
+	@Override
+	public List<UnitOfMeasure> findAllActiveUnitOfMeasure() {
+		return unitOfMeasureRepository.findAllActive();
+	}
+
 }

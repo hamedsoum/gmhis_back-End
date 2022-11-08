@@ -140,4 +140,18 @@ public class UnitOfMeasureController {
 		return new ResponseEntity<>(unitOfMeasure,HttpStatus.OK);
 	}
 
+	@ApiOperation(value = "Lister la liste des ids et noms des unites de mesure actifs dans le système")
+	@GetMapping("/active_unitOfMeasures_name")
+	public ResponseEntity<List<Map<String, Object>>> activePracticianName() {
+		List<Map<String, Object>> practicianList = new ArrayList<>();
+
+		unitOfMeasureService.findAllActiveUnitOfMeasure().stream().forEach(uOmDto -> {
+			Map<String, Object> uMap = new HashMap<>();
+			uMap.put("id", uOmDto.getId());
+			uMap.put("name", uOmDto.getName());
+			practicianList.add(uMap);
+		});
+
+		return new ResponseEntity<>(practicianList, HttpStatus.OK);
+	}
 }

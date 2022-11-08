@@ -30,7 +30,7 @@ public class UnitOfMeasure implements Serializable {
 	private String name;
 
 	@Column
-	private String active = "Y";
+	private Boolean active ;
 
 	@Column(nullable = true)
 	private String description;

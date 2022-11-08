@@ -23,6 +23,8 @@ public interface UnitOfMeasureService {
 	  
 	  List<UnitOfMeasure> findAllUnitOfMeasures();
 
+	  List<UnitOfMeasure> findAllActiveUnitOfMeasure();
+	  
 	  void deleteUnitOfMeasure(Integer id);
 		
 	  Optional<UnitOfMeasure> getUnitOfMeasureDetails(Long id); 
