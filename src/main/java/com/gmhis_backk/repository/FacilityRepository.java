@@ -1,6 +1,7 @@
 package com.gmhis_backk.repository;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,7 +19,7 @@ import com.gmhis_backk.domain.Facility;
  *
  */
 @Repository
-public interface FacilityRepository extends JpaRepository<Facility, Long> {
+public interface FacilityRepository extends JpaRepository<Facility, UUID> {
 
 	public Facility findByName(String name);
 
@@ -29,5 +30,5 @@ public interface FacilityRepository extends JpaRepository<Facility, Long> {
 	
 	@Query(value = "select f from Facility f where f.name like %:name% and f.active = :active")
 	public Page<Facility> findByActive(@Param("name") String name,
-			@Param("active") String active, Pageable p);
+			@Param("active") Boolean active, Pageable p);
 }

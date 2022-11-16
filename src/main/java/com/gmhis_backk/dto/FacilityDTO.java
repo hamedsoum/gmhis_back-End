@@ -15,9 +15,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class FacilityDTO {
 
-	private Long id;
+	private String id;
 	private String name;
-	private String active;
+	private Boolean active;
 	private String dhisCode;
 	private float latitude;
 	private String localCode;

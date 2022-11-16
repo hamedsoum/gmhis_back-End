@@ -3,6 +3,7 @@ package com.gmhis_backk.serviceImpl;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +53,7 @@ public class FacilityServiceImpl implements FacilityService{
 	
 
 	@Override
-	public Facility updateFacility(FacilityDTO facilityDto, Long id) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException {
+	public Facility updateFacility(FacilityDTO facilityDto, UUID id) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException {
 		Facility updateFacility = facilityRepository.findById(id).orElse(null);
 		
 		if (updateFacility == null) {
@@ -77,7 +78,7 @@ public class FacilityServiceImpl implements FacilityService{
 	}
 
 	@Override
-	public Optional<Facility> findFacilityById(Long id) {
+	public Optional<Facility> findFacilityById(UUID id) {
 		return facilityRepository.findById(id);
 	}
 
@@ -88,26 +89,22 @@ public class FacilityServiceImpl implements FacilityService{
 
 	@Override
 	public Page<Facility> findFacilities(Pageable pageable) {
-		// TODO Auto-generated method stub
-		return null;
+		return facilityRepository.findAll(pageable);
 	}
 
 	@Override
 	public Page<Facility> findFacilitiesContaining(String name, Pageable pageable) {
-		// TODO Auto-generated method stub
-		return null;
+		return facilityRepository.findByNameContainingIgnoreCase(name, pageable);
 	}
 
 	@Override
 	public List<Facility> findActiveFacilities() {
-		// TODO Auto-generated method stub
-		return null;
+		return facilityRepository.findActiveFacilities();
 	}
 
 	@Override
-	public Page<Facility> findByActive(String namme, String active, Pageable pageable) {
-		// TODO Auto-generated method stub
-		return null;
+	public Page<Facility> findByActive(String namme, Boolean active, Pageable pageable) {
+		return facilityRepository.findByActive(namme, active, pageable);
 	}
 
 }

@@ -82,7 +82,7 @@ public class ExaminationController {
 				
 //				Facility facility = new Facility();
 				Facility facility = new Facility();
-				facility.setId( (long) 1); 
+//				facility.setId( (long) 1); 
 				examination = new Examination();
 				examination.setAdmission(admission);
 				examination.setConclusion(examinationDto.getConclusion());

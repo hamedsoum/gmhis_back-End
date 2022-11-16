@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gmhis_backk.domain.Admission;
 import com.gmhis_backk.domain.Facility;
 import com.gmhis_backk.domain.User;
 import com.gmhis_backk.dto.FacilityDTO;
@@ -43,15 +45,15 @@ public class FacilityController {
 	FacilityService facilityService;
 	
 	@PostMapping("/add")
-	@ApiOperation("/Ajouter une admission")
+	@ApiOperation("/Ajouter un centre de sante")
 	public ResponseEntity<Facility>addFacility(@RequestBody FacilityDTO facilityDto) throws ResourceNameAlreadyExistException,ResourceNotFoundByIdException{
 		Facility facility = facilityService.saveFacility(facilityDto);
 		return new ResponseEntity<Facility>(facility, HttpStatus.OK);
 	} 
 	
 	@PutMapping("/update/{id}")
-	@ApiOperation("/Ajouter un centre de sante")
-	public ResponseEntity<Facility> updateFacility(@RequestBody FacilityDTO facilityDto, @PathVariable("id") Long id) throws ResourceNameAlreadyExistException,
+	@ApiOperation("/Modiifer un centre de sante")
+	public ResponseEntity<Facility> updateFacility(@RequestBody FacilityDTO facilityDto, @PathVariable("id") UUID id) throws ResourceNameAlreadyExistException,
 	ResourceNotFoundByIdException{
 		Facility facility = facilityService.updateFacility(facilityDto, id);
 		return new ResponseEntity<Facility>(facility, HttpStatus.OK);
@@ -75,7 +77,7 @@ public class FacilityController {
 		if (ObjectUtils.isEmpty(active) && ObjectUtils.isEmpty(name)) {
 			pFacilities = facilityService.findFacilities(pageable);
 		} else if(ObjectUtils.isNotEmpty(active)){
-			pFacilities = facilityService.findByActive(name, active, pageable);
+			pFacilities = facilityService.findByActive(name, Boolean.parseBoolean(active), pageable);
 		}else if (ObjectUtils.isNotEmpty(name)) {
 			pFacilities= facilityService.findFacilitiesContaining(name,pageable);
 		} 
@@ -84,7 +86,7 @@ public class FacilityController {
 		
 			
 		List<Map<String, Object>> facilities = this.getMapFromFacilityList(lFacilities);
-		response.put("content", facilities);
+		response.put("items", facilities);
 		response.put("totalElements", pFacilities.getTotalElements());
 		response.put("totalPages", pFacilities.getTotalPages());
 		response.put("size", pFacilities.getSize());
@@ -126,4 +128,38 @@ public class FacilityController {
 		});
 		return facilityList;
 	}
+	
+	@GetMapping("/active_facilities_name")
+	@ApiOperation(value = "Lister la liste des ids et noms des centres de sante actives dans le système")
+	public ResponseEntity<List<Map<String, Object>>>  activeFacilityName() {
+		List<Map<String, Object>>  actCodeList = new ArrayList<>();
+
+		facilityService.findActiveFacilities().forEach(facilityDto -> {
+			Map<String, Object> facilityMap = new HashMap<>();
+			facilityMap.put("id", facilityDto.getId());
+			facilityMap.put("name", facilityDto.getName());
+			actCodeList.add(facilityMap);
+		});
+		
+		return new ResponseEntity<>(actCodeList, HttpStatus.OK);
+	}
+	
+	@GetMapping("/get-detail/{id}")
+	@ApiOperation("detail d'un centre de sante ")
+	public  ResponseEntity<Map<String, Object>> getDetail(@PathVariable UUID id){
+		Map<String, Object> response = new HashMap<>();
+
+		Facility falicity = facilityService.findFacilityById(id).orElse(null);
+		response.put("id", falicity.getId());
+		response.put("facilityName", falicity.getName());
+		response.put("facilityShortNameName", falicity.getShortName());
+//		response.put("patientExternalId", admission.getPatient().getPatientExternalId());
+//		response.put("act", admission.getAct().getId());
+//		response.put("admissionDate", admission.getAdmissionStartDate());
+//		response.put("service", admission.getService().getId());
+//		response.put("practician", admission.getPractician().getId());
+		return new ResponseEntity<>(response,HttpStatus.OK);
+	}
+	
+
 }
