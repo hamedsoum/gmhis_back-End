@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gmhis_backk.AppUtils;
 import com.gmhis_backk.domain.Pathology;
+import com.gmhis_backk.domain.User;
 import com.gmhis_backk.dto.DefaultNameAndActiveDto;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
@@ -46,7 +47,7 @@ public class PathologyServiceImpl implements PathologyService {
 
 	@Override
 	public List<Pathology> findAllPathology() {
-		return pathologyRepository.findAllActCategorySimpleList();
+		return pathologyRepository.findAllActPathologySimpleList();
 	}
 
 
@@ -55,7 +56,7 @@ public class PathologyServiceImpl implements PathologyService {
 		return pathologyRepository.findById(id);
 	}
 	
-	protected com.gmhis_backk.domain.User getCurrentUserId() {
+	protected User getCurrentUserId() {
 		return this.userRepository.findUserByUsername(AppUtils.getUsername());
 	}
 
@@ -79,7 +80,7 @@ public class PathologyServiceImpl implements PathologyService {
 			throws ResourceNotFoundByIdException, ResourceNameAlreadyExistException {
 		Pathology updatePathology = pathologyRepository.findById(id).orElse(null);
 		if (updatePathology == null) {
-			 throw new ResourceNotFoundByIdException("Aucun pathologie trouvé pour l'identifiant");
+			 throw new ResourceNotFoundByIdException("Aucune pathologie trouvé pour l'identifiant");
 
 		} else {
 			Pathology pathologyByName = pathologyRepository.findByName(defaultNameAndActiveDto.getName());
@@ -95,6 +96,11 @@ public class PathologyServiceImpl implements PathologyService {
 		updatePathology.setUpdatedAt(new Date());
 		updatePathology.setUpdatedBy(getCurrentUserId().getId());
 		return pathologyRepository.save(updatePathology);
+	}
+
+	@Override
+	public List<Pathology> findAllActive() {
+		return pathologyRepository.findAllActive();
 	}
 
 }

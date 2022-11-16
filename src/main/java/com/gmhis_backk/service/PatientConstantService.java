@@ -1,5 +1,6 @@
 package com.gmhis_backk.service;
 
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
@@ -26,6 +27,9 @@ public interface PatientConstantService {
 	public PatientConstant findById(Long id);
 	
 	public List<PatientConstant> findPatientConstant(Long patientId);
+	
+	public List<PatientConstant> findPatientConstantByDate(Long patientId, String takeAt) throws ParseException;
+
 
 	public Page<PatientConstant> findPatientConstant(Long patientId, Pageable pageable);
 	

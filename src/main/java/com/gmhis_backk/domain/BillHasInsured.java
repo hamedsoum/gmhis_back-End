@@ -40,6 +40,11 @@ public class BillHasInsured {
 	@JoinColumn(name = "admission_id")
 	private Admission admission;
 	
+	@JsonBackReference
+	@ManyToOne
+	@JoinColumn(name = "insurance_id")
+    private Insurance insurance;
+	
 	@Column(name = "insured_coverage")
 	private int insuredCoverage;
 	

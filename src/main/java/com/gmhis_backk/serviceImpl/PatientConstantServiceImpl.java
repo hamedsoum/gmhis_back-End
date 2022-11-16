@@ -1,5 +1,7 @@
 package com.gmhis_backk.serviceImpl;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -60,6 +62,12 @@ public class PatientConstantServiceImpl implements PatientConstantService {
 	@Override
 	public Page<PatientConstant> findPatientConstantByDate(Long patientId, Date date1, Date date2, Pageable pageable){
 		return repo.findPatientConstantByDate(patientId, date1, date2, pageable);
+	}
+
+	@Override
+	public List<PatientConstant> findPatientConstantByDate(Long patientId, String takeAt) throws ParseException{
+		System.out.print(takeAt);
+		return repo.findPatientConstantByDate(patientId, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(takeAt));
 	}
 
 }

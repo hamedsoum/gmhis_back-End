@@ -1,5 +1,6 @@
 package com.gmhis_backk.controller;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -36,6 +37,7 @@ import com.gmhis_backk.domain.CashRegister;
 import com.gmhis_backk.domain.Convention;
 import com.gmhis_backk.domain.ConventionHasAct;
 import com.gmhis_backk.domain.ConventionHasActCode;
+import com.gmhis_backk.domain.Insurance;
 import com.gmhis_backk.domain.Insured;
 import com.gmhis_backk.domain.Patient;
 import com.gmhis_backk.domain.Payment;
@@ -52,9 +54,11 @@ import com.gmhis_backk.repository.UserRepository;
 import com.gmhis_backk.service.ActCodeService;
 import com.gmhis_backk.service.ActService;
 import com.gmhis_backk.service.AdmissionService;
+import com.gmhis_backk.service.BillHasInsuredService;
 import com.gmhis_backk.service.BillService;
 import com.gmhis_backk.service.CashRegisterService;
 import com.gmhis_backk.service.ConventionService;
+import com.gmhis_backk.service.InsuranceService;
 import com.gmhis_backk.service.InsuredService;
 import com.gmhis_backk.service.PaymentTypeService;
 import com.gmhis_backk.service.PracticianService;
@@ -112,6 +116,12 @@ public class BillController {
 	
 	@Autowired
 	private PracticianService practicianService;
+	
+	@Autowired
+	private InsuranceService insuranceService;
+	
+	@Autowired
+	private BillHasInsuredService billHasInsuredService;
 
 	private Admission admission = null;
 	private Convention convention = null;
@@ -126,7 +136,7 @@ public class BillController {
 	@ApiOperation(value = "Ajouter une facture ")
 	@PostMapping("/add")
 	@Transactional
-	public ResponseEntity<Bill> addBill(@RequestBody BillDTO billDto) throws ResourceNotFoundByIdException {
+	public ResponseEntity<Bill> addBill(@RequestBody BillDTO billDto) throws ResourceNotFoundByIdException, ParseException {
 //
 		admission = admissionService.findAdmissionById(billDto.getAdmission()).orElse(null);
 			if (admission == null) {
@@ -209,15 +219,19 @@ public class BillController {
 			System.out.println(billHasInsuredDto.getInsuredCoverage());
 			System.out.println(billHasInsuredDto.getInsuredPart());
 			System.out.println(billHasInsuredDto.getBill());
+			
 			Admission admission = admissionService.findAdmissionById(billHasInsuredDto.getAdmission()).orElse(null);
 			Insured Insured = insuredService.findInsuredById(billHasInsuredDto.getInsured()).orElse(null);
+			Insurance insurance = insuranceService.findInsuranceById(billHasInsuredDto.getInsurrance()).orElse(null);
 
+			
 			BillHasInsured billHasInsured = new BillHasInsured();
 			billHasInsured.setAdmission(admission);
 			billHasInsured.setInsured(Insured);
 			billHasInsured.setInsuredCoverage(billHasInsuredDto.getInsuredCoverage());
 			billHasInsured.setInsuredPart(billHasInsuredDto.getInsuredPart());
 			billHasInsured.setBill(bill);
+			billHasInsured.setInsurance(insurance);
 			billHasInsured.setCreatedAt(new Date());
 			billHasInsured.setCreatedBy(this.getCurrentUserId().getId());
 
@@ -529,12 +543,11 @@ public class BillController {
 			@RequestParam(required = false) Long convention,
 			@RequestParam(required = false) Long insurance,
 			@RequestParam(required = false) Long subscriber,
-			@RequestParam(required = false, defaultValue = "") String fromDate,
-			@RequestParam(required = false, defaultValue = "") String toDate,
+//			@RequestParam(required = false, defaultValue = "") String fromDate,
+//			@RequestParam(required = false, defaultValue = "") String toDate,
 			@RequestParam(required = true, defaultValue = "") String billStatus,
 			@RequestParam(defaultValue = "id,desc") String[] sort, @RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "50") int size) {
-
 		Map<String, Object> response = new HashMap<>();
 		Sort.Direction dir = sort[1].equalsIgnoreCase("asc") ? dir = Sort.Direction.ASC : Sort.Direction.DESC;
 
@@ -543,18 +556,18 @@ public class BillController {
 
 		Calendar cDate1 = Calendar.getInstance();
 		Calendar cDate2 = Calendar.getInstance();
-
-		if (ObjectUtils.isEmpty(fromDate)) {
-			cDate1.set(1970, 0, 1);
-		} else {
-			String[] fd = fromDate.split("/");
-			cDate1.set(Integer.parseInt(fd[2]), Integer.parseInt(fd[1]) - 1, Integer.parseInt(fd[0]), 0, 0);
-		}
-
-		if (ObjectUtils.isNotEmpty(toDate)) {
-			String[] td = toDate.split("/");
-			cDate2.set(Integer.parseInt(td[2]), Integer.parseInt(td[1]) - 1, Integer.parseInt(td[0]), 23, 59);
-		}
+//
+//		if (ObjectUtils.isEmpty(fromDate)) {
+//			cDate1.set(1970, 0, 1);
+//		} else {
+//			String[] fd = fromDate.split("/");
+//			cDate1.set(Integer.parseInt(fd[2]), Integer.parseInt(fd[1]) - 1, Integer.parseInt(fd[0]), 0, 0);
+//		}
+//
+//		if (ObjectUtils.isNotEmpty(toDate)) {
+//			String[] td = toDate.split("/");
+//			cDate2.set(Integer.parseInt(td[2]), Integer.parseInt(td[1]) - 1, Integer.parseInt(td[0]), 23, 59);
+//		}
 
 		Date date1 = cDate1.getTime();
 		Date date2 = cDate2.getTime();
@@ -601,9 +614,9 @@ public class BillController {
 			pBills = billService.findBillsByConvention(convention, billStatus, pageable);
 		}
 
-		if (ObjectUtils.isNotEmpty(fromDate) || ObjectUtils.isNotEmpty(toDate)) {
-			pBills = billService.findBillsByDate(date1, date2, billStatus, pageable);
-		}
+//		if (ObjectUtils.isNotEmpty(fromDate) || ObjectUtils.isNotEmpty(toDate)) {
+//			pBills = billService.findBillsByDate(date1, date2, billStatus, pageable);
+//		}
 
 		List<Bill> lBills = pBills.getContent();
 
@@ -621,6 +634,78 @@ public class BillController {
 		response.put("empty", pBills.isEmpty());
 
 		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+	
+	
+
+	@ApiOperation(value = "liste paginee de toutes les factures des assurances dans le système par Id de lassurance")
+	@GetMapping("/BillHasInsure_p_list")
+	public ResponseEntity<Map<String, Object>> BillHasInsuredpaginatedList(
+			@RequestParam(required = false, defaultValue = "") Long insuranceId,
+			@RequestParam(required = true, defaultValue = "") String date,
+			@RequestParam(defaultValue = "id,desc") String[] sort, @RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "50") int size) throws ParseException {
+		Map<String, Object> response = new HashMap<>();
+		Sort.Direction dir = sort[1].equalsIgnoreCase("asc") ? dir = Sort.Direction.ASC : Sort.Direction.DESC;
+//
+		Pageable pageable = PageRequest.of(page, size, Sort.by(dir, sort[0]));
+		Page<BillHasInsured> pBills;
+//
+		pBills = billHasInsuredService.findBillsHasInsured(pageable);
+
+		if (ObjectUtils.isNotEmpty(insuranceId)) {
+			pBills = billHasInsuredService.findBillsHasInsuredByInsurance(insuranceId, pageable);
+		}
+		
+		if (ObjectUtils.isNotEmpty(date)) {
+			pBills = billHasInsuredService.findBillsHasInsuredByDate(date, pageable) ;
+		}
+		
+		if (ObjectUtils.isNotEmpty(date) && ObjectUtils.isNotEmpty(insuranceId)) {
+			pBills = billHasInsuredService.findBillsHasInsuredByInsuranceIdAndDate(insuranceId,date, pageable) ;
+		}
+//		
+		List<BillHasInsured> lBills = pBills.getContent();
+//
+		List<Map<String, Object>> bill = this.getMapFromBillHasInsuredList(lBills);
+		response.put("items", bill);
+		response.put("totalElements", pBills.getTotalElements());
+		response.put("totalPages", pBills.getTotalPages());
+		response.put("size", pBills.getSize());
+		response.put("pageNumber", pBills.getNumber());
+		response.put("numberOfElements", pBills.getNumberOfElements());
+		response.put("first", pBills.isFirst());
+		response.put("last", pBills.isLast());
+		response.put("empty", pBills.isEmpty());
+
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+	
+	
+	protected List<Map<String, Object>> getMapFromBillHasInsuredList(List<BillHasInsured> billHasInsureds) {
+		List<Map<String, Object>> billList = new ArrayList<>();
+		billHasInsureds.stream().forEach(billHasInsuredDto -> {
+			Map<String, Object> billsMap = new HashMap<>();
+			User createdBy = ObjectUtils.isEmpty(billHasInsuredDto.getCreatedBy()) ? new User()
+					: userRepository.findById(billHasInsuredDto.getCreatedBy()).orElse(null);
+			User updatedBy = ObjectUtils.isEmpty(billHasInsuredDto.getUpdatedBy()) ? new User()
+					: userRepository.findById(billHasInsuredDto.getUpdatedBy()).orElse(null);
+			billsMap.put("id", billHasInsuredDto.getId());
+			billsMap.put("billNumber", billHasInsuredDto.getBill().getBillNumber());
+			billsMap.put("billDate", billHasInsuredDto.getBill().getCreatedAt());
+			billsMap.put("InsuranceName", billHasInsuredDto.getInsurance().getName());
+			billsMap.put("InsurancePart", billHasInsuredDto.getInsuredPart());
+			billsMap.put("InsuranceCoverage", billHasInsuredDto.getInsuredCoverage());
+			billsMap.put("BillTotalAmount", billHasInsuredDto.getBill().getTotalAmount());
+			billsMap.put("admissionNumber", billHasInsuredDto.getAdmission().getAdmissionNumber());
+			billsMap.put("patientNumber", billHasInsuredDto.getAdmission().getPatient().getPatientExternalId());
+			billsMap.put("createdByFirstName", ObjectUtils.isEmpty(createdBy) ? "--" : createdBy.getFirstName());
+			billsMap.put("createdByLastName", ObjectUtils.isEmpty(createdBy) ? "--" : createdBy.getLastName());
+			billsMap.put("UpdatedByFirstName", ObjectUtils.isEmpty(updatedBy) ? "--" : updatedBy.getFirstName());
+			billsMap.put("UpdatedByLastName", ObjectUtils.isEmpty(updatedBy) ? "--" : updatedBy.getLastName());
+			billList.add(billsMap);
+		});
+		return billList;
 	}
 
 	protected List<Map<String, Object>> getMapFromBillList(List<Bill> bills) {

@@ -70,7 +70,7 @@ public class Examination implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "pratician_id")
-	private User pratician;
+	private Pratician pratician;
 
 	@JsonBackReference
 	@ManyToMany

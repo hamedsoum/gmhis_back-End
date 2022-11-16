@@ -134,6 +134,19 @@ public  ResponseEntity<Optional<Pathology>> getDetail(@PathVariable Long id){
 }
 
 
+@ApiOperation(value = "Lister la liste des ids et noms des pathologies actives dans le système")
+@GetMapping("/active_pathologies_name")
+public ResponseEntity<List<Map<String, Object>>>  activeActCategoryName() {
+	List<Map<String, Object>>  pathologyList = new ArrayList<>();
 
+	pathologyService.findAllActive().forEach(pathology -> {
+		Map<String, Object> actMap = new HashMap<>();
+		actMap.put("id", pathology.getId());
+		actMap.put("name", pathology.getName());
+		pathologyList.add(actMap);
+	});
+	
+	return new ResponseEntity<>(pathologyList, HttpStatus.OK);
+}
 
 }

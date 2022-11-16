@@ -3,20 +3,16 @@ package com.gmhis_backk.domain;
 import java.io.Serializable;
 import javax.persistence.*;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.Date;
-
-import java.util.List;
 
 
 /**
- * @author pascal
+ * @author Hamed soumahoro
  * 
  */
 @Entity
@@ -31,7 +27,7 @@ public class Symptom implements Serializable {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 
-	private String active;
+	private Boolean active;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="created_at")

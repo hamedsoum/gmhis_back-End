@@ -1,5 +1,6 @@
 package com.gmhis_backk.service;
 
+import java.text.ParseException;
 import java.util.Date;
 import java.util.Optional;
 
@@ -10,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gmhis_backk.domain.Admission;
 import com.gmhis_backk.domain.Bill;
+import com.gmhis_backk.domain.BillHasInsured;
 import com.gmhis_backk.dto.AdmisionHasActDTO;
 import com.gmhis_backk.dto.AdmissionDTO;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
@@ -89,7 +91,8 @@ public interface AdmissionService {
 	
 	public Page<Admission> findAdmissionsInQueueByDate (Date fromDate, Date toDate, Long waitingRoom, Pageable pageable);
 	
-	
+	public Page<Admission>findAdmissiondByDate(String date, Pageable pageable) throws ParseException ;
+
 	
 
 }

@@ -1,5 +1,6 @@
 package com.gmhis_backk.controller;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -159,5 +160,23 @@ public class PatientConstantController  {
 	public PatientConstant detail(@PathVariable Long id) {
 		return constService.findById(id);
 	}
+	
+	@ApiOperation(value = "Retourne la liste des constante d'un patient par date")
+	@GetMapping("/patientConstantListBydate")
+	public ResponseEntity<Map<String, Object>>  patientConstantListByTakenDate(
+			@RequestParam(required = true) Long patientId,
+			@RequestParam(required = false) String takenAt
+			) throws ParseException {
+		Map<String, Object> response = new HashMap<>();
+		List<PatientConstant> lConstantes = null;
+
+		System.out.print(takenAt);
+		lConstantes =  constService.findPatientConstantByDate(patientId, takenAt);
+		List<Map<String, Object>> constByDate = this.getMapFromConstList(lConstantes);
+		response.put("items", constByDate);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+	
+	
 
 }

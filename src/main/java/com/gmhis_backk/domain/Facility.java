@@ -11,7 +11,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * @author pascal
+ * @author Hamed soumahoro
  * 
  */
 @Entity
@@ -27,7 +27,7 @@ public class Facility implements Serializable {
 	private Long id;
 
 	@Column
-	private String active;
+	private Boolean active;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "created_at")

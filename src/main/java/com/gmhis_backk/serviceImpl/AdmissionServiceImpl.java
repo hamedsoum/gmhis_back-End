@@ -1,5 +1,7 @@
 package com.gmhis_backk.serviceImpl;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Optional;
@@ -15,6 +17,7 @@ import com.gmhis_backk.AppUtils;
 import com.gmhis_backk.domain.Act;
 import com.gmhis_backk.domain.Admission;
 import com.gmhis_backk.domain.Bill;
+import com.gmhis_backk.domain.BillHasInsured;
 import com.gmhis_backk.domain.Patient;
 import com.gmhis_backk.domain.Pratician;
 import com.gmhis_backk.domain.User;
@@ -201,6 +204,7 @@ public class AdmissionServiceImpl implements AdmissionService{
 	
 	@Override
 	public Page<Admission> findAdmissionsByDate (Date fromDate, Date toDate, String admissionStatus, Pageable pageable){
+		System.out.print(fromDate);
 		return repo.findAdmissionByDate(fromDate, toDate, admissionStatus, pageable);
 	}
 	
@@ -299,6 +303,14 @@ public class AdmissionServiceImpl implements AdmissionService{
 		
 		return "AD" + year + month +String.format("%04d", number);
 			
+	}
+
+
+	@Override
+	public Page<Admission> findAdmissiondByDate(String date, Pageable pageable) throws ParseException {
+		String[] dates = date.split(","); 
+		return repo.findByDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dates[0]+" 00:00:00"),
+				new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dates[1]+" 23:59:59"), pageable);
 	}
 
 

@@ -31,8 +31,8 @@ public interface PathologyRepository extends JpaRepository<Pathology, Long> {
 	@Query("SELECT p FROM Pathology p Where p.id =:id")
 	Pathology getPathologyDetails(Integer id);
 	
-	@Query("SELECT a FROM Pathology a")
-	List<Pathology>findAllActCategorySimpleList();
+	@Query("SELECT p FROM Pathology p")
+	List<Pathology>findAllActPathologySimpleList();
 	
 	@Query(value = "SELECT p FROM Pathology p where id= :id")
 	Optional<Pathology> findById(Long id);

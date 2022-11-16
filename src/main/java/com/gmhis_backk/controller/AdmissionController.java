@@ -1,6 +1,7 @@
 package com.gmhis_backk.controller;
 
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -27,7 +28,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.gmhis_backk.AppUtils;
 import com.gmhis_backk.domain.Admission;
-import com.gmhis_backk.domain.Patient;
 import com.gmhis_backk.domain.User;
 import com.gmhis_backk.dto.AdmissionDTO;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
@@ -81,11 +81,10 @@ public class AdmissionController {
 			@RequestParam(required = false) Long practician,
 			@RequestParam(required = false) Long service,
 			@RequestParam(required = false) Long act,
-		    @RequestParam(required = false, defaultValue = "") String fromDate,
-		    @RequestParam(required = false, defaultValue = "") String toDate,
+		    @RequestParam(required = false, defaultValue = "") String date,
 		    @RequestParam(required = true, defaultValue = "R") String admissionStatus,
 			@RequestParam(defaultValue = "id,desc") String[] sort, @RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "50") int size) {
+			@RequestParam(defaultValue = "50") int size) throws ParseException {
 		   
 
 		Map<String, Object> response = new HashMap<>();
@@ -94,50 +93,31 @@ public class AdmissionController {
 		Pageable paging = PageRequest.of(page, size, Sort.by(dir, sort[0]));
 
 		Page<Admission> pAdmissions = null;
-		
-		Calendar cDate1 = Calendar.getInstance();
-		Calendar cDate2 = Calendar.getInstance();
-//		
-//				
-		if(ObjectUtils.isEmpty(fromDate)) { 
-			cDate1.set(1970, 0, 1);
-		}else {
-			String[] fd= fromDate.split("/");
-			cDate1.set(Integer.parseInt(fd[2]), Integer.parseInt(fd[1]) - 1 , Integer.parseInt(fd[0]), 0, 0);
-		}
-//		
-		if(ObjectUtils.isNotEmpty( toDate)) {
-			String[] td= toDate.split("/");
-			cDate2.set(Integer.parseInt(td[2]), Integer.parseInt(td[1]) - 1 , Integer.parseInt(td[0]), 23, 59);
-		}
-		
-		Date date1 = cDate1.getTime();
-		Date date2 = cDate2.getTime();
-		
+			
 		pAdmissions = admissionService.findAdmissions(admissionStatus, paging); 
 		
 		if( ObjectUtils.isNotEmpty(firstName) ||  ObjectUtils.isNotEmpty(lastName) ) {
 			pAdmissions = admissionService.findAdmissionsByPatientName(firstName, lastName, admissionStatus, paging);
 		}
-//		
+		
 		if( ObjectUtils.isNotEmpty(admissionNumber) ) {
 			System.out.print(admissionNumber);
 			pAdmissions = admissionService.findAdmissionsByAdmissionNumber(admissionNumber, admissionStatus, paging);
 		}
-////		
+		
 		if( ObjectUtils.isNotEmpty(patientExternalId)  ) {
 			System.out.print(patientExternalId);
 			pAdmissions = admissionService.findAdmissionsByPatientExternalId(patientExternalId, admissionStatus, paging);
 		} 
-//		
+	
 		if( ObjectUtils.isNotEmpty(cellPhone)  ) {
 			pAdmissions = admissionService.findAdmissionsByCellPhone(cellPhone, admissionStatus, paging);
 		} 
-//		
+		
 		if( ObjectUtils.isNotEmpty(cnamNumber)  ) {
 			pAdmissions = admissionService.findAdmissionsByCnamNumber(cnamNumber, admissionStatus, paging);
 		} 
-//		
+		
 		if( ObjectUtils.isNotEmpty(idCardNumber)  ) {
 			pAdmissions = admissionService.findAdmissionsByIdCardNumber(idCardNumber, admissionStatus, paging);
 		} 
@@ -154,9 +134,9 @@ public class AdmissionController {
 			pAdmissions = admissionService.findAdmissionsByService(service, admissionStatus, paging);
 		} 
 		
-//		if( ObjectUtils.isNotEmpty(fromDate) ||  ObjectUtils.isNotEmpty(toDate) ) {
-//			pAdmissions = admissionService.findAdmissionsByDate(date1, date2, admissionStatus, paging);
-//		}
+		if( ObjectUtils.isNotEmpty(date)) {
+			pAdmissions = admissionService.findAdmissiondByDate(date, paging);
+		}
 	
 		List<Admission> lAdmissions = pAdmissions.getContent();
 

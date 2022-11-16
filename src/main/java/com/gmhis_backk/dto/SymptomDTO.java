@@ -4,14 +4,18 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * 
+ * @author Hamed soumahoro
+ *
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BillHasInsuredDto {
-	Long admission;
-	Long bill;
-	Long insured;
-	Long insurrance;
-	int insuredCoverage;
-	int insuredPart;
+public class SymptomDTO {
+
+	private Long id;
+	private String name;
+	private Boolean active;
+
 }

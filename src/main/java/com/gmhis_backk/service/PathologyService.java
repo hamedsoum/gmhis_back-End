@@ -22,6 +22,8 @@ public interface PathologyService {
 	 Page<Pathology> findAllPathologyByName(String name, Pageable pageable);
 	  
 	  List<Pathology> findAllPathology();
+	  
+	  List<Pathology> findAllActive();
 		
 	  Optional<Pathology> getPathologyDetails(Long id); 
 	  
