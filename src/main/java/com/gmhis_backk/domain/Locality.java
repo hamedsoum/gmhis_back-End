@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,7 +15,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * @author pascal
+ * @author Hamed soumahoro
  * 
  */
 @Entity
@@ -46,10 +47,6 @@ public class Locality implements Serializable {
 
 	@Column(name = "zip_code", nullable = true)
 	private String zipCode;
-
-	@JsonBackReference
-	@OneToMany(mappedBy = "locality")
-	private List<Facility> facilities;
 
 	@JsonBackReference
 	@ManyToOne

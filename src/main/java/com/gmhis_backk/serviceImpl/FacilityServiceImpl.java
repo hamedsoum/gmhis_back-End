@@ -13,14 +13,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gmhis_backk.AppUtils;
+import com.gmhis_backk.domain.FaciityCategory;
 import com.gmhis_backk.domain.Facility;
+import com.gmhis_backk.domain.FacilityType;
 import com.gmhis_backk.domain.User;
 import com.gmhis_backk.dto.FacilityDTO;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
 import com.gmhis_backk.repository.FacilityRepository;
 import com.gmhis_backk.repository.UserRepository;
+import com.gmhis_backk.service.FacilityCategoryService;
 import com.gmhis_backk.service.FacilityService;
+import com.gmhis_backk.service.FacilityTypeService;
 
 @Service
 @Transactional
@@ -32,7 +36,12 @@ public class FacilityServiceImpl implements FacilityService{
 	@Autowired
 	private UserRepository userRepository;
 	
+	@Autowired 
+	FacilityTypeService facilityTypeService;
 	
+	
+	@Autowired 
+	FacilityCategoryService facilityCategoryService;
 	protected User getCurrentUserId() {
 		return this.userRepository.findUserByUsername(AppUtils.getUsername());
 	}
@@ -43,8 +52,20 @@ public class FacilityServiceImpl implements FacilityService{
 		if (facilityByName != null) {
 			throw new ResourceNameAlreadyExistException("le centre de santé existe déjà");
 		}
+		
+//		 FacilityType facilityType = facilityTypeService.findFacilityTypeById(facilityDto.getFacilityType()).orElse(null);
+//			if (facilityType == null) {
+//				throw new ResourceNotFoundByIdException("aucun type de centre de sante trouvé pour l'identifiant " );
+//			}
+//		
+//		FaciityCategory facilityCategory = facilityCategoryService.findFaciityCategoryById(facilityDto.getFacilityCategory()).orElse(null);
+//				if (facilityCategory == null) {
+//					throw new ResourceNotFoundByIdException("aucune categorie de centre de sante trouvé pour l'identifiant " );
+//				}
 		Facility facility = new Facility();
 		BeanUtils.copyProperties(facilityDto,facility,"id");
+//		facility.setFacilityType(facilityType);
+//		facility.setFacilityCategory(facilityCategory);
 		facility.setCreatedAt(new Date());
 		facility.setCreatedBy(getCurrentUserId().getId());
 		return facilityRepository.save(facility);

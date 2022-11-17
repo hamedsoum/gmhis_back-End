@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gmhis_backk.domain.Admission;
 import com.gmhis_backk.domain.Facility;
 import com.gmhis_backk.domain.User;
 import com.gmhis_backk.dto.FacilityDTO;
@@ -87,11 +86,10 @@ public class FacilityController {
 			
 		List<Map<String, Object>> facilities = this.getMapFromFacilityList(lFacilities);
 		response.put("items", facilities);
-		response.put("totalElements", pFacilities.getTotalElements());
+		response.put("currentPage", pFacilities.getNumber());
+		response.put("totalItems", pFacilities.getTotalElements());
 		response.put("totalPages", pFacilities.getTotalPages());
 		response.put("size", pFacilities.getSize());
-		response.put("pageNumber", pFacilities.getNumber());
-		response.put("numberOfElements", pFacilities.getNumberOfElements());
 		response.put("first", pFacilities.isFirst());
 		response.put("last", pFacilities.isLast());
 		response.put("empty", pFacilities.isEmpty());
@@ -115,9 +113,11 @@ public class FacilityController {
 			facilitiesMap.put("localCode", facilityDto.getLocalCode());
 			facilitiesMap.put("longitude", facilityDto.getLongitude());
 			facilitiesMap.put("shortName", facilityDto.getShortName());
-			facilitiesMap.put("locality", facilityDto.getLocality().getName());
+//			facilitiesMap.put("locality", facilityDto.getLocality().getName());
 			facilitiesMap.put("createdAt", facilityDto.getCreatedAt());
 			facilitiesMap.put("updatedAt", facilityDto.getUpdatedAt());
+			facilitiesMap.put("faciityType", facilityDto.getFacilityType().getName());
+			facilitiesMap.put("faciityCategory", facilityDto.getFacilityCategory().getName());
 			facilitiesMap.put("createdByLogin", ObjectUtils.isEmpty(createdBy) ? "--" : createdBy.getLogin());
 			facilitiesMap.put("createdByFirstName", ObjectUtils.isEmpty(createdBy) ? "--" : createdBy.getFirstName());
 			facilitiesMap.put("createdByLastName", ObjectUtils.isEmpty(createdBy) ? "--" : createdBy.getLastName());
@@ -138,6 +138,8 @@ public class FacilityController {
 			Map<String, Object> facilityMap = new HashMap<>();
 			facilityMap.put("id", facilityDto.getId());
 			facilityMap.put("name", facilityDto.getName());
+			facilityMap.put("faciityType", facilityDto.getFacilityType().getName());
+
 			actCodeList.add(facilityMap);
 		});
 		
@@ -153,11 +155,8 @@ public class FacilityController {
 		response.put("id", falicity.getId());
 		response.put("facilityName", falicity.getName());
 		response.put("facilityShortNameName", falicity.getShortName());
-//		response.put("patientExternalId", admission.getPatient().getPatientExternalId());
-//		response.put("act", admission.getAct().getId());
-//		response.put("admissionDate", admission.getAdmissionStartDate());
-//		response.put("service", admission.getService().getId());
-//		response.put("practician", admission.getPractician().getId());
+		response.put("faciityType", falicity.getFacilityType().getName());
+		response.put("faciityCategory", falicity.getFacilityCategory().getName());
 		return new ResponseEntity<>(response,HttpStatus.OK);
 	}
 	

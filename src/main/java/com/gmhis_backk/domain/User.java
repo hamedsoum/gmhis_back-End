@@ -1,5 +1,6 @@
 package com.gmhis_backk.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
@@ -12,12 +13,11 @@ import javax.persistence.*;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
-import java.sql.Time;
 import java.util.Date;
 
 /**
  * 
- * @author Mathurin
+ * @author Hamed soumahoro
  *
  */
 @Entity
@@ -25,6 +25,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Getter
 @Setter
+@Table(name = "user")
 public class User implements Serializable{
  
 	private static final long serialVersionUID = 1L;
@@ -68,6 +69,15 @@ public class User implements Serializable{
     private boolean isNotLocked;
     
     private boolean passwordMustBeChange;
+    
+    @Column(name = "facility_id")
+	private String facilityId;
+    
+    
+	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "facility_id", insertable = false, updatable = false)
+	private Facility facility;
     
 //    private Long hotelId;
     

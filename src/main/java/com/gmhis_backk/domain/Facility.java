@@ -6,6 +6,8 @@ import javax.persistence.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -70,7 +72,26 @@ public class Facility implements Serializable {
 	@Column(name = "locality_id")
 	private Long localityId;
 
+	
+	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "locality_id", insertable = false, updatable = false)
 	private Locality locality;
+	
+	@Column(name = "facility_type_id")
+	private String facilityTypeId;
+	
+	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "facility_type_id", insertable = false, updatable = false)
+	private FacilityType facilityType;
+	
+	
+	@Column(name = "facility_category_id")
+	private String facilityCategoryId;
+	
+	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "facility_category_id", insertable = false, updatable = false)
+	private FaciityCategory facilityCategory;
 }

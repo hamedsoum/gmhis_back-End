@@ -1,6 +1,9 @@
 package com.gmhis_backk.dto;
 
 
+import java.util.UUID;
+
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,5 +27,8 @@ public class FacilityDTO {
 	private float longitude;
 	private String shortName;
     private Long localityId;
-
+    private String facilityCategoryId;
+    private String facilityTypeId;
+//    private UUID facilityCategory;
+//    private UUID facilityType;
 }

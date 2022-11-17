@@ -1,20 +1,16 @@
 package com.gmhis_backk.domain;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,18 +21,19 @@ import lombok.NoArgsConstructor;
  * 
  */
 @Entity
-@Table(name = "facility_type")
+@Table(name = "facility_category")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class FacilityType implements Serializable {
+public class FaciityCategory implements Serializable  {
 	private static final long serialVersionUID = 1L;
+
 	
 	@Id
 	 @GeneratedValue(generator = "uuid2")
-   @GenericGenerator(name = "uuid2", strategy = "uuid2")
-   @Column(name = "id", updatable = false, nullable = false, columnDefinition = "VARCHAR(36)")
-   @Type(type = "uuid-char")
+  @GenericGenerator(name = "uuid2", strategy = "uuid2")
+  @Column(name = "id", updatable = false, nullable = false, columnDefinition = "VARCHAR(36)")
+  @Type(type = "uuid-char")
 	private UUID id;
 
 	@Column

@@ -35,7 +35,6 @@ import com.gmhis_backk.service.UserService;
 import javax.mail.MessagingException;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -44,13 +43,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.gmhis_backk.constant.UserImplConstant.*;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 
 
 /**
  * 
- * @author Mathurin
+ * @author Hamed soumahoro
  *
  */
 @Service
@@ -124,16 +122,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		return user;
 	}
 
-	@Override
+	@Override @Transactional
 	public User addNewUser(UserDto userDto)
 			throws UserNotFoundException, UsernameExistException, EmailExistException, IOException,
 			NotAnImageFileException, ResourceNotFoundByIdException, MessagingException, InvalidInputException {
 
-		validateFirstNameAndLastNameAndPassword(userDto.getFirstName(), userDto.getLastName(), null, null);
+//		validateFirstNameAndLastNameAndPassword(userDto.getFirstName(), userDto.getLastName(), null, null);
+//
+//		validateNewUsernameAndEmail(EMPTY, null, userDto.getEmail(), userDto.getTel());
 
-		validateNewUsernameAndEmail(EMPTY, null, userDto.getEmail(), userDto.getTel());
-
-	
+	    System.out.println(userDto.getFacilityId());
 		User user = new User();
 		BeanUtils.copyProperties(userDto, user,"id");
 		String password = generatePassword();
@@ -142,12 +140,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		String username = generateUsername(user);
 		user.setJoinDate(new Date());
 		user.setUsername(username);
-	
+
 		user.setPassword(encodePassword(password));
 		if (userDto.getRoles().size() != 0)
 			user.setRoleIds(StringUtils.join(userDto.getRoles(), ","));
 		user.setNotLocked(true);
-		user.setPasswordMustBeChange(true);
+		user.setPasswordMustBeChange(true); 
 		user = userRepository.save(user);
 		if (userDto.getRoles().size() != 0) {
 			for (int i = 0; i < userDto.getRoles().size(); i++) {
@@ -156,8 +154,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		}
 		
 		this.setUserRoleAndAuthorities(user);
-		emailService.sendNewPasswordEmail(user.getFirstName(), username, password, user.getEmail());
-//		eventLogService.addEvent("creation de l'utilisateur: " + user.getFirstName() + " " + user.getLastName(),user.getClass().getSimpleName());
+//		emailService.sendNewPasswordEmail(user.getFirstName(), username, password, user.getEmail());
+		eventLogService.addEvent("creation de l'utilisateur: " + user.getFirstName() + " " + user.getLastName(),user.getClass().getSimpleName());
 		return user;
 	}
 

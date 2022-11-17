@@ -1,12 +1,13 @@
 package com.gmhis_backk.dto;
 import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 /**
  * 
- * @author Mathurin
+ * @author Hamed soumahoro
  *
  */
 @AllArgsConstructor
@@ -33,6 +34,6 @@ public class UserDto {
     
     private boolean passwordMustBeChange;
     
+    private String facilityId;
 
- 
 }
