@@ -89,6 +89,9 @@ public interface AdmissionRepository extends JpaRepository<Admission, Long> {
 	@Query(value = "SELECT a FROM Admission a WHERE a.admissionStatus= :admissionStatus")
 	public Page<Admission> findAdmissions(@Param("admissionStatus") String admissionStatus, Pageable pageable);
 	
+	@Query(value = "SELECT a FROM Admission a WHERE a.admissionStatus= :admissionStatus")
+	public Page<Admission> findAdmissionsByFacility(@Param("admissionStatus") String admissionStatus, Pageable pageable);
+	
 	@Query(value = "SELECT b FROM Admission b WHERE b.createdAt BETWEEN :start AND :end")
 	Page<Admission> findByDate(Date start, Date end, Pageable pageable);
 
