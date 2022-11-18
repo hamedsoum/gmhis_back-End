@@ -17,7 +17,6 @@ import com.gmhis_backk.AppUtils;
 import com.gmhis_backk.domain.Act;
 import com.gmhis_backk.domain.Admission;
 import com.gmhis_backk.domain.Bill;
-import com.gmhis_backk.domain.BillHasInsured;
 import com.gmhis_backk.domain.Patient;
 import com.gmhis_backk.domain.Pratician;
 import com.gmhis_backk.domain.User;
@@ -110,6 +109,7 @@ public class AdmissionServiceImpl implements AdmissionService{
 		admission.setService(service);
 		admission.setAdmissionStartDate(new Date());
         admission.setAdmissionStatus("R");
+        admission.setFacilityId(this.getCurrentUserId().getFacilityId());;
         admission.setCreatedAt(new Date());
 		admission.setCreatedBy(getCurrentUserId().getId());
 		return repo.save(admission);
@@ -158,59 +158,60 @@ public class AdmissionServiceImpl implements AdmissionService{
 	}
 	
 	@Override
-	public Page<Admission> findAdmissionsByPatientName (String firstName, String lastName, String admissionStatus, Pageable pageable){
-		return repo.findAdmissionsByPatientName(firstName, lastName, admissionStatus, pageable);
+	public Page<Admission> findAdmissionsByPatientName (String firstName, String lastName, String admissionStatus,String facilityId, Pageable pageable){
+		System.out.print(facilityId);
+		return repo.findAdmissionsByPatientName(firstName, lastName, admissionStatus ,facilityId, pageable);
 	}
 
 	@Override
-    public Page<Admission> findAdmissionsByAdmissionNumber(String admissionNumber, String admissionStatus, Pageable pageable){
-		return repo.findAdmissionsByAdmissionNumber(admissionNumber, admissionStatus, pageable);
+    public Page<Admission> findAdmissionsByAdmissionNumber(String admissionNumber, String admissionStatus,String facilityId, Pageable pageable){
+		return repo.findAdmissionsByAdmissionNumber(admissionNumber, admissionStatus,facilityId, pageable);
 	}
 	
 	@Override
-	public Page<Admission> findAdmissionsByPatientExternalId(String patientExternalId, String admissionStatus, Pageable pageable){
-		return repo.findAdmissionsByPatientExternalId(patientExternalId, admissionStatus, pageable);
+	public Page<Admission> findAdmissionsByPatientExternalId(String patientExternalId, String admissionStatus,String facilityId, Pageable pageable){
+		return repo.findAdmissionsByPatientExternalId(patientExternalId, admissionStatus,facilityId, pageable);
 	}
 	
 	@Override
-	public Page<Admission> findAdmissionsByCellPhone(String cellPhone, String admissionStatus,  Pageable pageable){
-		return repo.findAdmissionsByCellPhone(cellPhone, admissionStatus, pageable);
+	public Page<Admission> findAdmissionsByCellPhone(String cellPhone, String admissionStatus,String facilityId,  Pageable pageable){
+		return repo.findAdmissionsByCellPhone(cellPhone, admissionStatus,facilityId, pageable);
 	}
 	
 	@Override
-	public Page<Admission> findAdmissionsByCnamNumber(String cnamNumber, String admissionStatus, Pageable pageable){
-		return repo.findAdmissionsByCnamNumber(cnamNumber, admissionStatus, pageable);
+	public Page<Admission> findAdmissionsByCnamNumber(String cnamNumber, String admissionStatus,String facilityId, Pageable pageable){
+		return repo.findAdmissionsByCnamNumber(cnamNumber, admissionStatus,facilityId, pageable);
 	}
 	
 	@Override
-	public Page<Admission> findAdmissionsByIdCardNumber(String idCardNumber, String admissionStatus, Pageable pageable){
-		return repo.findAdmissionsByIdCardNumber(idCardNumber, admissionStatus, pageable);
+	public Page<Admission> findAdmissionsByIdCardNumber(String idCardNumber, String admissionStatus,String facilityId, Pageable pageable){
+		return repo.findAdmissionsByIdCardNumber(idCardNumber, admissionStatus,facilityId, pageable);
 	}
 	
 	@Override
-	public Page<Admission> findAdmissionsByPractician(Long practician, String admissionStatus, Pageable pageable){
-		return repo.findAdmissionsByPractician(practician, admissionStatus, pageable);
+	public Page<Admission> findAdmissionsByPractician(Long practician, String admissionStatus,String facilityId, Pageable pageable){
+		return repo.findAdmissionsByPractician(practician, admissionStatus,facilityId, pageable);
 	}
 		
 	@Override
-	public Page<Admission> findAdmissionsByAct(Long act, String admissionStatus, Pageable pageable){
-		return repo.findAdmissionsByAct(act, admissionStatus, pageable);
+	public Page<Admission> findAdmissionsByAct(Long act, String admissionStatus,String facilityId, Pageable pageable){
+		return repo.findAdmissionsByAct(act, admissionStatus,facilityId, pageable);
 	}
 	
 	@Override
-	public Page<Admission> findAdmissionsByService(Long service, String admissionStatus, Pageable pageable){
-		return repo.findAdmissionsByService(service, admissionStatus, pageable);
+	public Page<Admission> findAdmissionsByService(Long service, String admissionStatus,String facilityId, Pageable pageable){
+		return repo.findAdmissionsByService(service, admissionStatus,facilityId, pageable);
 	}
 	
 	@Override
-	public Page<Admission> findAdmissionsByDate (Date fromDate, Date toDate, String admissionStatus, Pageable pageable){
+	public Page<Admission> findAdmissionsByDate (Date fromDate, Date toDate, String admissionStatus,String facilityId, Pageable pageable){
 		System.out.print(fromDate);
-		return repo.findAdmissionByDate(fromDate, toDate, admissionStatus, pageable);
+		return repo.findAdmissionByDate(fromDate, toDate, admissionStatus,facilityId, pageable);
 	}
 	
 	@Override
-	public Page<Admission> findAdmissions(String admissionStatus, Pageable pageable){
-		return repo.findAdmissions(admissionStatus, pageable);
+	public Page<Admission> findAdmissions(String admissionStatus,String facilityId, Pageable pageable){
+		return repo.findAdmissions(admissionStatus,facilityId, pageable);
 	}
 	
 	@Override
@@ -219,8 +220,8 @@ public class AdmissionServiceImpl implements AdmissionService{
 	}
 	
 	@Override
-	public Page<Admission> findAdmissionsInQueue(Long waitingRoom, Pageable pageable){
-		return repo.findAdmissionsInQueue(waitingRoom,pageable);
+	public Page<Admission> findAdmissionsInQueue(Long waitingRoom,String facilityId, Pageable pageable){
+		return repo.findAdmissionsInQueue(waitingRoom,facilityId,pageable);
 	}
 		
 	@Override
@@ -307,10 +308,17 @@ public class AdmissionServiceImpl implements AdmissionService{
 
 
 	@Override
-	public Page<Admission> findAdmissiondByDate(String date, Pageable pageable) throws ParseException {
+	public Page<Admission> findAdmissiondByDate(String date,String facilityId, Pageable pageable) throws ParseException {
 		String[] dates = date.split(","); 
 		return repo.findByDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dates[0]+" 00:00:00"),
-				new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dates[1]+" 23:59:59"), pageable);
+				new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dates[1]+" 23:59:59"),facilityId, pageable);
+	}
+
+
+	@Override
+	public Page<Admission> findAdmissionsByFacility(String facilityId, String admissionStatus, Pageable pageable) {
+		System.out.print(facilityId);
+		return repo.findAdmissionsByFacility( admissionStatus, facilityId, pageable);
 	}
 
 

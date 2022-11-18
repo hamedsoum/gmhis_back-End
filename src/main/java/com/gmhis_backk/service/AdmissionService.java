@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,31 +46,31 @@ public interface AdmissionService {
 	
 	public void deleteById(Long id);
 	
-	public Page<Admission> findAdmissions(String admissionStatus, Pageable pageable);
+	public Page<Admission> findAdmissions(String admissionStatus,String facilityId, Pageable pageable);
 	
-	public Page<Admission> findAdmissionsByPatientName (String firstName, String lastName, String admissionStatus, Pageable pageable);
+	public Page<Admission> findAdmissionsByPatientName (String firstName, String lastName, String admissionStatus,String facilityId, Pageable pageable);
 	
-	public Page<Admission> findAdmissionsByAdmissionNumber(String admissionNumber, String admissionStatus, Pageable pageable);
+	public Page<Admission> findAdmissionsByAdmissionNumber(String admissionNumber, String admissionStatus,String facilityId, Pageable pageable);
 	
-	public Page<Admission> findAdmissionsByPatientExternalId(String patientExternalId, String admissionStatus, Pageable pageable);
+	public Page<Admission> findAdmissionsByPatientExternalId(String patientExternalId, String admissionStatus,String facilityId, Pageable pageable);
 	
-	public Page<Admission> findAdmissionsByCellPhone(String cellPhone, String admissionStatus,  Pageable pageable);
+	public Page<Admission> findAdmissionsByCellPhone(String cellPhone, String admissionStatus,String facilityId,  Pageable pageable);
 	
-	public Page<Admission> findAdmissionsByCnamNumber(String cnamNumber, String admissionStatus, Pageable pageable);
+	public Page<Admission> findAdmissionsByCnamNumber(String cnamNumber, String admissionStatus,String facilityId, Pageable pageable);
 	
-	public Page<Admission> findAdmissionsByIdCardNumber(String idCardNumber, String admissionStatus, Pageable pageable);
+	public Page<Admission> findAdmissionsByIdCardNumber(String idCardNumber, String admissionStatus,String facilityId, Pageable pageable);
 	
-	public Page<Admission> findAdmissionsByPractician(Long practician, String admissionStatus, Pageable pageable);
+	public Page<Admission> findAdmissionsByPractician(Long practician, String admissionStatus,String facilityId, Pageable pageable);
 		
-	public Page<Admission> findAdmissionsByAct(Long act, String admissionStatus, Pageable pageable);
+	public Page<Admission> findAdmissionsByAct(Long act, String admissionStatus,String facilityId, Pageable pageable);
 	
-	public Page<Admission> findAdmissionsByService(Long service, String admissionStatus, Pageable pageable);
+	public Page<Admission> findAdmissionsByService(Long service, String admissionStatus,String facilityId, Pageable pageable);
 	
-	public Page<Admission> findAdmissionsByDate (Date fromDate, Date toDate, String admissionStatus, Pageable pageable);
+	public Page<Admission> findAdmissionsByDate (Date fromDate, Date toDate, String admissionStatus,String facilityId, Pageable pageable);
 	
 	public void setAdmissionStatusToBilled(Long id);
 	
-	public Page<Admission> findAdmissionsInQueue (Long waitingRoom, Pageable pageable) ;
+	public Page<Admission> findAdmissionsInQueue (Long waitingRoom,String facilityId, Pageable pageable) ;
 	
     public Page<Admission> findAdmissionsInQueueByPatientName (String firstName, String lastName, Long waitingRoom, Pageable pageable);
 	
@@ -91,8 +92,10 @@ public interface AdmissionService {
 	
 	public Page<Admission> findAdmissionsInQueueByDate (Date fromDate, Date toDate, Long waitingRoom, Pageable pageable);
 	
-	public Page<Admission>findAdmissiondByDate(String date, Pageable pageable) throws ParseException ;
+	public Page<Admission>findAdmissiondByDate(String date,String facilityId, Pageable pageable) throws ParseException ;
 
+	public Page<Admission>findAdmissionsByFacility(String facilityId ,String admissionStatus, Pageable pageable);
 	
+
 
 }

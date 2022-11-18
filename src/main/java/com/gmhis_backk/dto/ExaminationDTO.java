@@ -21,7 +21,7 @@ public class ExaminationDTO {
 	private String conclusion;
 	private Date endDate;
 	private String examinationType;
-	private Long facility;
+//	private Long facility;
 	private String history;
 	private Date startDate;
 	private Long admission;

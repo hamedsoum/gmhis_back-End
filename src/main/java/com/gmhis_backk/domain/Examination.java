@@ -4,6 +4,7 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -40,8 +41,12 @@ public class Examination implements Serializable {
 	@Column(name = "examination_type")
 	private String examinationType;
 
-	@ManyToOne
-	@JoinColumn(name = "facility_Id")
+	 @Column(name = "facility_id", nullable = true)
+		private String facilityId;
+		    
+	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "facility_id", insertable = false, updatable = false)
 	private Facility facility;
 
 	@Lob

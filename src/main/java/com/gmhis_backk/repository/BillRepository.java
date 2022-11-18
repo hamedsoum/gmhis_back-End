@@ -30,8 +30,8 @@ public interface BillRepository extends JpaRepository<Bill, Long>{
 	@Query(value = "SELECT b FROM Bill b WHERE b.admission.id = :admissionId")
 	public List<Bill > findBillByAdmissionId(Long admissionId);
 	
-	@Query(value = "SELECT b FROM Bill b WHERE b.admission.patient.firstName like %:firstName% and  (b.admission.patient.lastName like %:lastName% or b.admission.patient.maidenName like %:lastName% ) and b.billStatus= :billStatus")
-	public Page<Bill> findBillsByPatientName(@Param("firstName") String firstName, @Param("lastName") String lastName, @Param("billStatus") String billStatus, Pageable pageable);
+	@Query(value = "SELECT b FROM Bill b WHERE b.admission.patient.firstName like %:firstName% and  (b.admission.patient.lastName like %:lastName% or b.admission.patient.maidenName like %:lastName% ) and b.billStatus= :billStatus AND b.admission.facilityId =:facilityId ")
+	public Page<Bill> findBillsByPatientName(@Param("firstName") String firstName, @Param("lastName") String lastName, @Param("billStatus") String billStatus, @Param("facilityId") String facilityId, Pageable pageable);
 	
 	@Query(value = "SELECT b FROM Bill b WHERE b.admission.admissionNumber like %:admissionNumber% and b.billStatus= :billStatus")
     public Page<Bill> findBillsByAdmissionNumber(@Param("admissionNumber") String admissionNumber, @Param("billStatus") String billStatus, Pageable pageable);
@@ -67,8 +67,8 @@ public interface BillRepository extends JpaRepository<Bill, Long>{
 	@Query(value = "SELECT b FROM Bill b WHERE b.billStatus='N'")
 	public Page<Bill> findByBillStatus(String status, Pageable pageable);
 	
-	@Query(value = "SELECT b FROM Bill b WHERE b.billStatus= :billStatus")
-	public Page<Bill> findBills(@Param("billStatus") String billStatus, Pageable pageable);
+	@Query(value = "SELECT b FROM Bill b WHERE b.billStatus= :billStatus AND b.admission.facilityId =:facilityId ")
+	public Page<Bill> findBills(@Param("billStatus") String billStatus,@Param("facilityId") String facilityId, Pageable pageable);
 	
 	
 	@Modifying

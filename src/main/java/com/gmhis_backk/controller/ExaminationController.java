@@ -66,9 +66,9 @@ public class ExaminationController {
 	@PostMapping("/add")
 	public ResponseEntity<Examination> addExaminations(@RequestBody ExaminationDTO examinationDto) throws ResourceNameAlreadyExistException,
 	ResourceNotFoundByIdException{
-	    System.out.println(examinationDto.toString());
+//	    System.out.println(examinationDto.toString());
 	    
-
+	    	System.out.print(this.getCurrentUserId().getFacilityId());
 		
 		 Admission admission = admissionService.findAdmissionById(examinationDto.getAdmission()).orElse(null);
 			if (admission == null) {
@@ -90,8 +90,8 @@ public class ExaminationController {
 				examination.setExaminationReasons(examinationDto.getExaminationReasons());
 				examination.setExaminationType(examinationDto.getExaminationType());
 				examination.setConclusionExamResult(examinationDto.getConclusionExamResult());
-//				examination.setFacility(this.getFacility()); 
-				examination.setFacility(facility); 
+				examination.setFacilityId(this.getCurrentUserId().getFacilityId());
+//				examination.setFacility(facility); 
 				examination.setHistory(examinationDto.getHistory());
 				examination.setPratician(practician);
 	      		examination.setStartDate(new Date());

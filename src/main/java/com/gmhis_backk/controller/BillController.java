@@ -572,7 +572,7 @@ public class BillController {
 		Date date1 = cDate1.getTime();
 		Date date2 = cDate2.getTime();
 
-		pBills = billService.findBills(billStatus, pageable);
+		pBills = billService.findBills(billStatus,this.getCurrentUserId().getFacilityId(), pageable);
 
 		if (ObjectUtils.isNotEmpty(billNumber)) {
 			pBills = billService.findBillsByBillNumber(billNumber, billStatus, pageable);
@@ -583,7 +583,7 @@ public class BillController {
 		}
 
 		if (ObjectUtils.isNotEmpty(firstName) || ObjectUtils.isNotEmpty(lastName)) {
-			pBills = billService.findBillsByPatientName(firstName, lastName, billStatus, pageable);
+			pBills = billService.findBillsByPatientName(firstName, lastName, billStatus,this.getCurrentUserId().getFacilityId(), pageable);
 		}
 
 		if (ObjectUtils.isNotEmpty(patientExternalId)) {
@@ -1084,5 +1084,6 @@ public class BillController {
 		  });
 		  return bList;
 	}
+
 
 }

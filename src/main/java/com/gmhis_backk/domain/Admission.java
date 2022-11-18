@@ -116,13 +116,14 @@ public class Admission implements Serializable {
 	@OneToMany(mappedBy = "admission")
 	private List<Examination> examinations;
 	
-	 @Column(name = "facility_id")
-		private String facilityId;
+	
+	 
+	 @Column(name = "facility_id", nullable = true)
+	private String facilityId;
 	    
-	    
-		@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-		@ManyToOne(fetch = FetchType.LAZY)
-		@JoinColumn(name = "facility_id", insertable = false, updatable = false)
-		private Facility facility;
+	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "facility_id", insertable = false, updatable = false)
+	private Facility facility;
 
 }

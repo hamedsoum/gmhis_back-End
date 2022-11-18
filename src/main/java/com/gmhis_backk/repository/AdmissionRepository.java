@@ -46,60 +46,60 @@ public interface AdmissionRepository extends JpaRepository<Admission, Long> {
 
 	// admissions
 	/****************************************************************************/
-	@Query(value = "SELECT a FROM Admission a WHERE a.patient.firstName like %:firstName% and  (a.patient.lastName like %:lastName% or a.patient.maidenName like %:lastName% ) and a.admissionStatus= :admissionStatus")
+	@Query(value = "SELECT a FROM Admission a WHERE a.patient.firstName like %:firstName% and  (a.patient.lastName like %:lastName% or a.patient.maidenName like %:lastName% ) and a.admissionStatus= :admissionStatus  AND a.facilityId =:facilityId")
 	public Page<Admission> findAdmissionsByPatientName(@Param("firstName") String firstName,
-			@Param("lastName") String lastName, @Param("admissionStatus") String admissionStatus, Pageable pageable);
+			@Param("lastName") String lastName, @Param("admissionStatus") String admissionStatus, @Param("facilityId") String facilityId, Pageable pageable);
 
-	@Query(value = "SELECT a FROM Admission a WHERE a.admissionNumber like %:admissionNumber% and a.admissionStatus= :admissionStatus")
+	@Query(value = "SELECT a FROM Admission a WHERE a.admissionNumber like %:admissionNumber% and a.admissionStatus= :admissionStatus AND a.facilityId =:facilityId")
 	public Page<Admission> findAdmissionsByAdmissionNumber(@Param("admissionNumber") String admissionNumber,
-			@Param("admissionStatus") String admissionStatus, Pageable pageable);
+			@Param("admissionStatus") String admissionStatus, @Param("facilityId") String facilityId, Pageable pageable);
 
-	@Query(value = "SELECT a FROM Admission a WHERE a.patient.patientExternalId like %:patientExternalId% and a.admissionStatus= :admissionStatus")
+	@Query(value = "SELECT a FROM Admission a WHERE a.patient.patientExternalId like %:patientExternalId% and a.admissionStatus= :admissionStatus AND a.facilityId =:facilityId")
 	public Page<Admission> findAdmissionsByPatientExternalId(@Param("patientExternalId") String patientExternalId,
-			@Param("admissionStatus") String admissionStatus, Pageable pageable);
+			@Param("admissionStatus") String admissionStatus, @Param("facilityId") String facilityId, Pageable pageable);
 
-	@Query(value = "SELECT a FROM Admission a WHERE a.patient.cellPhone1 like %:cellPhone% or a.patient.cellPhone2 like %:cellPhone% and a.admissionStatus= :admissionStatus")
+	@Query(value = "SELECT a FROM Admission a WHERE a.patient.cellPhone1 like %:cellPhone% or a.patient.cellPhone2 like %:cellPhone% and a.admissionStatus= :admissionStatus AND a.facilityId =:facilityId")
 	public Page<Admission> findAdmissionsByCellPhone(@Param("cellPhone") String cellPhone,
-			@Param("admissionStatus") String admissionStatus, Pageable pageable);
+			@Param("admissionStatus") String admissionStatus, @Param("facilityId") String facilityId, Pageable pageable);
 
-	@Query(value = "SELECT a FROM Admission a WHERE a.patient.cnamNumber like %:cnamNumber% and a.admissionStatus= :admissionStatus")
+	@Query(value = "SELECT a FROM Admission a WHERE a.patient.cnamNumber like %:cnamNumber% and a.admissionStatus= :admissionStatus AND a.facilityId =:facilityId")
 	public Page<Admission> findAdmissionsByCnamNumber(@Param("cnamNumber") String cnamNumber,
-			@Param("admissionStatus") String admissionStatus, Pageable pageable);
+			@Param("admissionStatus") String admissionStatus,@Param("facilityId") String facilityId, Pageable pageable);
 
-	@Query(value = "SELECT a FROM Admission a WHERE a.patient.idCardNumber like %:idCardNumber% and a.admissionStatus= :admissionStatus")
+	@Query(value = "SELECT a FROM Admission a WHERE a.patient.idCardNumber like %:idCardNumber% and a.admissionStatus= :admissionStatus AND a.facilityId =:facilityId")
 	public Page<Admission> findAdmissionsByIdCardNumber(@Param("idCardNumber") String idCardNumber,
-			@Param("admissionStatus") String admissionStatus, Pageable pageable);
+			@Param("admissionStatus") String admissionStatus,@Param("facilityId") String facilityId, Pageable pageable);
 
-	@Query(value = "SELECT a FROM Admission a WHERE a.practician.id = :practician and a.admissionStatus= :admissionStatus")
+	@Query(value = "SELECT a FROM Admission a WHERE a.practician.id = :practician and a.admissionStatus= :admissionStatus AND a.facilityId =:facilityId")
 	public Page<Admission> findAdmissionsByPractician(@Param("practician") Long practician,
-			@Param("admissionStatus") String admissionStatus, Pageable pageable);
+			@Param("admissionStatus") String admissionStatus,@Param("facilityId") String facilityId, Pageable pageable);
 
-	@Query(value = "SELECT a FROM Admission a WHERE a.act.id = :act  and a.admissionStatus= :admissionStatus")
-	public Page<Admission> findAdmissionsByAct(@Param("act") Long act, @Param("admissionStatus") String admissionStatus,
+	@Query(value = "SELECT a FROM Admission a WHERE a.act.id = :act  and a.admissionStatus= :admissionStatus AND a.facilityId =:facilityId")
+	public Page<Admission> findAdmissionsByAct(@Param("act") Long act, @Param("admissionStatus") String admissionStatus,@Param("facilityId") String facilityId,
 			Pageable pageable);
 
-	@Query(value = "SELECT a FROM Admission a WHERE a.service.id = :service and a.admissionStatus= :admissionStatus")
+	@Query(value = "SELECT a FROM Admission a WHERE a.service.id = :service and a.admissionStatus= :admissionStatus AND a.facilityId =:facilityId")
 	public Page<Admission> findAdmissionsByService(@Param("service") Long service,
-			@Param("admissionStatus") String admissionStatus, Pageable pageable);
+			@Param("admissionStatus") String admissionStatus,@Param("facilityId") String facilityId, Pageable pageable);
 
-	@Query(value = "SELECT a FROM Admission a WHERE a.createdAt between :fromDate and :toDate and a.admissionStatus= :admissionStatus")
+	@Query(value = "SELECT a FROM Admission a WHERE a.createdAt between :fromDate and :toDate and a.admissionStatus= :admissionStatus AND a.facilityId =:facilityId")
 	public Page<Admission> findAdmissionByDate(@Param("fromDate") Date fromDate, @Param("toDate") Date toDate,
-			@Param("admissionStatus") String admissionStatus, Pageable pageable);
+			@Param("admissionStatus") String admissionStatus,@Param("facilityId") String facilityId, Pageable pageable);
 
-	@Query(value = "SELECT a FROM Admission a WHERE a.admissionStatus= :admissionStatus")
-	public Page<Admission> findAdmissions(@Param("admissionStatus") String admissionStatus, Pageable pageable);
+	@Query(value = "SELECT a FROM Admission a WHERE a.admissionStatus= :admissionStatus AND a.facilityId =:facilityId")
+	public Page<Admission> findAdmissions(@Param("admissionStatus") String admissionStatus,@Param("facilityId") String facilityId, Pageable pageable);
 	
-	@Query(value = "SELECT a FROM Admission a WHERE a.admissionStatus= :admissionStatus")
-	public Page<Admission> findAdmissionsByFacility(@Param("admissionStatus") String admissionStatus, Pageable pageable);
+	@Query(value = "SELECT a FROM Admission a WHERE a.admissionStatus= :admissionStatus AND a.facilityId =:facilityId")
+	public Page<Admission> findAdmissionsByFacility(@Param("admissionStatus") String admissionStatus, @Param("facilityId") String facilityId, Pageable pageable);
 	
-	@Query(value = "SELECT b FROM Admission b WHERE b.createdAt BETWEEN :start AND :end")
-	Page<Admission> findByDate(Date start, Date end, Pageable pageable);
+	@Query(value = "SELECT a FROM Admission a WHERE a.createdAt BETWEEN :start AND :end AND a.facilityId =:facilityId")
+	Page<Admission> findByDate(Date start, Date end,@Param("facilityId") String facilityId, Pageable pageable);
 
 	// admissions queues
 	/*******************************************************************************/
 
-	@Query(value = "SELECT * FROM admission a, bill b, payment p, pratician pr, service s WHERE a.id=b.admission_id and b.id = p.bill_id and a.service_id = pr.service_id and s.waiting_room_id = :waiting_room and a.admission_status = 'B' and b.bill_status = 'C' and admission_end_date is null GROUP by a.id ", nativeQuery = true)
-	public Page<Admission> findAdmissionsInQueue(Long waiting_room, Pageable pageable);
+	@Query(value = "SELECT * FROM admission a, bill b, payment p, pratician pr, service s WHERE a.id=b.admission_id and a.facility_id =:facilityId and b.id = p.bill_id and a.service_id = pr.service_id and s.waiting_room_id = :waiting_room and a.admission_status = 'B' and b.bill_status = 'C' and admission_end_date is null GROUP by a.id ", nativeQuery = true)
+	public Page<Admission> findAdmissionsInQueue(Long waiting_room,@Param("facilityId") String facilityId, Pageable pageable);
 
 	@Query(value = "SELECT * FROM admission a, bill b, payment p, patient pa, pratician pr, service s  WHERE a.id=b.admission_id and b.id = p.bill_id and a.patient_id = pa.id and a.service_id = pr.service_id and s.waiting_room_id = :waiting_room  and a.admission_status = 'B' and b.bill_status = 'C' and pa.first_name like %:firstName% and (pa.last_name like %:lastName% or pa.maiden_name like %:lastName%) and admission_end_date is null  GROUP by a.id ", nativeQuery = true)
 	public Page<Admission> findAdmissionsInQueueByPatientName(String firstName, String lastName, Long waiting_room, Pageable pageable);

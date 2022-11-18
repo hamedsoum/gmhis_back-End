@@ -60,8 +60,8 @@ public class BillServiceImpl implements BillService{
 
 	
 	@Override
-	public Page<Bill> findBills(String billStatus, Pageable pageable){
-		return repo.findBills(billStatus, pageable);
+	public Page<Bill> findBills(String billStatus,String facilityId, Pageable pageable){
+		return repo.findBills(billStatus,facilityId, pageable);
 	}
 	
 	@Override
@@ -76,8 +76,8 @@ public class BillServiceImpl implements BillService{
 	}
 	
 	@Override
-    public Page<Bill> findBillsByPatientName (String firstName, String lastName, String billStatus, Pageable pageable){
-		return repo.findBillsByPatientName(firstName, lastName, billStatus, pageable);
+    public Page<Bill> findBillsByPatientName (String firstName, String lastName, String billStatus,String facilityId, Pageable pageable){
+		return repo.findBillsByPatientName(firstName, lastName, billStatus,facilityId, pageable);
 	}
 	
 	@Override

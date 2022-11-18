@@ -81,6 +81,7 @@ public class AdmissionController {
 			@RequestParam(required = false) Long practician,
 			@RequestParam(required = false) Long service,
 			@RequestParam(required = false) Long act,
+			@RequestParam(required = false) String facilityId,
 		    @RequestParam(required = false, defaultValue = "") String date,
 		    @RequestParam(required = true, defaultValue = "R") String admissionStatus,
 			@RequestParam(defaultValue = "id,desc") String[] sort, @RequestParam(defaultValue = "0") int page,
@@ -94,32 +95,32 @@ public class AdmissionController {
 
 		Page<Admission> pAdmissions = null;
 			
-		pAdmissions = admissionService.findAdmissions(admissionStatus, paging); 
-		
+//		pAdmissions = admissionService.findAdmissions(admissionStatus, paging); 
+		pAdmissions = admissionService.findAdmissionsByFacility(this.getCurrentUserId().getFacilityId(),admissionStatus, paging); 	
 		if( ObjectUtils.isNotEmpty(firstName) ||  ObjectUtils.isNotEmpty(lastName) ) {
-			pAdmissions = admissionService.findAdmissionsByPatientName(firstName, lastName, admissionStatus, paging);
+			pAdmissions = admissionService.findAdmissionsByPatientName(firstName, lastName, admissionStatus,this.getCurrentUserId().getFacilityId(), paging);
 		}
 		
 		if( ObjectUtils.isNotEmpty(admissionNumber) ) {
 			System.out.print(admissionNumber);
-			pAdmissions = admissionService.findAdmissionsByAdmissionNumber(admissionNumber, admissionStatus, paging);
+			pAdmissions = admissionService.findAdmissionsByAdmissionNumber(admissionNumber, admissionStatus,this.getCurrentUserId().getFacilityId(), paging);
 		}
 		
 		if( ObjectUtils.isNotEmpty(patientExternalId)  ) {
 			System.out.print(patientExternalId);
-			pAdmissions = admissionService.findAdmissionsByPatientExternalId(patientExternalId, admissionStatus, paging);
+			pAdmissions = admissionService.findAdmissionsByPatientExternalId(patientExternalId, admissionStatus,this.getCurrentUserId().getFacilityId(), paging);
 		} 
 	
 		if( ObjectUtils.isNotEmpty(cellPhone)  ) {
-			pAdmissions = admissionService.findAdmissionsByCellPhone(cellPhone, admissionStatus, paging);
+			pAdmissions = admissionService.findAdmissionsByCellPhone(cellPhone, admissionStatus,this.getCurrentUserId().getFacilityId(), paging);
 		} 
 		
 		if( ObjectUtils.isNotEmpty(cnamNumber)  ) {
-			pAdmissions = admissionService.findAdmissionsByCnamNumber(cnamNumber, admissionStatus, paging);
+			pAdmissions = admissionService.findAdmissionsByCnamNumber(cnamNumber, admissionStatus,this.getCurrentUserId().getFacilityId(), paging);
 		} 
 		
 		if( ObjectUtils.isNotEmpty(idCardNumber)  ) {
-			pAdmissions = admissionService.findAdmissionsByIdCardNumber(idCardNumber, admissionStatus, paging);
+			pAdmissions = admissionService.findAdmissionsByIdCardNumber(idCardNumber, admissionStatus,this.getCurrentUserId().getFacilityId(), paging);
 		} 
 //		
 //		if( ObjectUtils.isNotEmpty(practician) ) {
@@ -127,15 +128,15 @@ public class AdmissionController {
 //		} 
 		
 		if( ObjectUtils.isNotEmpty(act) ) {
-			pAdmissions = admissionService.findAdmissionsByAct(act, admissionStatus, paging);
+			pAdmissions = admissionService.findAdmissionsByAct(act, admissionStatus,this.getCurrentUserId().getFacilityId(), paging);
 		} 
 //		
 		if( ObjectUtils.isNotEmpty(service) ) {
-			pAdmissions = admissionService.findAdmissionsByService(service, admissionStatus, paging);
+			pAdmissions = admissionService.findAdmissionsByService(service, admissionStatus,this.getCurrentUserId().getFacilityId(), paging);
 		} 
 		
 		if( ObjectUtils.isNotEmpty(date)) {
-			pAdmissions = admissionService.findAdmissiondByDate(date, paging);
+			pAdmissions = admissionService.findAdmissiondByDate(date,this.getCurrentUserId().getFacilityId(), paging);
 		}
 	
 		List<Admission> lAdmissions = pAdmissions.getContent();
@@ -166,6 +167,8 @@ public class AdmissionController {
 					: userRepository.findById(admissionDto.getUpdatedBy()).orElse(null);
 			admissionsMap.put("id", admissionDto.getId());
 			admissionsMap.put("admissionNumber", admissionDto.getAdmissionNumber());
+			admissionsMap.put("facilityName", admissionDto.getFacility().getName());
+			admissionsMap.put("facilityType", admissionDto.getFacility().getFacilityType().getName());
 			admissionsMap.put("admissionStatus", admissionDto.getAdmissionStatus());
 			admissionsMap.put("patientId", admissionDto.getPatient().getId());
 			admissionsMap.put("patientExternalId", admissionDto.getPatient().getPatientExternalId());
@@ -264,10 +267,10 @@ public class AdmissionController {
 	
 		
 		if(ObjectUtils.isEmpty(waitingRoom)) {
-			waitingRoom = waitingRoomService.findWaitingRoomByPractician(getCurrentUserId().getId()) ;
+			waitingRoom = waitingRoomService.findWaitingRoomByPractician(this.getCurrentUserId().getId()) ;
 		}  
 		
-		queue = admissionService.findAdmissionsInQueue(waitingRoom, pageable); 
+		queue = admissionService.findAdmissionsInQueue(waitingRoom,this.getCurrentUserId().getFacilityId(), pageable); 
 		
 		if( ObjectUtils.isNotEmpty(firstName) ||  ObjectUtils.isNotEmpty(lastName) ) {
 			queue = admissionService.findAdmissionsInQueueByPatientName(firstName, lastName, waitingRoom, pageable);
