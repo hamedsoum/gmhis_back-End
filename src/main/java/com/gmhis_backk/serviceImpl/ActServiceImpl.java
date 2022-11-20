@@ -19,6 +19,7 @@ import com.gmhis_backk.domain.ActGroup;
 import com.gmhis_backk.domain.AdmissionHasAct;
 import com.gmhis_backk.domain.Convention;
 import com.gmhis_backk.domain.ConventionHasAct;
+import com.gmhis_backk.domain.User;
 import com.gmhis_backk.dto.ActDTO;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
@@ -106,7 +107,7 @@ public class ActServiceImpl implements ActService{
 		return actRepository.findById(id);
 	}
 	
-	protected com.gmhis_backk.domain.User getCurrentUserId() {
+	protected  User getCurrentUserId() {
 		return this.userRepository.findUserByUsername(AppUtils.getUsername());
 	}
 

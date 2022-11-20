@@ -26,6 +26,11 @@ import com.gmhis_backk.service.FacilityCategoryService;
 import com.gmhis_backk.service.FacilityService;
 import com.gmhis_backk.service.FacilityTypeService;
 
+/**
+ * 
+ * @author Hamed soumahoro
+ *
+ */
 @Service
 @Transactional
 public class FacilityServiceImpl implements FacilityService{

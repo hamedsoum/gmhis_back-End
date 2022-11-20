@@ -18,5 +18,6 @@ public class PatientPrescriptionDTO {
 	private String drugs;  
 	private String drugServed;
 	private Long admission;
+	private Long Examination;
 
 }

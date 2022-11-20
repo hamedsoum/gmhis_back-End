@@ -2,9 +2,11 @@ package com.gmhis_backk.domain;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,6 +16,10 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonRawValue;
 
 import lombok.AllArgsConstructor;
@@ -35,15 +41,22 @@ public class PatientPrescription implements Serializable{
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	 @GeneratedValue(generator = "uuid2")
+   @GenericGenerator(name = "uuid2", strategy = "uuid2")
+   @Column(name = "id", updatable = false, nullable = false, columnDefinition = "VARCHAR(36)")
+   @Type(type = "uuid-char")
+	private UUID id;
+	
+	@Column(name = "prescription_number")
+	private String prescriptionNumber;
 	   
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "created_at")
 	private Date createdAt;
 
-	@ManyToOne
-	@JoinColumn(name = "facility_Id")
+	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "facility_id", insertable = false, updatable = false)
 	private Facility facility;
 	
 	@ManyToOne
@@ -52,7 +65,11 @@ public class PatientPrescription implements Serializable{
 	
 	@ManyToOne
 	@JoinColumn(name = "pratician_id")
-	private User pratician;
+	private Pratician pratician;
+	
+	@ManyToOne
+	@JoinColumn(name = "examination_id")
+	private Examination examination;
 	
 	@Column(columnDefinition = "json")
 	@JsonRawValue
