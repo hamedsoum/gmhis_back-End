@@ -30,7 +30,10 @@ public interface PatientConstantRepository extends JpaRepository<PatientConstant
 	@Query(value = "select p from PatientConstant p join p.patient pat where pat.id = :id AND p.takenAt=:takenAt")
 	public List<PatientConstant> findPatientConstantByDate(@Param("id") Long patientId,@Param("takenAt") Date takenAt);
 	
-	@Query(value = "select p from PatientConstant p join p.patient pat where pat.id = :id and p.takenAt between :date1 and :date2")
+	@Query(value = "select p from PatientConstant p join p.patient pat where pat.id = :id and p.takenAt between :date1 and :date2 GROUP BY p.takenAt")
 	public Page<PatientConstant> findPatientConstantByDate(@Param("id") Long patientId, @Param("date1") Date date1, @Param("date2") Date date2, Pageable pageable);
+	
+	@Query(value = "select Count(c) from PatientConstant c where c.patient.id = :patientId GROUP BY c.takenAt")
+	public Long findPatientConstantsNumber(@Param("patientId") Long patientId);
 
 }

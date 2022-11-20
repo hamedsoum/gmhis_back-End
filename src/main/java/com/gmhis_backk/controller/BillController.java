@@ -304,7 +304,7 @@ public class BillController {
 		}
 
 //		if (billDto.getDiscountInPercentage() != 0) {
-//			int cost = this.getActCostWhithoutConvention(billDto.getActs());
+//			int cost = this.getActCostWhithoutConvention(billDto.getActs()); 
 //			int discount = cost * billDto.getDiscountInPercentage() / 100;
 //			this.patientPart = this.patientPart - discount;
 //		}
@@ -796,6 +796,7 @@ public class BillController {
 		billMap.put("billDate", bill.getCreatedAt());
 		billMap.put("accountNumber", bill.getAccountNumber());
 		billMap.put("admissionNumber", bill.getAdmission().getAdmissionNumber());
+		billMap.put("facilityName", bill.getAdmission().getFacility().getName());
 		billMap.put("admissionId", bill.getAdmission().getId());
 		billMap.put("admissionStartDate", bill.getAdmission().getAdmissionStartDate());
 		billMap.put("admissionEndDate", bill.getAdmission().getAdmissionEndDate());

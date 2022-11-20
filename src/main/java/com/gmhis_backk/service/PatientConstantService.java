@@ -39,5 +39,7 @@ public interface PatientConstantService {
 	
 	public Page<PatientConstant> findPatientConstantByDate(Long patientId, Date date1, Date date2, Pageable pageable);
 
+	public Long findPatientConstantsNumber(Long patientId);
+
 
 }

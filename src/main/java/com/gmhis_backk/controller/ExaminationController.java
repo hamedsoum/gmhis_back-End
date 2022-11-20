@@ -170,7 +170,7 @@ public class ExaminationController {
 	}
 	
 	@GetMapping("/getPatientExaminationNumber/{patientId}")
-	@ApiOperation("detail d'une admission ")
+	@ApiOperation("nombre de consultation d'un patient ")
 	public  Long getDetail(@PathVariable Long patientId){
 	
 	return examinationService.findPatientExaminationsNumber(patientId);

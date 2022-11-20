@@ -177,6 +177,14 @@ public class PatientConstantController  {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 	
+	@GetMapping("/getPatientConstantNumber/{patientId}")
+	@ApiOperation("nombre de prise de constante d'un patient ")
+	public  ResponseEntity<Map<String, Object>> getPatientConstantNumber(@PathVariable Long patientId){
+		Map<String, Object> response = new HashMap<>();
+		List<PatientConstant> pConstantes =  constService.findPatientConstant(patientId);
+		System.out.print(pConstantes.size());
+	 constService.findPatientConstant(patientId);
+		response.put("PatientConstantNumber",pConstantes.size());
+		return new ResponseEntity<>(response, HttpStatus.OK);	}
 	
-
 }

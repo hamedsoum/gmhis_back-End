@@ -70,4 +70,9 @@ public class PatientConstantServiceImpl implements PatientConstantService {
 		return repo.findPatientConstantByDate(patientId, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(takeAt));
 	}
 
+	@Override
+	public Long findPatientConstantsNumber(Long patientId) {
+		return repo.findPatientConstantsNumber(patientId);
+	}
+
 }
