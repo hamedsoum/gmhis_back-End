@@ -28,4 +28,6 @@ public interface PrescriptionService {
 	public List<Prescription> findAll();
 
 	public Page<Prescription> findAll(Pageable pageable);
+	
+	public Page <Prescription> findAllPatientPrescriptions(Long Patient, Pageable pageable);
 }

@@ -12,7 +12,7 @@ import com.gmhis_backk.domain.Prescription;
 
 public interface PrescriptionRepository extends JpaRepository<Prescription, UUID> {
 
-	@Query(value="select p from Prescription p where p.examination.admission.patient.id = :patient")
+	@Query(value="select p from Prescription p where p.examination.admission.patient.id = :patient ORDER BY p.prescriptionDate DESC")
 	public Page<Prescription> findAllPatientPrescriptions(@Param("patient") Long patient, Pageable pageable);
 	
 	@Query(value = "select * from prescription p order by p.prescription_date desc LIMIT 0,1", nativeQuery = true)

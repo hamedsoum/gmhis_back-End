@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -69,8 +70,13 @@ public class PrescriptionController {
 
 		Pageable pageable = PageRequest.of(page, size, Sort.by(dir, sort[0]));
         
-//	
-		Page<Prescription> pPrescriptions = prescriptionService.findAll(pageable);
+		Page<Prescription> pPrescriptions = null;
+
+		pPrescriptions = prescriptionService.findAll(pageable);
+		
+		if( ObjectUtils.isNotEmpty(patient) ) {
+			pPrescriptions = prescriptionService.findAllPatientPrescriptions(patient, pageable);
+		} 
 //		
 //
 		List<Prescription> lPrescriptions = pPrescriptions.getContent();

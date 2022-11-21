@@ -2,7 +2,6 @@ package com.gmhis_backk.serviceImpl;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gmhis_backk.AppUtils;
 import com.gmhis_backk.domain.Drug;
 import com.gmhis_backk.domain.Examination;
-import com.gmhis_backk.domain.PatientPrescription;
 import com.gmhis_backk.domain.Prescription;
 import com.gmhis_backk.domain.PrescriptionItem;
 import com.gmhis_backk.domain.User;
@@ -138,5 +136,10 @@ public String getPrescriptionNumber() {
 		return "OR" + year + month +String.format("%04d", number);
 			
 	}
+
+@Override
+public Page<Prescription> findAllPatientPrescriptions(Long Patient, Pageable pageable) {
+	return prescriptionRepository.findAllPatientPrescriptions(Patient, pageable);
+}
 
 }
