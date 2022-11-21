@@ -9,6 +9,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -50,6 +51,7 @@ public class PrescriptionItem implements Serializable {
 //	private Drug d;
 
 
+	@JsonManagedReference(value = "prescription-prescriptionItem")
 	@ManyToOne
 	@JoinColumn(name = "prescription_id")
 	private Prescription prescription;

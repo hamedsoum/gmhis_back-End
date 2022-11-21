@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gmhis_backk.domain.Facility;
+import com.gmhis_backk.domain.PatientConstant;
 import com.gmhis_backk.domain.Prescription;
 import com.gmhis_backk.domain.PrescriptionItem;
 import com.gmhis_backk.dto.PrescriptionDto;
@@ -136,5 +137,44 @@ public class PrescriptionController {
 			prescriptionItemList.add(examsMap);
 		});
 		return prescriptionItemList;
+	}
+	
+	@GetMapping("/getPrescriptionNumber/{patientId}")
+	@ApiOperation("nombre de consultation d'un patient ")
+	public  Long getDetail(@PathVariable Long patientId){
+	
+	return prescriptionService.findPrescriptionsNumber(patientId);
+	}
+	
+	@GetMapping("/get-detail/{id}")
+	@ApiOperation("detail d'une ordonnance ")
+	public  ResponseEntity<Map<String, Object>> getDetail(@PathVariable UUID id){
+		Map<String, Object> response = new HashMap<>();
+
+		Prescription prescription = prescriptionService.findPrescriptionById(id).orElse(null);
+//		response.put("prescription", prescription);
+		response.put("id", prescription.getId());
+		response.put("practicienFirstName", prescription.getExamination().getPratician().getUser().getFirstName());
+		response.put("practicienLastName", prescription.getExamination().getPratician().getUser().getLastName());
+		response.put("facilityName", prescription.getExamination().getFacility().getName());
+		response.put("serviceName", prescription.getExamination().getAdmission().getService().getName());
+		response.put("facilityLocality", prescription.getExamination().getFacility().getLocality().getName());
+		response.put("facilityCountry", prescription.getExamination().getFacility().getLocality().getCity().getCountry().getName());
+		response.put("facilityCity", prescription.getExamination().getFacility().getLocality().getCity().getName());
+		response.put("prescriptionDate", prescription.getPrescriptionDate());
+		response.put("prescriptionNumber", prescription.getPrescriptionNumber());
+		response.put("prescriptionObservation", prescription.getObservation());
+		response.put("patientFirstName", prescription.getExamination().getAdmission().getPatient().getFirstName());
+		response.put("patientLastName", prescription.getExamination().getAdmission().getPatient().getLastName());
+		response.put("patientCivility", prescription.getExamination().getAdmission().getPatient().getCivility());
+
+//		response.put("prescriptionItem", prescription.getPrescriptionItems());
+
+
+//		response.put("facilityName", prescription.getName());
+//		response.put("facilityShortNameName", falicity.getShortName());
+//		response.put("faciityType", falicity.getFacilityType().getName());
+//		response.put("faciityCategory", falicity.getFacilityCategory().getName());
+		return new ResponseEntity<>(response,HttpStatus.OK);
 	}
 }

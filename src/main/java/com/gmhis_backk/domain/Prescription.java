@@ -55,6 +55,7 @@ public class Prescription implements Serializable {
 	@JoinColumn(name = "examination_id")
 	private Examination examination;
 
+	@JsonBackReference(value = "prescription-prescriptionItem")
 	@OneToMany(mappedBy = "prescription", fetch = FetchType.LAZY)
 	private List<PrescriptionItem> prescriptionItems;
 	

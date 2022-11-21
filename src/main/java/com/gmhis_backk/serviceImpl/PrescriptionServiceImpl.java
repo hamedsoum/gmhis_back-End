@@ -3,6 +3,7 @@ package com.gmhis_backk.serviceImpl;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.BeanUtils;
@@ -69,6 +70,8 @@ public class PrescriptionServiceImpl implements PrescriptionService {
 			}
 			prescription.setPrescriptionDate(new Date());
 			prescription.setCreatedBy(this.getCurrentUserId().getId());
+			prescription.setPrescriptionStatus("Non collectée");
+
 
 			Prescription newPrescription = prescriptionRepository.save(prescription);
 			
@@ -140,6 +143,17 @@ public String getPrescriptionNumber() {
 @Override
 public Page<Prescription> findAllPatientPrescriptions(Long Patient, Pageable pageable) {
 	return prescriptionRepository.findAllPatientPrescriptions(Patient, pageable);
+}
+
+@Override
+public Long findPrescriptionsNumber(Long patientId) {
+	return prescriptionRepository.findPrescriptionNumber(patientId);
+}
+
+@Override
+public Optional<Prescription> findPrescriptionById(UUID id) {
+	// TODO Auto-generated method stub
+	return prescriptionRepository.findById(id);
 }
 
 }

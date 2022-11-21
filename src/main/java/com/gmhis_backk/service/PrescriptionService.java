@@ -1,6 +1,7 @@
 package com.gmhis_backk.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -30,4 +31,9 @@ public interface PrescriptionService {
 	public Page<Prescription> findAll(Pageable pageable);
 	
 	public Page <Prescription> findAllPatientPrescriptions(Long Patient, Pageable pageable);
+	
+	public Long findPrescriptionsNumber(Long patientId);
+
+	public Optional<Prescription> findPrescriptionById(UUID id);
+
 }

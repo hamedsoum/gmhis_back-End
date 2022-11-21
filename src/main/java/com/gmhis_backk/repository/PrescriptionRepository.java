@@ -17,4 +17,7 @@ public interface PrescriptionRepository extends JpaRepository<Prescription, UUID
 	
 	@Query(value = "select * from prescription p order by p.prescription_date desc LIMIT 0,1", nativeQuery = true)
 	public  Prescription findLastPrescription();
+	
+	@Query(value = "select Count(p) from Prescription p where p.examination.admission.patient.id = :patientId")
+	public Long findPrescriptionNumber(@Param("patientId") Long patientId);
 }
