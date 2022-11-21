@@ -13,9 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gmhis_backk.AppUtils;
-import com.gmhis_backk.domain.FaciityCategory;
 import com.gmhis_backk.domain.Facility;
-import com.gmhis_backk.domain.FacilityType;
 import com.gmhis_backk.domain.User;
 import com.gmhis_backk.dto.FacilityDTO;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;

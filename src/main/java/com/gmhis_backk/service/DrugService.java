@@ -6,23 +6,31 @@ import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gmhis_backk.domain.Drug;
 import com.gmhis_backk.dto.DrugDto;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
 
+/**
+ * 
+ * @author Hamed soumahoro
+ *
+ */
+@Service 
+@Transactional
 public interface DrugService {
 
-public Drug saveDrug(DrugDto f) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException;
+public Drug saveDrug(DrugDto dDto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException;
 	
-	public Drug updateDrug(DrugDto f, UUID Id)throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException;
+	public Drug updateDrug(DrugDto dDto, UUID Id)throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException;
 ;
 	public Drug findDrugByName(String drug);
 	
 	public Optional<Drug> findDrugById(UUID id);
 
-	public List<Drug> findFacilitiesType();
 	
 	public Page<Drug> findDrugs(Pageable pageable);
 	

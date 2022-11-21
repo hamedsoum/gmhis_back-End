@@ -13,7 +13,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.gmhis_backk.domain.Admission;
-import com.gmhis_backk.domain.BillHasInsured;
 
 
 /**

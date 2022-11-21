@@ -4,6 +4,7 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
@@ -91,6 +92,7 @@ public class Examination implements Serializable {
 					@JoinColumn(name = "symptom_id", referencedColumnName = "id") })
 	private List<Symptom> symptoms = new ArrayList<>();
 	
+	@JsonBackReference(value = "examination-prescription")
 	@OneToMany(mappedBy = "examination")
 	private List<Prescription> prescriptions;
 

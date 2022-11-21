@@ -10,6 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gmhis_backk.domain.Insured;
 
+/**
+ * 
+ * @author Hamed soumahoro
+ *
+ */
 @Service
 @Transactional
 public interface InsuredService {

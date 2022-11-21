@@ -23,41 +23,43 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gmhis_backk.domain.FacilityType;
-import com.gmhis_backk.dto.DefaultNameAndActiveDto;
+import com.gmhis_backk.domain.Drug;
+import com.gmhis_backk.domain.Facility;
+import com.gmhis_backk.dto.DrugDto;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
 import com.gmhis_backk.repository.UserRepository;
-import com.gmhis_backk.service.FacilityTypeService;
+import com.gmhis_backk.service.DrugService;
 
 import io.swagger.annotations.ApiOperation;
 
 @RestController
-@RequestMapping("/facility_type")
-public class FacilityTypeContyroller {
+@RequestMapping("/drug")
+public class DrugController {
 
 	@Autowired 
 	UserRepository userRepository;
 	
 	@Autowired
-	FacilityTypeService facilityTypeService;
+	DrugService drugService;
 	
 	@PostMapping("/add")
-	@ApiOperation("/Ajouter un type de centre de sante")
-	public ResponseEntity<FacilityType>addFacilityTtpe(@RequestBody DefaultNameAndActiveDto f) throws ResourceNameAlreadyExistException,ResourceNotFoundByIdException{
-		FacilityType facilityType = facilityTypeService.saveFacilityType(f);
-		return new ResponseEntity<FacilityType>(facilityType, HttpStatus.OK);
+	@ApiOperation("/Ajouter un medicament")
+	public ResponseEntity<Drug>addDrugTtpe(@RequestBody DrugDto dDto) throws ResourceNameAlreadyExistException,ResourceNotFoundByIdException{
+		System.out.print(dDto.getName());
+		Drug facilityType = drugService.saveDrug(dDto);
+		return new ResponseEntity<Drug>(facilityType, HttpStatus.OK);
 	} 
 	
 	@PutMapping("/update/{id}")
-	@ApiOperation("/Modifier un type de centre de sante")
-	public ResponseEntity<FacilityType> updateFacilityType(@RequestBody DefaultNameAndActiveDto f, @PathVariable("id") UUID id) throws ResourceNameAlreadyExistException,
+	@ApiOperation("/Modifier un medicament")
+	public ResponseEntity<Drug> updateDrug(@RequestBody DrugDto dDto, @PathVariable("id") UUID id) throws ResourceNameAlreadyExistException,
 	ResourceNotFoundByIdException{
-		FacilityType facilityType = facilityTypeService.updateFacilityType(f, id);
-		return new ResponseEntity<FacilityType>(facilityType, HttpStatus.OK);
+		Drug facilityType = drugService.updateDrug(dDto, id);
+		return new ResponseEntity<Drug>(facilityType, HttpStatus.OK);
 	}
 	
-	@ApiOperation(value = "Lister la liste paginee de toutes les types de centres medicaux dans le système")
+	@ApiOperation(value = "Lister la liste paginee de toutes les medicamentsdans le système")
 	@GetMapping("/p_list")
 	public ResponseEntity<Map<String, Object>> paginatedList(
 			@RequestParam(required = false, defaultValue = "") String name,
@@ -70,20 +72,20 @@ public class FacilityTypeContyroller {
 		Pageable pageable = PageRequest.of(page, size, Sort.by(dir, sort[0]));
 
 		
-       Page<FacilityType> pFacilities = null;
+       Page<Drug> pFacilities = null;
 		
 		if (ObjectUtils.isEmpty(active) && ObjectUtils.isEmpty(name)) {
-			pFacilities = facilityTypeService.findFacilitiesType(pageable);
+			pFacilities = drugService.findDrugs(pageable);
 		} else if(ObjectUtils.isNotEmpty(active)){
-			pFacilities = facilityTypeService.findByActive(name, Boolean.parseBoolean(active), pageable);
+			pFacilities = drugService.findByActive(name, Boolean.parseBoolean(active), pageable);
 		}else if (ObjectUtils.isNotEmpty(name)) {
-			pFacilities= facilityTypeService.findFacilitiesTypeContaining(name,pageable);
+			pFacilities= drugService.findDrugsContaining(name,pageable);
 		} 
 		
-		List<FacilityType> lFacilities = pFacilities.getContent();
+		List<Drug> lFacilities = pFacilities.getContent();
 		
 			
-		List<Map<String, Object>> facilities = this.getMapFromFacilityList(lFacilities);
+		List<Map<String, Object>> facilities = this.getMapFromDrugList(lFacilities);
 		response.put("items", facilities);
 		response.put("totalElements", pFacilities.getTotalElements());
 		response.put("totalPages", pFacilities.getTotalPages());
@@ -97,30 +99,41 @@ public class FacilityTypeContyroller {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 	
-	protected List<Map<String, Object>> getMapFromFacilityList(List<FacilityType> facilitiesTypes) {
-		List<Map<String, Object>> facilityList = new ArrayList<>();
-		facilitiesTypes.stream().forEach(facilityDto -> {
-			Map<String, Object> facilitiesMap = new HashMap<>();
-			facilitiesMap.put("id", facilityDto.getId());
-			facilitiesMap.put("name", facilityDto.getName());
-			facilitiesMap.put("active", facilityDto.getActive());
-			facilityList.add(facilitiesMap);
+	protected List<Map<String, Object>> getMapFromDrugList(List<Drug> facilitiesTypes) {
+		List<Map<String, Object>> drugList = new ArrayList<>();
+		facilitiesTypes.stream().forEach(drugDto -> {
+			Map<String, Object> drugMap = new HashMap<>();
+			drugMap.put("id", drugDto.getId());
+			drugMap.put("name", drugDto.getName());
+			drugMap.put("active", drugDto.getActive());
+			drugList.add(drugMap);
 		});
-		return facilityList;
+		return drugList;
 	}
 	
-	@GetMapping("/active_facilities_name")
-	@ApiOperation(value = "Lister la liste des ids et noms des types centres de sante actives dans le système")
-	public ResponseEntity<List<Map<String, Object>>>  activeFacilityName() {
-		List<Map<String, Object>>  actCodeList = new ArrayList<>();
+	@GetMapping("/active_drugs_name")
+	@ApiOperation(value = "Lister la liste des ids et noms des medicaments actives dans le système")
+	public ResponseEntity<List<Map<String, Object>>>  activeDrugName() {
+		List<Map<String, Object>>  drugList = new ArrayList<>();
 
-		facilityTypeService.findActiveFacilitiesType().forEach(facilityTypeDto -> {
-			Map<String, Object> facilityTypeMap = new HashMap<>();
-			facilityTypeMap.put("id", facilityTypeDto.getId());
-			facilityTypeMap.put("name", facilityTypeDto.getName());
-			actCodeList.add(facilityTypeMap);
+		drugService.findActiveDrugsType().forEach(drugDto -> {
+			Map<String, Object> drugMap = new HashMap<>();
+			drugMap.put("id", drugDto.getId());
+			drugMap.put("name", drugDto.getName());
+			drugList.add(drugMap);
 		});
 		
-		return new ResponseEntity<>(actCodeList, HttpStatus.OK);
+		return new ResponseEntity<>(drugList, HttpStatus.OK);
+	}
+	
+	@GetMapping("/get-detail/{id}")
+	@ApiOperation("detail d'un medicament ")
+	public  ResponseEntity<Map<String, Object>> getDetail(@PathVariable UUID id){
+		Map<String, Object> response = new HashMap<>();
+
+		Drug drug = drugService.findDrugById(id).orElse(null);
+		response.put("id", drug.getId());
+		response.put("facilityName", drug.getName());
+		return new ResponseEntity<>(response,HttpStatus.OK);
 	}
 }
