@@ -58,7 +58,6 @@ public class PrescriptionServiceImpl implements PrescriptionService {
 	@Override @Transactional
 	public Prescription save(PrescriptionDto prescriptionDto)
 			throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException {
-		System.out.print(prescriptionDto.getObservation());
 		Prescription prescription = new Prescription();
 		BeanUtils.copyProperties(prescriptionDto, prescription, "id");
 		prescription.setPrescriptionNumber(getPrescriptionNumber());

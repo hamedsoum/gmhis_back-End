@@ -104,7 +104,10 @@ public class PrescriptionController {
 			examsMap.put("id", prescriptionDto.getId());
 			examsMap.put("prescritionDate", prescriptionDto.getPrescriptionDate());
 			examsMap.put("prescriptionNumber", prescriptionDto.getPrescriptionNumber());
+			examsMap.put("faciityName", prescriptionDto.getExamination().getFacility().getName());
 			examsMap.put("prescriptionStatus", prescriptionDto.getPrescriptionStatus());
+			examsMap.put("practicienFirstName", prescriptionDto.getExamination().getPratician().getUser().getFirstName());
+			examsMap.put("practicienLastName", prescriptionDto.getExamination().getPratician().getUser().getLastName());
 			prescriptionList.add(examsMap);
 		});
 		return prescriptionList;
