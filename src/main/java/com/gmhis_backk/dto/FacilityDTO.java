@@ -27,6 +27,7 @@ public class FacilityDTO {
     private Long localityId;
     private String facilityCategoryId;
     private String facilityTypeId;
+    private String logoId;
 //    private UUID facilityCategory;
 //    private UUID facilityType;
 }

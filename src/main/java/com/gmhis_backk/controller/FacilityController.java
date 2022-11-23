@@ -1,6 +1,9 @@
 package com.gmhis_backk.controller;
 
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,12 +11,14 @@ import java.util.UUID;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,14 +27,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.util.StreamUtils;
+
 
 import com.gmhis_backk.domain.Facility;
+import com.gmhis_backk.domain.Files;
 import com.gmhis_backk.domain.User;
 import com.gmhis_backk.dto.FacilityDTO;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
+import com.gmhis_backk.repository.FileDbRepository;
 import com.gmhis_backk.repository.UserRepository;
 import com.gmhis_backk.service.FacilityService;
+import com.gmhis_backk.service.FileLocationService;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -43,9 +54,51 @@ public class FacilityController {
 	@Autowired
 	FacilityService facilityService;
 	
+
+	 @Autowired
+	 FileLocationService fileLocationService;
+	 
+	 @Autowired
+     FileDbRepository fileRepository;
+//	
+//	@PostMapping("/add")
+//	@ApiOperation("/Ajouter un centre de sante")
+//	public ResponseEntity<Facility>addFacility(@RequestBody FacilityDTO facilityDto) throws ResourceNameAlreadyExistException,ResourceNotFoundByIdException{
+//		Facility facility = facilityService.saveFacility(facilityDto);
+//		return new ResponseEntity<Facility>(facility, HttpStatus.OK);
+//	} 
+	
+	
 	@PostMapping("/add")
 	@ApiOperation("/Ajouter un centre de sante")
-	public ResponseEntity<Facility>addFacility(@RequestBody FacilityDTO facilityDto) throws ResourceNameAlreadyExistException,ResourceNotFoundByIdException{
+	public ResponseEntity<Facility>addFacility(
+			@RequestParam(required = false) String name,
+			@RequestParam(required = false) String active,
+			@RequestParam(required = false) String dhisCode,
+			@RequestParam(required = false) String facilityCategoryId,
+			@RequestParam(required = false) String facilityTypeId,
+			@RequestParam(required = false) String latitude,
+			@RequestParam(required = false) String localCode,
+			@RequestParam(required = false) Long localityId,
+			@RequestParam(required = false) String longitude,
+			@RequestParam(required = false) String shortName,
+    		@RequestParam(required = false) MultipartFile logo
+			) throws ResourceNameAlreadyExistException,ResourceNotFoundByIdException, Exception{
+		
+		UUID logoId = fileLocationService.save(logo.getBytes(), logo.getOriginalFilename(), logo.getContentType());
+		FacilityDTO facilityDto = new FacilityDTO();
+		facilityDto.setActive(Boolean.parseBoolean(active));
+		facilityDto.setName(name);
+		facilityDto.setDhisCode(dhisCode);
+		facilityDto.setFacilityCategoryId(facilityCategoryId);
+		facilityDto.setFacilityTypeId(facilityTypeId);
+		facilityDto.setLatitude(Float.parseFloat(latitude));
+		facilityDto.setLocalCode(localCode);
+		facilityDto.setLocalityId(localityId);
+		facilityDto.setLongitude(Float.parseFloat(longitude));
+		facilityDto.setShortName(shortName);
+		facilityDto.setShortName(shortName);
+		facilityDto.setLogoId(logoId.toString());
 		Facility facility = facilityService.saveFacility(facilityDto);
 		return new ResponseEntity<Facility>(facility, HttpStatus.OK);
 	} 
@@ -148,17 +201,26 @@ public class FacilityController {
 	
 	@GetMapping("/get-detail/{id}")
 	@ApiOperation("detail d'un centre de sante ")
-	public  ResponseEntity<Map<String, Object>> getDetail(@PathVariable UUID id){
+	public  ResponseEntity<Map<String, Object>> getDetail(@PathVariable UUID id) throws IOException{
 		Map<String, Object> response = new HashMap<>();
-
+	
 		Facility falicity = facilityService.findFacilityById(id).orElse(null);
-		response.put("id", falicity.getId());
-		response.put("facilityName", falicity.getName());
-		response.put("facilityShortNameName", falicity.getShortName());
-		response.put("faciityType", falicity.getFacilityType().getName());
-		response.put("faciityCategory", falicity.getFacilityCategory().getName());
-		return new ResponseEntity<>(response,HttpStatus.OK);
+	Files file = fileRepository.findById(UUID.fromString(falicity.getLogoId())).orElse(null);
+	var imgFile = new FileSystemResource(Paths.get(file.getLocation()));
+    byte[] bytes = StreamUtils.copyToByteArray(imgFile.getInputStream());
+    String encodedString = Base64.getEncoder().encodeToString(bytes);
+    String basse64 = "data:"+file.getType()+";base64," + encodedString ;
+	response.put("id", falicity.getId());
+	response.put("logo", basse64);
+	response.put("facilityName", falicity.getName());
+	response.put("facilityShortNameName", falicity.getShortName());
+	response.put("faciityType", falicity.getFacilityType().getName());
+	response.put("faciityCategory", falicity.getFacilityCategory().getName());
+	return new ResponseEntity<>(response,HttpStatus.OK);
+		
 	}
+	
+
 	
 
 }

@@ -1,6 +1,7 @@
 package com.gmhis_backk.controller;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -13,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.gmhis_backk.domain.Image;
-import com.gmhis_backk.repository.ImageDbRepository;
+import com.gmhis_backk.domain.Files;
+import com.gmhis_backk.repository.FileDbRepository;
 import com.gmhis_backk.service.ImageService;
 
 @RestController
@@ -22,14 +23,14 @@ import com.gmhis_backk.service.ImageService;
 public class ImageController {
 
 	@Autowired
-	ImageDbRepository imageDbRepository;
+	FileDbRepository imageDbRepository;
 	
 	@Autowired
 	ImageService imageService;
 	
 	@PostMapping("/add") 
-	Long uploadImage(@RequestParam MultipartFile multipartFile) throws IOException {
-		Image dbImage = new Image();
+	UUID uploadImage(@RequestParam MultipartFile multipartFile) throws IOException {
+		Files dbImage = new Files();
 		
 		dbImage.setName(multipartFile.getName());
 //		dbImage.setContent(multipartFile.getBytes());
