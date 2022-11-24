@@ -97,4 +97,8 @@ public class Facility implements Serializable {
 	
 	@Column(name = "logo_id")
 	private String logoId;
+	
+	private String address;
+	
+	private String contact;
 }

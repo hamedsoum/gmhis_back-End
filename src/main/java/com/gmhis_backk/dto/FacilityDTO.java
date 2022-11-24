@@ -28,6 +28,8 @@ public class FacilityDTO {
     private String facilityCategoryId;
     private String facilityTypeId;
     private String logoId;
+    private String address;
+    private String contact;
 //    private UUID facilityCategory;
 //    private UUID facilityType;
 }
