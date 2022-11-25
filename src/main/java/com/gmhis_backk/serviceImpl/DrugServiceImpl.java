@@ -13,13 +13,19 @@ import org.springframework.stereotype.Service;
 
 import com.gmhis_backk.AppUtils;
 import com.gmhis_backk.domain.Drug;
+import com.gmhis_backk.domain.DrugDci;
+import com.gmhis_backk.domain.DrugPharmacologicalForm;
+import com.gmhis_backk.domain.DrugTherapeuticClass;
 import com.gmhis_backk.domain.User;
 import com.gmhis_backk.dto.DrugDto;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
 import com.gmhis_backk.repository.DrugRepository;
 import com.gmhis_backk.repository.UserRepository;
+import com.gmhis_backk.service.DrugDciService;
+import com.gmhis_backk.service.DrugPharmacologicalFormService;
 import com.gmhis_backk.service.DrugService;
+import com.gmhis_backk.service.DrugTherapeuticClassService;
 
 @Service
 public class DrugServiceImpl implements DrugService {
@@ -29,6 +35,15 @@ public class DrugServiceImpl implements DrugService {
 	
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private DrugDciService drugDciService;
+	
+	@Autowired
+	private DrugPharmacologicalFormService drugPharmacologicalFormService;
+	
+	@Autowired
+	private DrugTherapeuticClassService drugTherapeuticClassService;
 	
 	protected User getCurrentUserId() {
 		return this.userRepository.findUserByUsername(AppUtils.getUsername());
@@ -40,8 +55,28 @@ public class DrugServiceImpl implements DrugService {
 		if (drugByName != null) {
 			throw new ResourceNameAlreadyExistException("le medicament existe déjà");
 		}
+		
+		 DrugDci drugDci = drugDciService.getDrugDciDetails(dDto.getDrugDci()).orElse(null);
+			if (drugDci == null) {
+				throw new ResourceNotFoundByIdException("aucun DCI trouvé pour l'identifiant " );
+			}
+			System.out.print(dDto.getDrugPharmacologicalForm());
+			DrugPharmacologicalForm drugPharmcoloForm = drugPharmacologicalFormService.findFormById(dDto.getDrugPharmacologicalForm()).orElse(null);
+			if (drugPharmcoloForm == null) {
+				throw new ResourceNotFoundByIdException("aucune forme pharmacologique trouvée pour l'identifiant " );
+			}
+		
+			 DrugTherapeuticClass drugTherapeuticClass = drugTherapeuticClassService.getDrugTherapeuticClassDetails(dDto.getDrugTherapeuticClass()).orElse(null);
+				if (drugTherapeuticClass == null) {
+					throw new ResourceNotFoundByIdException("aucune classe therapeuttique trouvée pour l'identifiant " );
+				}
+			
+		
 		Drug drug = new Drug();
 		BeanUtils.copyProperties(dDto,drug,"id");
+		drug.setDrugDci(drugDci);
+		drug.setDrugPharmacologicalForm(drugPharmcoloForm);
+		drug.setDrugTherapeuticClass(drugTherapeuticClass);
 		drug.setCreatedAt(new Date());
 		drug.setCreatedBy(this.getCurrentUserId().getId());
 		return drugRepository.save(drug);
@@ -94,6 +129,17 @@ public class DrugServiceImpl implements DrugService {
 	@Override
 	public Page<Drug> findByActive(String namme, Boolean active, Pageable pageable) {
 		return drugRepository.findByActive(namme, active, pageable);
+	}
+
+	@Override
+	public Page<Drug> finddrugByActiveAndNameAndDrugDci(String namme, Boolean active, UUID drugDci,
+			Pageable pageable) {
+		return drugRepository.findDrugByNameAndActiceAndDci(namme, active, drugDci, pageable);
+	}
+
+	@Override
+	public Page<Drug> finddrugByDrugDci(UUID drugDci, Pageable pageable) {
+		return drugRepository.findDrugBydDci(drugDci, pageable);
 	}
 
 	

@@ -33,6 +33,6 @@ public interface DrugPharmacologicalFormRepository extends JpaRepository<DrugPha
 	public Page<DrugPharmacologicalForm> findByActive(@Param("name") String name,
 			@Param("active") Boolean active, Pageable p);
 	
-	@Query(value = "SELECT d FROM DrugTherapeuticClass d where id= :id")
+	@Query(value = "SELECT d FROM DrugPharmacologicalForm d where id= :id")
 	Optional<DrugPharmacologicalForm> findById(UUID id);
 }

@@ -39,4 +39,8 @@ public Drug saveDrug(DrugDto dDto) throws ResourceNameAlreadyExistException, Res
 	public List<Drug> findActiveDrugsType();
 	
 	public Page<Drug> findByActive(String namme, Boolean active, Pageable pageable);
+	
+	public Page<Drug> finddrugByDrugDci(UUID drugDci, Pageable pageable);
+	
+	public Page<Drug> finddrugByActiveAndNameAndDrugDci(String namme, Boolean active, UUID drugDci, Pageable pageable);
 }
