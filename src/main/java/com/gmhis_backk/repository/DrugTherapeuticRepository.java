@@ -2,6 +2,7 @@ package com.gmhis_backk.repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Repository;
 import com.gmhis_backk.domain.DrugTherapeuticClass;
 
 @Repository
-public interface DrugTherapeuticRepository extends JpaRepository<DrugTherapeuticClass, Long> {
+public interface DrugTherapeuticRepository extends JpaRepository<DrugTherapeuticClass, UUID> {
 	
 	DrugTherapeuticClass findByName(String name);
 	

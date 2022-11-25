@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -28,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.gmhis_backk.domain.DrugTherapeuticClass;
 import com.gmhis_backk.domain.User;
-import com.gmhis_backk.dto.DefaultNameAndActiveDto;
+import com.gmhis_backk.dto.DrugTherapeuticClassDto;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
 import com.gmhis_backk.repository.UserRepository;
@@ -113,22 +114,22 @@ public class DrugTherapeuticClassController {
 	
 	@PostMapping("/add")
 	@ApiOperation("Ajouter une classe dans le systeme")
-	public ResponseEntity<DrugTherapeuticClass> addDci(@RequestBody DefaultNameAndActiveDto dciDto) throws ResourceNameAlreadyExistException,
+	public ResponseEntity<DrugTherapeuticClass> addDci(@RequestBody DrugTherapeuticClassDto drugTherapeuticClassDto) throws ResourceNameAlreadyExistException,
 	ResourceNotFoundByIdException {
-		DrugTherapeuticClass drugDci = drugTherapeuticClassService.addDrugTherapeuticClass(dciDto);
+		DrugTherapeuticClass drugDci = drugTherapeuticClassService.addDrugTherapeuticClass(drugTherapeuticClassDto);
 		return new ResponseEntity<DrugTherapeuticClass>(drugDci, HttpStatus.OK);
 	}
 	
 	@PutMapping("/update/{id}")
 	@ApiOperation("Modifier un dci dans le systeme")
-	public ResponseEntity<DrugTherapeuticClass>updateDci(@PathVariable("id") Long id,@RequestBody DefaultNameAndActiveDto defaultNameAndActiveDto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException{
-		DrugTherapeuticClass updateTherapeuticClass = drugTherapeuticClassService.updateDrugTherapeuticClass(id, defaultNameAndActiveDto);
+	public ResponseEntity<DrugTherapeuticClass>updateDci(@PathVariable("id") UUID id,@RequestBody DrugTherapeuticClassDto drugTherapeuticClassDto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException{
+		DrugTherapeuticClass updateTherapeuticClass = drugTherapeuticClassService.updateDrugTherapeuticClass(id, drugTherapeuticClassDto);
 		return new ResponseEntity<>(updateTherapeuticClass,HttpStatus.OK);
 	}
 
 	@GetMapping("/get-detail/{id}")
 	@ApiOperation("detail d'un dci")
-	public  ResponseEntity<Optional<DrugTherapeuticClass>> getDetail(@PathVariable Long id){
+	public  ResponseEntity<Optional<DrugTherapeuticClass>> getDetail(@PathVariable UUID id){
 		Optional<DrugTherapeuticClass> drugDci = drugTherapeuticClassService.getDrugTherapeuticClassDetails(id);
 		return new ResponseEntity<>(drugDci,HttpStatus.OK);
 	}
