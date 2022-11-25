@@ -51,4 +51,7 @@ private static final long serialVersionUID = 1L;
 
 	@Column(name = "created_by")
 	private Long createdBy;
+	
+	@Column(name = "drug_price")
+	private Double drugPrice;
 }

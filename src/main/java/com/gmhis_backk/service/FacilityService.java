@@ -42,4 +42,6 @@ public interface FacilityService {
 	public List<Facility> findActiveFacilities();
 	
 	public Page<Facility> findByActive(String namme, Boolean active, Pageable pageable);
+	
+	public Page<Facility> findByCategory(String namme, Boolean active, String facilityCategoryId, Pageable pageable);
 }

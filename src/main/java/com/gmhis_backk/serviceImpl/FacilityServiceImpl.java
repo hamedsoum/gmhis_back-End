@@ -131,4 +131,9 @@ public class FacilityServiceImpl implements FacilityService{
 		return facilityRepository.findByActive(namme, active, pageable);
 	}
 
+	@Override
+	public Page<Facility> findByCategory(String namme, Boolean active, String facilityCategoryId, Pageable pageable) {
+		return facilityRepository.findFacilityByCategoryId(namme, active, facilityCategoryId, pageable);
+	}
+
 }

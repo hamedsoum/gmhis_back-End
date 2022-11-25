@@ -147,7 +147,9 @@ public class FacilityController {
 	@GetMapping("/p_list")
 	public ResponseEntity<Map<String, Object>> paginatedList(
 			@RequestParam(required = false, defaultValue = "") String name,
-			@RequestParam(required = false) String active, @RequestParam(defaultValue = "id,desc") String[] sort, 
+			@RequestParam(required = false) String active,
+			@RequestParam(required = false) String facilityCategoryId,
+			@RequestParam(defaultValue = "id,desc") String[] sort, 
 			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
 
 		Map<String, Object> response = new HashMap<>();
@@ -158,7 +160,7 @@ public class FacilityController {
 		
        Page<Facility> pFacilities = null;
 		
-		if (ObjectUtils.isEmpty(active) && ObjectUtils.isEmpty(name)) {
+		if (ObjectUtils.isEmpty(active) && ObjectUtils.isEmpty(name) && ObjectUtils.isEmpty(facilityCategoryId)) {
 			pFacilities = facilityService.findFacilities(pageable);
 		} else if(ObjectUtils.isNotEmpty(active)){
 			pFacilities = facilityService.findByActive(name, Boolean.parseBoolean(active), pageable);

@@ -8,7 +8,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DrugDto {
-	private Long id;
+	private String id;
 	private String name;
 	private Boolean active;
+	private Double drugPrice;
 }
