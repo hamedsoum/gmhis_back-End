@@ -23,6 +23,9 @@ public interface DrugDciService {
 	 Page<DrugDci> findAllDrugDciByName(String name, Pageable pageable);
 	  
 	  List<DrugDci> findAllDrugDci();
+	  
+	  List<DrugDci> findAllActiveDrugDci();
+
 		
 	  Optional<DrugDci> getDrugDciDetails(UUID id); 
 	  

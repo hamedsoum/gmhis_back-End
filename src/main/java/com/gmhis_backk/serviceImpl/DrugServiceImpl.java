@@ -96,7 +96,19 @@ public class DrugServiceImpl implements DrugService {
 				}
 			}
 		}
+		
+		DrugPharmacologicalForm drugPharmcoloForm = drugPharmacologicalFormService.findFormById(dDto.getDrugPharmacologicalForm()).orElse(null);
+		if (drugPharmcoloForm == null) {
+			throw new ResourceNotFoundByIdException("aucune forme pharmacologique trouvée pour l'identifiant " );
+		}
+	
+		 DrugTherapeuticClass drugTherapeuticClass = drugTherapeuticClassService.getDrugTherapeuticClassDetails(dDto.getDrugTherapeuticClass()).orElse(null);
+			if (drugTherapeuticClass == null) {
+				throw new ResourceNotFoundByIdException("aucune classe therapeuttique trouvée pour l'identifiant " );
+			}
 		BeanUtils.copyProperties(dDto, updateDrug,"id");
+		updateDrug.setUpdatedAt(new Date());
+		updateDrug.setUpdatedBy(this.getCurrentUserId().getId());
 		return drugRepository.save(updateDrug);
 	}
 

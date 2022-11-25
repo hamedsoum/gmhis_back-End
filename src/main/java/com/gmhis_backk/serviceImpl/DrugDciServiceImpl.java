@@ -100,4 +100,9 @@ public class DrugDciServiceImpl implements DrugDciService {
 		return drugRepository.save(updateDrugDci);
 	}
 
+	@Override
+	public List<DrugDci> findAllActiveDrugDci() {
+		return drugRepository.findAllActive();
+	}
+
 }

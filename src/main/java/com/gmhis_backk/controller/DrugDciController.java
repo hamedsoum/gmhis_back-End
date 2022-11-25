@@ -133,4 +133,18 @@ public class DrugDciController {
 		return new ResponseEntity<>(drugDci,HttpStatus.OK);
 	}
 
+	@GetMapping("/active_dci_name")
+	@ApiOperation(value = "Lister la liste des ids et noms des dci actives dans le système")
+	public ResponseEntity<List<Map<String, Object>>>  activePharmacologicalNameAndId() {
+		List<Map<String, Object>>  dciList = new ArrayList<>();
+
+		drugDciService.findAllActiveDrugDci().forEach(dciDto -> {
+			Map<String, Object> dciMap = new HashMap<>();
+			dciMap.put("id", dciDto.getId());
+			dciMap.put("name", dciDto.getName());
+			dciList.add(dciMap);
+		});
+		
+		return new ResponseEntity<>(dciList, HttpStatus.OK);
+	}
 }
