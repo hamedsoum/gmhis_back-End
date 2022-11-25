@@ -22,8 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gmhis_backk.domain.Facility;
-import com.gmhis_backk.domain.PatientConstant;
 import com.gmhis_backk.domain.Prescription;
 import com.gmhis_backk.domain.PrescriptionItem;
 import com.gmhis_backk.dto.PrescriptionDto;

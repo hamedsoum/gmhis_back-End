@@ -26,6 +26,8 @@ public interface DrugTherapeuticClassService {
 		
 	  Optional<DrugTherapeuticClass> getDrugTherapeuticClassDetails(UUID id); 
 	  
+		public List<DrugTherapeuticClass> findActiveDrugTherapeuticClass();
+	  
 	  DrugTherapeuticClass addDrugTherapeuticClass(DrugTherapeuticClassDto drugTherapeuticClassDto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException;
 		
 	  DrugTherapeuticClass updateDrugTherapeuticClass(UUID id,DrugTherapeuticClassDto drugTherapeuticClassDto) throws ResourceNotFoundByIdException, ResourceNameAlreadyExistException;

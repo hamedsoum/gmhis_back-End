@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gmhis_backk.AppUtils;
 import com.gmhis_backk.domain.DrugTherapeuticClass;
+import com.gmhis_backk.domain.User;
 import com.gmhis_backk.dto.DrugTherapeuticClassDto;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
@@ -56,7 +57,7 @@ public class DrugTherapeuticClassServiceImpl implements DrugTherapeuticClassServ
 		return drugTherapeuticRepository.findById(id);
 	}
 	
-	protected com.gmhis_backk.domain.User getCurrentUserId() {
+	protected User getCurrentUserId() {
 		return this.userRepository.findUserByUsername(AppUtils.getUsername());
 	}
 
@@ -94,6 +95,11 @@ public class DrugTherapeuticClassServiceImpl implements DrugTherapeuticClassServ
 		updateDrugTherapeuticClass.setUpdatedAt(new Date());
 		updateDrugTherapeuticClass.setUpdatedBy(getCurrentUserId().getId());
 		return drugTherapeuticRepository.save(updateDrugTherapeuticClass);
+	}
+
+	@Override
+	public List<DrugTherapeuticClass> findActiveDrugTherapeuticClass() {
+		return drugTherapeuticRepository.findAllActive();
 	}
  
 }

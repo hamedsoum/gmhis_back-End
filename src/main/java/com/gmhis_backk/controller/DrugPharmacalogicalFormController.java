@@ -27,29 +27,29 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gmhis_backk.domain.DrugTherapeuticClass;
+import com.gmhis_backk.domain.DrugPharmacologicalForm;
 import com.gmhis_backk.domain.User;
-import com.gmhis_backk.dto.DrugTherapeuticClassDto;
+import com.gmhis_backk.dto.DrugPharmacologicFormDto;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
 import com.gmhis_backk.repository.UserRepository;
-import com.gmhis_backk.service.DrugTherapeuticClassService;
+import com.gmhis_backk.service.DrugPharmacologicalFormService;
 
 import io.swagger.annotations.ApiOperation;
 
 @RestController
-@RequestMapping("/drug_therapeutic_class")
-public class DrugTherapeuticClassController {
+@RequestMapping("/drug_pharmacological_form")
+public class DrugPharmacalogicalFormController {
 	
 	@Autowired
 	UserRepository userRepository;
 	
 	@Autowired 
-	DrugTherapeuticClassService drugTherapeuticClassService;
+	DrugPharmacologicalFormService drugPharmacologicalFormService;
 	
 	@GetMapping("/list")
-	@ApiOperation("liste paginee de toutes les classes theraptic dans le systeme")
-	public ResponseEntity<Map<String, Object>> getAllTherapetic(
+	@ApiOperation("liste paginee de toutes les forme pharmacologique dans le systeme")
+	public ResponseEntity<Map<String, Object>> getAllPharmacological(
 			@RequestParam(name = "name", required = false, defaultValue = "") String name,
 			@RequestParam(required = false, defaultValue = "") String active,
 			@RequestParam(defaultValue = "0") int page,
@@ -62,33 +62,33 @@ public class DrugTherapeuticClassController {
 
 		Pageable paging = PageRequest.of(page, size, Sort.by(dir, sort[0]));
 
-		Page<DrugTherapeuticClass> pageDrugTherapeuticClass;
+		Page<DrugPharmacologicalForm> pageDrugPharmacologicalForm;
 		
-		pageDrugTherapeuticClass = drugTherapeuticClassService.findAllDrugTherapeuticClass(paging);
+		pageDrugPharmacologicalForm = drugPharmacologicalFormService.findForms(paging);
 		
 		if (StringUtils.isNotBlank(active)) {
-			pageDrugTherapeuticClass = drugTherapeuticClassService.findAllDrugTherapeuticClassByActiveAndName(active.trim(), Boolean.parseBoolean(active), paging);
+			pageDrugPharmacologicalForm = drugPharmacologicalFormService.findByActive(active.trim(), Boolean.parseBoolean(active), paging);
 		} else if(StringUtils.isNotBlank(name)) {
-			pageDrugTherapeuticClass = drugTherapeuticClassService.findAllDrugTherapeuticClassByName(name.trim(), paging);
+			pageDrugPharmacologicalForm = drugPharmacologicalFormService.findFormsContaining(name.trim(), paging);
 		}
 
-		List<DrugTherapeuticClass> pageDrugDciList = pageDrugTherapeuticClass.getContent();
+		List<DrugPharmacologicalForm> pageDrugDciList = pageDrugPharmacologicalForm.getContent();
 		
-		List<Map<String, Object>> drugTherapeuticClasses= this.getMapFromDrugTherapeuticClassList(pageDrugDciList);
+		List<Map<String, Object>> drugTherapeuticClasses= this.getMapFromDrugPharmacologicalFormList(pageDrugDciList);
 
 		response.put("items", drugTherapeuticClasses);
-		response.put("currentPage", pageDrugTherapeuticClass.getNumber());
-		response.put("totalItems", pageDrugTherapeuticClass.getTotalElements());
-		response.put("totalPages", pageDrugTherapeuticClass.getTotalPages());
-		response.put("size", pageDrugTherapeuticClass.getSize());
-		response.put("first", pageDrugTherapeuticClass.isFirst());
-		response.put("last", pageDrugTherapeuticClass.isLast());
-		response.put("empty", pageDrugTherapeuticClass.isEmpty());
+		response.put("currentPage", pageDrugPharmacologicalForm.getNumber());
+		response.put("totalItems", pageDrugPharmacologicalForm.getTotalElements());
+		response.put("totalPages", pageDrugPharmacologicalForm.getTotalPages());
+		response.put("size", pageDrugPharmacologicalForm.getSize());
+		response.put("first", pageDrugPharmacologicalForm.isFirst());
+		response.put("last", pageDrugPharmacologicalForm.isLast());
+		response.put("empty", pageDrugPharmacologicalForm.isEmpty());
 
 		return new ResponseEntity<>(response, OK);
 	}
 	
-	protected List<Map<String, Object>> getMapFromDrugTherapeuticClassList(List<DrugTherapeuticClass> drugDcis) {
+	protected List<Map<String, Object>> getMapFromDrugPharmacologicalFormList(List<DrugPharmacologicalForm> drugDcis) {
 		List<Map<String, Object>> drugDciList = new ArrayList<>();
 		drugDcis.stream().forEach(drugDciDto -> {
 
@@ -114,40 +114,39 @@ public class DrugTherapeuticClassController {
 	
 	@PostMapping("/add")
 	@ApiOperation("Ajouter une classe dans le systeme")
-	public ResponseEntity<DrugTherapeuticClass> addDci(@RequestBody DrugTherapeuticClassDto drugTherapeuticClassDto) throws ResourceNameAlreadyExistException,
+	public ResponseEntity<DrugPharmacologicalForm> addPharmacological(@RequestBody DrugPharmacologicFormDto drugPharmacologicalDto) throws ResourceNameAlreadyExistException,
 	ResourceNotFoundByIdException {
-		DrugTherapeuticClass drugDci = drugTherapeuticClassService.addDrugTherapeuticClass(drugTherapeuticClassDto);
-		return new ResponseEntity<DrugTherapeuticClass>(drugDci, HttpStatus.OK);
+		DrugPharmacologicalForm drugDci = drugPharmacologicalFormService.saveForm(drugPharmacologicalDto);
+		return new ResponseEntity<DrugPharmacologicalForm>(drugDci, HttpStatus.OK);
 	}
 	
 	@PutMapping("/update/{id}")
 	@ApiOperation("Modifier un dci dans le systeme")
-	public ResponseEntity<DrugTherapeuticClass>updateDci(@PathVariable("id") UUID id,@RequestBody DrugTherapeuticClassDto drugTherapeuticClassDto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException{
-		DrugTherapeuticClass updateTherapeuticClass = drugTherapeuticClassService.updateDrugTherapeuticClass(id, drugTherapeuticClassDto);
+	public ResponseEntity<DrugPharmacologicalForm>updatePharmacological(@PathVariable("id") UUID id,@RequestBody DrugPharmacologicFormDto drugPharmacologicalDto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException{
+		DrugPharmacologicalForm updateTherapeuticClass = drugPharmacologicalFormService.updateForm(id, drugPharmacologicalDto);
 		return new ResponseEntity<>(updateTherapeuticClass,HttpStatus.OK);
 	}
 
 	@GetMapping("/get-detail/{id}")
 	@ApiOperation("detail d'un dci")
-	public  ResponseEntity<Optional<DrugTherapeuticClass>> getDetail(@PathVariable UUID id){
-		Optional<DrugTherapeuticClass> drugDci = drugTherapeuticClassService.getDrugTherapeuticClassDetails(id);
+	public  ResponseEntity<Optional<DrugPharmacologicalForm>> getDetail(@PathVariable UUID id){
+		Optional<DrugPharmacologicalForm> drugDci = drugPharmacologicalFormService.findFormById(id);
 		return new ResponseEntity<>(drugDci,HttpStatus.OK);
 	}
 	
-	
+	@GetMapping("/active_pharmacological_form_name")
+	@ApiOperation(value = "Lister la liste des ids et noms des formes pharmacologiques actives dans le système")
+	public ResponseEntity<List<Map<String, Object>>>  activePharmacologicalNameAndId() {
+		List<Map<String, Object>>  drugPharmacologicalList = new ArrayList<>();
 
-	@GetMapping("/active_drugTherapeutic_class_name")
-	@ApiOperation(value = "Lister la liste des ids et noms des classes therapeutic actives dans le système")
-	public ResponseEntity<List<Map<String, Object>>>  activeFacilityName() {
-		List<Map<String, Object>>  drugTherapeuticList = new ArrayList<>();
-
-		drugTherapeuticClassService.findActiveDrugTherapeuticClass().forEach(drugTherapeuticDto -> {
-			Map<String, Object> therapeuticMap = new HashMap<>();
-			therapeuticMap.put("id", drugTherapeuticDto.getId());
-			therapeuticMap.put("name", drugTherapeuticDto.getName());
-			drugTherapeuticList.add(therapeuticMap);
+		drugPharmacologicalFormService.findActiveForms().forEach(drugPharmacologicalDto -> {
+			Map<String, Object> phamarcologicalMap = new HashMap<>();
+			phamarcologicalMap.put("id", drugPharmacologicalDto.getId());
+			phamarcologicalMap.put("name", drugPharmacologicalDto.getName());
+			drugPharmacologicalList.add(phamarcologicalMap);
 		});
 		
-		return new ResponseEntity<>(drugTherapeuticList, HttpStatus.OK);
+		return new ResponseEntity<>(drugPharmacologicalList, HttpStatus.OK);
 	}
+
 }
