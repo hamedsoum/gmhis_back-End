@@ -23,12 +23,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.util.StreamUtils;
 
 
 import com.gmhis_backk.domain.Facility;
@@ -84,6 +82,7 @@ public class FacilityController {
 			@RequestParam(required = false) String shortName,
 			@RequestParam(required = false) String address,
 			@RequestParam(required = false) String contact,
+			@RequestParam(required = false) String email,
     		@RequestParam(required = false) MultipartFile logo
 			) throws ResourceNameAlreadyExistException,ResourceNotFoundByIdException, Exception{
 		UUID logoId = fileLocationService.save(logo.getBytes(), logo.getOriginalFilename(), logo.getContentType());
@@ -99,6 +98,7 @@ public class FacilityController {
 		facilityDto.setLongitude(Float.parseFloat(longitude));
 		facilityDto.setAddress(address);
 		facilityDto.setContact(contact);
+		facilityDto.setEmail(email);
 		facilityDto.setShortName(shortName);
 		facilityDto.setLogoId(logoId.toString());
 		Facility facility = facilityService.saveFacility(facilityDto);
@@ -121,6 +121,7 @@ public class FacilityController {
 			@RequestParam(required = false) String shortName,
 			@RequestParam(required = false) String address,
 			@RequestParam(required = false) String contact,
+			@RequestParam(required = false) String email,
     		@RequestParam(required = false) MultipartFile logo
 			) throws IOException, Exception{
 //		UUID logoId = fileLocationService.save(logo.getBytes(), logo.getOriginalFilename(), logo.getContentType());
@@ -136,8 +137,8 @@ public class FacilityController {
 		facilityDto.setLongitude(Float.parseFloat(longitude));
 		facilityDto.setAddress(address);
 		facilityDto.setContact(contact);
+		facilityDto.setEmail(email);
 		facilityDto.setShortName(shortName);
-
 //		facilityDto.setLogoId(logoId.toString());
 		Facility facility = facilityService.updateFacility(facilityDto, UUID.fromString(id));
 		return new ResponseEntity<Facility>(facility, HttpStatus.OK);
@@ -202,6 +203,7 @@ public class FacilityController {
 			facilitiesMap.put("shortName", facilityDto.getShortName());
 			facilitiesMap.put("contact", facilityDto.getContact());
 			facilitiesMap.put("address", facilityDto.getAddress());
+			facilitiesMap.put("email", facilityDto.getEmail());
 			facilitiesMap.put("createdAt", facilityDto.getCreatedAt());
 			facilitiesMap.put("updatedAt", facilityDto.getUpdatedAt());
 			facilitiesMap.put("faciityType", facilityDto.getFacilityType().getName());

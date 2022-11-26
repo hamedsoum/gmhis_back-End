@@ -67,7 +67,7 @@ public class DrugTherapeuticClassController {
 		pageDrugTherapeuticClass = drugTherapeuticClassService.findAllDrugTherapeuticClass(paging);
 		
 		if (StringUtils.isNotBlank(active)) {
-			pageDrugTherapeuticClass = drugTherapeuticClassService.findAllDrugTherapeuticClassByActiveAndName(active.trim(), Boolean.parseBoolean(active), paging);
+			pageDrugTherapeuticClass = drugTherapeuticClassService.findAllDrugTherapeuticClassByActiveAndName(name.trim(), Boolean.parseBoolean(active), paging);
 		} else if(StringUtils.isNotBlank(name)) {
 			pageDrugTherapeuticClass = drugTherapeuticClassService.findAllDrugTherapeuticClassByName(name.trim(), paging);
 		}
@@ -93,19 +93,19 @@ public class DrugTherapeuticClassController {
 		drugDcis.stream().forEach(drugDciDto -> {
 
 			Map<String, Object> drugDcisMap = new HashMap<>();
-			User createdBy = ObjectUtils.isEmpty(drugDciDto.getCreatedBy()) ? new User()
-					: userRepository.findById(drugDciDto.getCreatedBy()).orElse(null);
-			User updatedBy = ObjectUtils.isEmpty(drugDciDto.getUpdatedBy()) ? new User()
-					: userRepository.findById(drugDciDto.getUpdatedBy()).orElse(null);
+//			User createdBy = ObjectUtils.isEmpty(drugDciDto.getCreatedBy()) ? new User()
+//					: userRepository.findById(drugDciDto.getCreatedBy()).orElse(null);
+//			User updatedBy = ObjectUtils.isEmpty(drugDciDto.getUpdatedBy()) ? new User()
+//					: userRepository.findById(drugDciDto.getUpdatedBy()).orElse(null);
 			drugDcisMap.put("id", drugDciDto.getId());
 			drugDcisMap.put("name", drugDciDto.getName());
 			drugDcisMap.put("active", drugDciDto.getActive());
-			drugDcisMap.put("createdAt", drugDciDto.getCreatedAt());
-			drugDcisMap.put("updatedAt", drugDciDto.getUpdatedAt());
-			drugDcisMap.put("createdByFirstName", ObjectUtils.isEmpty(createdBy) ? "--" : createdBy.getFirstName());
-			drugDcisMap.put("createdByLastName", ObjectUtils.isEmpty(createdBy) ? "--" : createdBy.getLastName());
-			drugDcisMap.put("UpdatedByFirstName", ObjectUtils.isEmpty(updatedBy) ? "--" : updatedBy.getFirstName());
-			drugDcisMap.put("UpdatedByLastName", ObjectUtils.isEmpty(updatedBy) ? "--" : updatedBy.getLastName());
+//			drugDcisMap.put("createdAt", drugDciDto.getCreatedAt());
+//			drugDcisMap.put("updatedAt", drugDciDto.getUpdatedAt());
+//			drugDcisMap.put("createdByFirstName", ObjectUtils.isEmpty(createdBy) ? "--" : createdBy.getFirstName());
+//			drugDcisMap.put("createdByLastName", ObjectUtils.isEmpty(createdBy) ? "--" : createdBy.getLastName());
+//			drugDcisMap.put("UpdatedByFirstName", ObjectUtils.isEmpty(updatedBy) ? "--" : updatedBy.getFirstName());
+//			drugDcisMap.put("UpdatedByLastName", ObjectUtils.isEmpty(updatedBy) ? "--" : updatedBy.getLastName());
 			drugDciList.add(drugDcisMap);
 		});
 		return drugDciList;

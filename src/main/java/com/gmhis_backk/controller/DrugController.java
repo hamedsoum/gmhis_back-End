@@ -107,6 +107,12 @@ public class DrugController {
 			drugMap.put("id", drugDto.getId());
 			drugMap.put("name", drugDto.getName());
 			drugMap.put("active", drugDto.getActive());
+			drugMap.put("dci", drugDto.getDrugDci().getName());
+			drugMap.put("therapeuticClass", drugDto.getDrugTherapeuticClass().getName());
+			drugMap.put("pharmacologicalForm", drugDto.getDrugPharmacologicalForm().getName());
+			drugMap.put("price", drugDto.getDrugPrice());
+			drugMap.put("dosage", drugDto.getDosage());
+			drugMap.put("active", drugDto.getActive());
 			drugList.add(drugMap);
 		});
 		return drugList;
@@ -121,6 +127,8 @@ public class DrugController {
 			Map<String, Object> drugMap = new HashMap<>();
 			drugMap.put("id", drugDto.getId());
 			drugMap.put("name", drugDto.getName());
+			drugMap.put("drugPharmacologicalName", drugDto.getDrugPharmacologicalForm().getName());
+			drugMap.put("dosage", drugDto.getDosage());
 			drugList.add(drugMap);
 		});
 		
@@ -134,9 +142,10 @@ public class DrugController {
 
 		Drug drug = drugService.findDrugById(id).orElse(null);
 		response.put("id", drug.getId());
-		response.put("drugName", drug.getName());
+		response.put("name", drug.getName());
+		response.put("active", drug.getActive());
 		response.put("drugPrice", drug.getDrugPrice());
-		response.put("drugDosage", drug.getDosage());
+		response.put("dosage", drug.getDosage());
 		response.put("drugDciName", drug.getDrugDci().getName());
 		response.put("drugDciId", drug.getDrugDci().getId());
 		response.put("drugPharmacologicalName", drug.getDrugPharmacologicalForm().getName());

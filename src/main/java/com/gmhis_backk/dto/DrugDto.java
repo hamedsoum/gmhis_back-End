@@ -14,9 +14,9 @@ public class DrugDto {
 	private String name;
 	private Boolean active;
 	private Double drugPrice;
-	private UUID drugDci;
-	private UUID drugPharmacologicalForm;
-	private UUID drugTherapeuticClass;
+	private UUID drugDciId;
+	private UUID drugPharmacologicalId;
+	private UUID drugtherapicalId;
 	private String dosage;
 
 }

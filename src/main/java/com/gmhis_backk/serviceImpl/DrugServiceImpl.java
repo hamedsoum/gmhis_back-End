@@ -56,17 +56,16 @@ public class DrugServiceImpl implements DrugService {
 			throw new ResourceNameAlreadyExistException("le medicament existe déjà");
 		}
 		
-		 DrugDci drugDci = drugDciService.getDrugDciDetails(dDto.getDrugDci()).orElse(null);
+		 DrugDci drugDci = drugDciService.getDrugDciDetails(dDto.getDrugDciId()).orElse(null);
 			if (drugDci == null) {
 				throw new ResourceNotFoundByIdException("aucun DCI trouvé pour l'identifiant " );
 			}
-			System.out.print(dDto.getDrugPharmacologicalForm());
-			DrugPharmacologicalForm drugPharmcoloForm = drugPharmacologicalFormService.findFormById(dDto.getDrugPharmacologicalForm()).orElse(null);
+			DrugPharmacologicalForm drugPharmcoloForm = drugPharmacologicalFormService.findFormById(dDto.getDrugPharmacologicalId()).orElse(null);
 			if (drugPharmcoloForm == null) {
 				throw new ResourceNotFoundByIdException("aucune forme pharmacologique trouvée pour l'identifiant " );
 			}
 		
-			 DrugTherapeuticClass drugTherapeuticClass = drugTherapeuticClassService.getDrugTherapeuticClassDetails(dDto.getDrugTherapeuticClass()).orElse(null);
+			 DrugTherapeuticClass drugTherapeuticClass = drugTherapeuticClassService.getDrugTherapeuticClassDetails(dDto.getDrugtherapicalId()).orElse(null);
 				if (drugTherapeuticClass == null) {
 					throw new ResourceNotFoundByIdException("aucune classe therapeuttique trouvée pour l'identifiant " );
 				}
@@ -96,17 +95,24 @@ public class DrugServiceImpl implements DrugService {
 				}
 			}
 		}
+		 DrugDci drugDci = drugDciService.getDrugDciDetails(dDto.getDrugDciId()).orElse(null);
+			if (drugDci == null) {
+				throw new ResourceNotFoundByIdException("aucun DCI trouvé pour l'identifiant " );
+			}
 		
-		DrugPharmacologicalForm drugPharmcoloForm = drugPharmacologicalFormService.findFormById(dDto.getDrugPharmacologicalForm()).orElse(null);
+		DrugPharmacologicalForm drugPharmcoloForm = drugPharmacologicalFormService.findFormById(dDto.getDrugPharmacologicalId()).orElse(null);
 		if (drugPharmcoloForm == null) {
 			throw new ResourceNotFoundByIdException("aucune forme pharmacologique trouvée pour l'identifiant " );
 		}
 	
-		 DrugTherapeuticClass drugTherapeuticClass = drugTherapeuticClassService.getDrugTherapeuticClassDetails(dDto.getDrugTherapeuticClass()).orElse(null);
+		 DrugTherapeuticClass drugTherapeuticClass = drugTherapeuticClassService.getDrugTherapeuticClassDetails(dDto.getDrugtherapicalId()).orElse(null);
 			if (drugTherapeuticClass == null) {
 				throw new ResourceNotFoundByIdException("aucune classe therapeuttique trouvée pour l'identifiant " );
 			}
 		BeanUtils.copyProperties(dDto, updateDrug,"id");
+		updateDrug.setDrugDci(drugDci);
+		updateDrug.setDrugPharmacologicalForm(drugPharmcoloForm);
+		updateDrug.setDrugTherapeuticClass(drugTherapeuticClass);
 		updateDrug.setUpdatedAt(new Date());
 		updateDrug.setUpdatedBy(this.getCurrentUserId().getId());
 		return drugRepository.save(updateDrug);

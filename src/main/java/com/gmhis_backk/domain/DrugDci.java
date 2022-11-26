@@ -48,7 +48,7 @@ public class DrugDci implements Serializable {
 	private UUID id;
 
 	@Column
-	private Boolean active ;
+	private Boolean active;
 	
 	@Column
 	private String name;
