@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -51,4 +52,7 @@ private static final long serialVersionUID = 1L;
 
 	@Column(name = "created_by")
 	private Long createdBy;
+	
+	@JoinColumn(name = "drug_price")
+	private double drugPrice;
 }

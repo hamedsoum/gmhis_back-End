@@ -135,8 +135,10 @@ public class PrescriptionController {
 			examsMap.put("dosage", prescriptionItemDto.getDosage());
 			examsMap.put("quantity", prescriptionItemDto.getQuantity());
 			examsMap.put("drug", prescriptionItemDto.getDrug().getName());
+			examsMap.put("drugPrice", prescriptionItemDto.getDrug().getDrugPrice());
 			examsMap.put("collected", prescriptionItemDto.getCollected());
 			examsMap.put("duration", prescriptionItemDto.getDuration());
+			examsMap.put("collected", prescriptionItemDto.getCollected());
 			prescriptionItemList.add(examsMap);
 		});
 		return prescriptionItemList;
@@ -160,6 +162,7 @@ public class PrescriptionController {
 		response.put("practicienFirstName", prescription.getExamination().getPratician().getUser().getFirstName());
 		response.put("practicienLastName", prescription.getExamination().getPratician().getUser().getLastName());
 		response.put("facilityName", prescription.getExamination().getFacility().getName());
+		response.put("facilityName", prescription.getExamination().getFacility().getName());
 		response.put("serviceName", prescription.getExamination().getAdmission().getService().getName());
 		response.put("facilityLocality", prescription.getExamination().getFacility().getLocality().getName());
 		response.put("facilityCountry", prescription.getExamination().getFacility().getLocality().getCity().getCountry().getName());
@@ -180,4 +183,39 @@ public class PrescriptionController {
 //		response.put("faciityCategory", falicity.getFacilityCategory().getName());
 		return new ResponseEntity<>(response,HttpStatus.OK);
 	}
-}
+	
+	@GetMapping("/prescriptionByPrescriptionNumber/{prescriptionNumber}")
+	@ApiOperation("detail d'une ordonnance par son numero")
+	public  ResponseEntity<Map<String, Object>> getDetail(@PathVariable String prescriptionNumber){
+		Map<String, Object> response = new HashMap<>();
+		Prescription prescription = prescriptionService.findPrescriptionByPrescriptionNumber(prescriptionNumber);
+		response.put("id", prescription.getId());
+		response.put("practicienFirstName", prescription.getExamination().getPratician().getUser().getFirstName());
+		response.put("practicienLastName", prescription.getExamination().getPratician().getUser().getLastName());
+		response.put("facilityName", prescription.getExamination().getFacility().getName());
+		response.put("serviceName", prescription.getExamination().getAdmission().getService().getName());
+		response.put("facilityLocality", prescription.getExamination().getFacility().getLocality().getName());
+		response.put("facilityCountry", prescription.getExamination().getFacility().getLocality().getCity().getCountry().getName());
+		response.put("facilityCity", prescription.getExamination().getFacility().getLocality().getCity().getName());
+		response.put("prescriptionDate", prescription.getPrescriptionDate());
+		response.put("prescriptionNumber", prescription.getPrescriptionNumber());
+		response.put("prescriptionObservation", prescription.getObservation());
+		response.put("patientFirstName", prescription.getExamination().getAdmission().getPatient().getFirstName());
+		response.put("patientLastName", prescription.getExamination().getAdmission().getPatient().getLastName());
+		response.put("patientCivility", prescription.getExamination().getAdmission().getPatient().getCivility());
+		return new ResponseEntity<>(response,HttpStatus.OK);
+		}
+	
+	@PostMapping("/SetPrescriptionItems")
+	@ApiOperation("detail d'une ordonnance par son numero")
+	public boolean setPrescriptionItems(@RequestBody List<String> pDto) {
+			for(String prescriptionItemid : pDto) {
+				System.out.println(prescriptionItemid);
+			  PrescriptionItem  prescriptionItem = prescriptionItemService.findPrescriptionItemById(UUID.fromString(prescriptionItemid)).orElse(null);
+				System.out.println(prescriptionItem.getDosage());
+			  prescriptionItem.setCollected(true);
+			}
+		return true;
+	}
+	
+	}

@@ -151,8 +151,12 @@ public Long findPrescriptionsNumber(Long patientId) {
 
 @Override
 public Optional<Prescription> findPrescriptionById(UUID id) {
-	// TODO Auto-generated method stub
 	return prescriptionRepository.findById(id);
+}
+
+@Override
+public Prescription findPrescriptionByPrescriptionNumber(String prescriptionNumber) {
+	return prescriptionRepository.findPrescriptionByPrescriptionNumber(prescriptionNumber);
 }
 
 }

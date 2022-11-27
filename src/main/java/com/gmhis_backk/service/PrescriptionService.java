@@ -35,5 +35,7 @@ public interface PrescriptionService {
 	public Long findPrescriptionsNumber(Long patientId);
 
 	public Optional<Prescription> findPrescriptionById(UUID id);
+	
+	public Prescription findPrescriptionByPrescriptionNumber(String prescriptionNumber);
 
 }

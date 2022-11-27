@@ -20,4 +20,7 @@ public interface PrescriptionRepository extends JpaRepository<Prescription, UUID
 	
 	@Query(value = "select Count(p) from Prescription p where p.examination.admission.patient.id = :patientId")
 	public Long findPrescriptionNumber(@Param("patientId") Long patientId);
+	
+	@Query(value = "SELECT p FROM Prescription p WHERE p.prescriptionNumber =:prescriptionNumber")
+	public Prescription findPrescriptionByPrescriptionNumber(@Param("prescriptionNumber") String prescriptionNumber);
 }
