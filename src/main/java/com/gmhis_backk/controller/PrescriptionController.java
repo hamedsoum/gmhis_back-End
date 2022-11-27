@@ -162,12 +162,17 @@ public class PrescriptionController {
 		response.put("facilityLocality", prescription.getExamination().getFacility().getLocality().getName());
 		response.put("facilityCountry", prescription.getExamination().getFacility().getLocality().getCity().getCountry().getName());
 		response.put("facilityCity", prescription.getExamination().getFacility().getLocality().getCity().getName());
+		response.put("facilityAdress", prescription.getExamination().getFacility().getAddress());
+		response.put("facilityContact", prescription.getExamination().getFacility().getContact());
 		response.put("prescriptionDate", prescription.getPrescriptionDate());
 		response.put("prescriptionNumber", prescription.getPrescriptionNumber());
 		response.put("prescriptionObservation", prescription.getObservation());
 		response.put("patientFirstName", prescription.getExamination().getAdmission().getPatient().getFirstName());
 		response.put("patientLastName", prescription.getExamination().getAdmission().getPatient().getLastName());
 		response.put("patientCivility", prescription.getExamination().getAdmission().getPatient().getCivility());
+		response.put("patientAge", prescription.getExamination().getAdmission().getPatient().getAge());
+		response.put("patientHeight", prescription.getExamination().getAdmission().getPatient().getHeight());
+		response.put("patientWeight", prescription.getExamination().getAdmission().getPatient().getHeight());
 
 //		response.put("prescriptionItem", prescription.getPrescriptionItems());
 

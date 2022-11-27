@@ -44,6 +44,9 @@ public class PatientDTO {
 	private String cellPhone2;
 	private String motherProfession;
 	private String fatherName;
+	private int age;
+	private double height;
+	private double weight;
 	private List<InsuredDTO> insurances;
 
 }

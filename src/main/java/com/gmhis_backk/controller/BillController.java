@@ -803,6 +803,9 @@ public class BillController {
 		billMap.put("patientExternalId", bill.getAdmission().getPatient().getPatientExternalId());
 		billMap.put("patientFirstName", bill.getAdmission().getPatient().getFirstName());
 		billMap.put("patientLastName", bill.getAdmission().getPatient().getLastName());
+		billMap.put("patientAge", bill.getAdmission().getPatient().getAge());
+		billMap.put("patientHeight", bill.getAdmission().getPatient().getHeight());
+		billMap.put("patientWeight", bill.getAdmission().getPatient().getHeight());
 		billMap.put("patientMaidenName", bill.getAdmission().getPatient().getMaidenName());
 		billMap.put("billDate", bill.getCreatedAt());
 		billMap.put("accountNumber", bill.getAccountNumber());
