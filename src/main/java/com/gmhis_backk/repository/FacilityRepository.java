@@ -31,4 +31,8 @@ public interface FacilityRepository extends JpaRepository<Facility, UUID> {
 	@Query(value = "select f from Facility f where f.name like %:name% and f.active = :active")
 	public Page<Facility> findByActive(@Param("name") String name,
 			@Param("active") Boolean active, Pageable p);
+	
+	@Query(value = "select f from Facility f where f.name like %:name% and f.active = :active AND f.facilityCategoryId = :facilityCategoryId")
+	public Page<Facility> findFacilityByCategoryId(@Param("name") String name,
+			@Param("active") Boolean active,@Param("active") String facilityCategoryId, Pageable p);
 }

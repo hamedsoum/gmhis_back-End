@@ -4,11 +4,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -16,6 +16,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
@@ -25,7 +28,7 @@ import lombok.NoArgsConstructor;
 
 /**
  * 
- * @author pascal
+ * @author hamed soumahoro
  * 
  */
 @Entity
@@ -37,12 +40,15 @@ public class DrugDci implements Serializable {
 
 	private static final long serialVersionUID = 1L; 
 	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+   @Id
+   @GeneratedValue(generator = "uuid2")
+   @GenericGenerator(name = "uuid2", strategy = "uuid2")
+   @Column(name = "id", updatable = false, nullable = false, columnDefinition = "VARCHAR(36)")
+   @Type(type = "uuid-char")
+	private UUID id;
 
 	@Column
-	private Boolean active ;
+	private Boolean active;
 	
 	@Column
 	private String name;

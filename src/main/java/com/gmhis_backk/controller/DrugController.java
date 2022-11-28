@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gmhis_backk.domain.Drug;
-import com.gmhis_backk.domain.Facility;
 import com.gmhis_backk.dto.DrugDto;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
@@ -46,23 +45,23 @@ public class DrugController {
 	@PostMapping("/add")
 	@ApiOperation("/Ajouter un medicament")
 	public ResponseEntity<Drug>addDrugTtpe(@RequestBody DrugDto dDto) throws ResourceNameAlreadyExistException,ResourceNotFoundByIdException{
-		System.out.print(dDto.getName());
-		Drug facilityType = drugService.saveDrug(dDto);
-		return new ResponseEntity<Drug>(facilityType, HttpStatus.OK);
+		Drug drug = drugService.saveDrug(dDto);
+		return new ResponseEntity<Drug>(drug, HttpStatus.OK);
 	} 
 	
 	@PutMapping("/update/{id}")
 	@ApiOperation("/Modifier un medicament")
 	public ResponseEntity<Drug> updateDrug(@RequestBody DrugDto dDto, @PathVariable("id") UUID id) throws ResourceNameAlreadyExistException,
 	ResourceNotFoundByIdException{
-		Drug facilityType = drugService.updateDrug(dDto, id);
-		return new ResponseEntity<Drug>(facilityType, HttpStatus.OK);
+		Drug drug = drugService.updateDrug(dDto, id);
+		return new ResponseEntity<Drug>(drug, HttpStatus.OK);
 	}
 	
 	@ApiOperation(value = "Lister la liste paginee de toutes les medicamentsdans le système")
 	@GetMapping("/p_list")
 	public ResponseEntity<Map<String, Object>> paginatedList(
 			@RequestParam(required = false, defaultValue = "") String name,
+			@RequestParam(required = false, defaultValue = "") String drugDci,
 			@RequestParam(required = false) String active, @RequestParam(defaultValue = "id,desc") String[] sort, 
 			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
 
@@ -74,13 +73,15 @@ public class DrugController {
 		
        Page<Drug> pFacilities = null;
 		
-		if (ObjectUtils.isEmpty(active) && ObjectUtils.isEmpty(name)) {
+		if (ObjectUtils.isEmpty(active) && ObjectUtils.isEmpty(name) && ObjectUtils.isEmpty(drugDci)) {
 			pFacilities = drugService.findDrugs(pageable);
-		} else if(ObjectUtils.isNotEmpty(active)){
+		} else if(ObjectUtils.isNotEmpty(active) && ObjectUtils.isEmpty(name) && ObjectUtils.isEmpty(drugDci)){
 			pFacilities = drugService.findByActive(name, Boolean.parseBoolean(active), pageable);
-		}else if (ObjectUtils.isNotEmpty(name)) {
+		}else if (ObjectUtils.isEmpty(active) && ObjectUtils.isNotEmpty(name) && ObjectUtils.isEmpty(drugDci)) {
 			pFacilities= drugService.findDrugsContaining(name,pageable);
-		} 
+		} else if (ObjectUtils.isEmpty(active) && ObjectUtils.isEmpty(name) && ObjectUtils.isNotEmpty(drugDci)) {
+			pFacilities= drugService.finddrugByDrugDci(UUID.fromString(drugDci),pageable);
+		}
 		
 		List<Drug> lFacilities = pFacilities.getContent();
 		
@@ -106,6 +107,12 @@ public class DrugController {
 			drugMap.put("id", drugDto.getId());
 			drugMap.put("name", drugDto.getName());
 			drugMap.put("active", drugDto.getActive());
+			drugMap.put("dci", drugDto.getDrugDci().getName());
+			drugMap.put("therapeuticClass", drugDto.getDrugTherapeuticClass().getName());
+			drugMap.put("pharmacologicalForm", drugDto.getDrugPharmacologicalForm().getName());
+			drugMap.put("price", drugDto.getDrugPrice());
+			drugMap.put("dosage", drugDto.getDosage());
+			drugMap.put("active", drugDto.getActive());
 			drugList.add(drugMap);
 		});
 		return drugList;
@@ -120,6 +127,8 @@ public class DrugController {
 			Map<String, Object> drugMap = new HashMap<>();
 			drugMap.put("id", drugDto.getId());
 			drugMap.put("name", drugDto.getName());
+			drugMap.put("drugPharmacologicalName", drugDto.getDrugPharmacologicalForm().getName());
+			drugMap.put("dosage", drugDto.getDosage());
 			drugList.add(drugMap);
 		});
 		
@@ -133,7 +142,16 @@ public class DrugController {
 
 		Drug drug = drugService.findDrugById(id).orElse(null);
 		response.put("id", drug.getId());
-		response.put("facilityName", drug.getName());
+		response.put("name", drug.getName());
+		response.put("active", drug.getActive());
+		response.put("drugPrice", drug.getDrugPrice());
+		response.put("dosage", drug.getDosage());
+		response.put("drugDciName", drug.getDrugDci().getName());
+		response.put("drugDciId", drug.getDrugDci().getId());
+		response.put("drugPharmacologicalName", drug.getDrugPharmacologicalForm().getName());
+		response.put("drugPharmacologicalId", drug.getDrugPharmacologicalForm().getId());
+		response.put("drugtherapicalName", drug.getDrugTherapeuticClass().getName());
+		response.put("drugtherapicalId", drug.getDrugTherapeuticClass().getId());
 		return new ResponseEntity<>(response,HttpStatus.OK);
 	}
 }

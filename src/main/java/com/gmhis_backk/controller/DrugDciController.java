@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -28,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.gmhis_backk.domain.DrugDci;
 import com.gmhis_backk.domain.User;
-import com.gmhis_backk.dto.DefaultNameAndActiveDto;
+import com.gmhis_backk.dto.DrugDciDto;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
 import com.gmhis_backk.repository.UserRepository;
@@ -66,7 +67,7 @@ public class DrugDciController {
 		pageDrugDci = drugDciService.findAllDrugDci(paging);
 		
 		if (StringUtils.isNotBlank(active)) {
-			pageDrugDci = drugDciService.findAllDrugDciByActiveAndName(active.trim(), Boolean.parseBoolean(active), paging);
+			pageDrugDci = drugDciService.findAllDrugDciByActiveAndName(drugName.trim(), Boolean.parseBoolean(active), paging);
 		} else if(StringUtils.isNotBlank(drugName)) {
 			pageDrugDci = drugDciService.findAllDrugDciByName(drugName.trim(), paging);
 		}
@@ -99,12 +100,12 @@ public class DrugDciController {
 			drugDcisMap.put("id", drugDciDto.getId());
 			drugDcisMap.put("name", drugDciDto.getName());
 			drugDcisMap.put("active", drugDciDto.getActive());
-			drugDcisMap.put("createdAt", drugDciDto.getCreatedAt());
-			drugDcisMap.put("updatedAt", drugDciDto.getUpdatedAt());
-			drugDcisMap.put("createdByFirstName", ObjectUtils.isEmpty(createdBy) ? "--" : createdBy.getFirstName());
-			drugDcisMap.put("createdByLastName", ObjectUtils.isEmpty(createdBy) ? "--" : createdBy.getLastName());
-			drugDcisMap.put("UpdatedByFirstName", ObjectUtils.isEmpty(updatedBy) ? "--" : updatedBy.getFirstName());
-			drugDcisMap.put("UpdatedByLastName", ObjectUtils.isEmpty(updatedBy) ? "--" : updatedBy.getLastName());
+//			drugDcisMap.put("createdAt", drugDciDto.getCreatedAt());
+//			drugDcisMap.put("updatedAt", drugDciDto.getUpdatedAt());
+//			drugDcisMap.put("createdByFirstName", ObjectUtils.isEmpty(createdBy) ? "--" : createdBy.getFirstName());
+//			drugDcisMap.put("createdByLastName", ObjectUtils.isEmpty(createdBy) ? "--" : createdBy.getLastName());
+//			drugDcisMap.put("UpdatedByFirstName", ObjectUtils.isEmpty(updatedBy) ? "--" : updatedBy.getFirstName());
+//			drugDcisMap.put("UpdatedByLastName", ObjectUtils.isEmpty(updatedBy) ? "--" : updatedBy.getLastName());
 			drugDciList.add(drugDcisMap);
 		});
 		return drugDciList;
@@ -112,7 +113,7 @@ public class DrugDciController {
 	
 	@PostMapping("/add")
 	@ApiOperation("Ajouter un DCI dans le systeme")
-	public ResponseEntity<DrugDci> addDci(@RequestBody DefaultNameAndActiveDto dciDto) throws ResourceNameAlreadyExistException,
+	public ResponseEntity<DrugDci> addDci(@RequestBody DrugDciDto dciDto) throws ResourceNameAlreadyExistException,
 	ResourceNotFoundByIdException {
 		DrugDci drugDci = drugDciService.addDrugDci(dciDto);
 		return new ResponseEntity<DrugDci>(drugDci, HttpStatus.OK);
@@ -120,16 +121,30 @@ public class DrugDciController {
 	
 	@PutMapping("/update/{id}")
 	@ApiOperation("Modifier un dci dans le systeme")
-	public ResponseEntity<DrugDci>updateDci(@PathVariable("id") Long id,@RequestBody DefaultNameAndActiveDto defaultNameAndActiveDto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException{
+	public ResponseEntity<DrugDci>updateDci(@PathVariable("id") UUID id,@RequestBody DrugDciDto defaultNameAndActiveDto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException{
 		DrugDci updateDci = drugDciService.updateDrugDci(id, defaultNameAndActiveDto);
 		return new ResponseEntity<>(updateDci,HttpStatus.OK);
 	}
 
 	@GetMapping("/get-detail/{id}")
 	@ApiOperation("detail d'un dci")
-	public  ResponseEntity<Optional<DrugDci>> getDetail(@PathVariable Long id){
+	public  ResponseEntity<Optional<DrugDci>> getDetail(@PathVariable UUID id){
 		Optional<DrugDci> drugDci = drugDciService.getDrugDciDetails(id);
 		return new ResponseEntity<>(drugDci,HttpStatus.OK);
 	}
 
+	@GetMapping("/active_dci_name")
+	@ApiOperation(value = "Lister la liste des ids et noms des dci actives dans le système")
+	public ResponseEntity<List<Map<String, Object>>>  activePharmacologicalNameAndId() {
+		List<Map<String, Object>>  dciList = new ArrayList<>();
+
+		drugDciService.findAllActiveDrugDci().forEach(dciDto -> {
+			Map<String, Object> dciMap = new HashMap<>();
+			dciMap.put("id", dciDto.getId());
+			dciMap.put("name", dciDto.getName());
+			dciList.add(dciMap);
+		});
+		
+		return new ResponseEntity<>(dciList, HttpStatus.OK);
+	}
 }

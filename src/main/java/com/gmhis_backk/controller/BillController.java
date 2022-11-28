@@ -1,23 +1,29 @@
 package com.gmhis_backk.controller;
 
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,6 +43,7 @@ import com.gmhis_backk.domain.CashRegister;
 import com.gmhis_backk.domain.Convention;
 import com.gmhis_backk.domain.ConventionHasAct;
 import com.gmhis_backk.domain.ConventionHasActCode;
+import com.gmhis_backk.domain.Files;
 import com.gmhis_backk.domain.Insurance;
 import com.gmhis_backk.domain.Insured;
 import com.gmhis_backk.domain.Patient;
@@ -50,6 +57,7 @@ import com.gmhis_backk.dto.BillDTO;
 import com.gmhis_backk.dto.PaymentDTO;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
 import com.gmhis_backk.repository.BillHasInsuredRepository;
+import com.gmhis_backk.repository.FileDbRepository;
 import com.gmhis_backk.repository.UserRepository;
 import com.gmhis_backk.service.ActCodeService;
 import com.gmhis_backk.service.ActService;
@@ -122,6 +130,9 @@ public class BillController {
 	
 	@Autowired
 	private BillHasInsuredService billHasInsuredService;
+	
+	 @Autowired
+     FileDbRepository fileRepository;
 
 	private Admission admission = null;
 	private Convention convention = null;
@@ -775,7 +786,7 @@ public class BillController {
 
 	@ApiOperation(value = "Retourne les details d'une facture specifique")
 	@GetMapping("/detail/{id}")
-	public Object detail(@PathVariable Long id) {
+	public Object detail(@PathVariable Long id) throws IOException {
 		bill = new Bill();
 
 		bill = billService.findBillById(id).orElseGet(() -> {
@@ -792,11 +803,15 @@ public class BillController {
 		billMap.put("patientExternalId", bill.getAdmission().getPatient().getPatientExternalId());
 		billMap.put("patientFirstName", bill.getAdmission().getPatient().getFirstName());
 		billMap.put("patientLastName", bill.getAdmission().getPatient().getLastName());
+		billMap.put("patientAge", bill.getAdmission().getPatient().getAge());
+		billMap.put("patientHeight", bill.getAdmission().getPatient().getHeight());
+		billMap.put("patientWeight", bill.getAdmission().getPatient().getHeight());
 		billMap.put("patientMaidenName", bill.getAdmission().getPatient().getMaidenName());
 		billMap.put("billDate", bill.getCreatedAt());
 		billMap.put("accountNumber", bill.getAccountNumber());
 		billMap.put("admissionNumber", bill.getAdmission().getAdmissionNumber());
 		billMap.put("facilityName", bill.getAdmission().getFacility().getName());
+		billMap.put("facilityLogo", this.facilityLogoInBase64(bill.getAdmission().getFacility().getLogoId()));
 		billMap.put("admissionId", bill.getAdmission().getId());
 		billMap.put("admissionStartDate", bill.getAdmission().getAdmissionStartDate());
 		billMap.put("admissionEndDate", bill.getAdmission().getAdmissionEndDate());
@@ -1084,6 +1099,16 @@ public class BillController {
 				
 		  });
 		  return bList;
+	}
+	
+	
+	public String facilityLogoInBase64(String logoId) throws IOException {	
+			Files file = fileRepository.findById(UUID.fromString(logoId)).orElse(null);
+			var imgFile = new FileSystemResource(Paths.get(file.getLocation()));
+		    byte[] bytes = StreamUtils.copyToByteArray(imgFile.getInputStream());
+		    String encodedString = Base64.getEncoder().encodeToString(bytes);
+		    String basse64 = "data:"+file.getType()+";base64," + encodedString ;	
+		    return basse64;
 	}
 
 

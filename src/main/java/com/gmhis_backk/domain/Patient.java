@@ -165,5 +165,16 @@ public class Patient implements Serializable {
 	
 	@OneToMany(mappedBy = "patient", fetch = FetchType.LAZY)
 	private List<Insured> insurances;
+	
+	@Column
+	private int age;
+	
+	
+	@Column
+	private Double height;
+	
+	
+	@Column
+	private Double weight;
 
 }

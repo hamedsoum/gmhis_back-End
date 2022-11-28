@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -45,6 +46,9 @@ private static final long serialVersionUID = 1L;
 	@Column
 	private String name;
 	
+	@Column
+	private String dosage;
+	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "created_at")
 	private Date createdAt;
@@ -55,4 +59,26 @@ private static final long serialVersionUID = 1L;
 	
 	@JoinColumn(name = "drug_price")
 	private double drugPrice;
+
+@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "updated_at")
+	private Date updatedAt;
+
+
+	@Column(name = "updated_by")
+	private Long updatedBy;
+	
+	
+	@ManyToOne
+	@JoinColumn(name="drug_dci_id")
+	private DrugDci drugDci;
+	
+	@ManyToOne
+	@JoinColumn(name="drug_pharmacological_form_id")
+	private DrugPharmacologicalForm drugPharmacologicalForm;
+	
+	@ManyToOne
+	@JoinColumn(name="drug_therapeutic_class_id")
+	private DrugTherapeuticClass drugTherapeuticClass;
+	
 }

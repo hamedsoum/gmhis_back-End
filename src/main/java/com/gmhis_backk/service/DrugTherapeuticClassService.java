@@ -2,13 +2,14 @@ package com.gmhis_backk.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.gmhis_backk.domain.DrugTherapeuticClass;
-import com.gmhis_backk.dto.DefaultNameAndActiveDto;
+import com.gmhis_backk.dto.DrugTherapeuticClassDto;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
 
@@ -23,11 +24,13 @@ public interface DrugTherapeuticClassService {
 	  
 	  List<DrugTherapeuticClass> findAllDrugTherapeuticClass();
 		
-	  Optional<DrugTherapeuticClass> getDrugTherapeuticClassDetails(Long id); 
+	  Optional<DrugTherapeuticClass> getDrugTherapeuticClassDetails(UUID id); 
 	  
-	  DrugTherapeuticClass addDrugTherapeuticClass(DefaultNameAndActiveDto defaultNameAndActiveDto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException;
+		public List<DrugTherapeuticClass> findActiveDrugTherapeuticClass();
+	  
+	  DrugTherapeuticClass addDrugTherapeuticClass(DrugTherapeuticClassDto drugTherapeuticClassDto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException;
 		
-	  DrugTherapeuticClass updateDrugTherapeuticClass(Long id,DefaultNameAndActiveDto defaultNameAndActiveDto) throws ResourceNotFoundByIdException, ResourceNameAlreadyExistException;
+	  DrugTherapeuticClass updateDrugTherapeuticClass(UUID id,DrugTherapeuticClassDto drugTherapeuticClassDto) throws ResourceNotFoundByIdException, ResourceNameAlreadyExistException;
 
 
 }
