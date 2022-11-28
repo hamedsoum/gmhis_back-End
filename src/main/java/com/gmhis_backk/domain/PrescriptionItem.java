@@ -1,6 +1,7 @@
 package com.gmhis_backk.domain;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.UUID;
 
 import javax.persistence.*;
@@ -60,5 +61,9 @@ public class PrescriptionItem implements Serializable {
 	
 	private String duration;
 
+	@Temporal(TemporalType.TIMESTAMP)
+
+	@Column(name = "collected_at", nullable = true)
+	private Date collectedAt;
 
 }

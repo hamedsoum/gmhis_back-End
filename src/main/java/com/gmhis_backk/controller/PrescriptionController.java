@@ -1,6 +1,7 @@
 package com.gmhis_backk.controller;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,6 +32,7 @@ import com.gmhis_backk.dto.PrescriptionDto;
 import com.gmhis_backk.exception.domain.EmailExistException;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
+import com.gmhis_backk.repository.PrescriptionItemRepository;
 import com.gmhis_backk.service.PrescriptionItemService;
 import com.gmhis_backk.service.PrescriptionService;
 
@@ -49,6 +52,9 @@ public class PrescriptionController {
 	
 	@Autowired
 	private PrescriptionItemService prescriptionItemService;
+	
+	@Autowired
+	private PrescriptionItemRepository prescriptionItemRepository;
 	
 	@PostMapping("/add")
 	@ApiOperation("Ajouter une ordonnance")
@@ -208,12 +214,16 @@ public class PrescriptionController {
 	
 	@PostMapping("/SetPrescriptionItems")
 	@ApiOperation("detail d'une ordonnance par son numero")
+	@Transactional
 	public boolean setPrescriptionItems(@RequestBody List<String> pDto) {
 			for(String prescriptionItemid : pDto) {
 				System.out.println(prescriptionItemid);
 			  PrescriptionItem  prescriptionItem = prescriptionItemService.findPrescriptionItemById(UUID.fromString(prescriptionItemid)).orElse(null);
-				System.out.println(prescriptionItem.getDosage());
-			  prescriptionItem.setCollected(true);
+				prescriptionItem.setCollected(true);
+				prescriptionItem.setCollectedAt(new Date());
+
+//				System.out.println(false);
+			  prescriptionItemRepository.save(prescriptionItem);
 			}
 		return true;
 	}
