@@ -27,6 +27,16 @@ public interface AnalysisRequestService {
 	
 	public Page<AnalysisRequest> findAnalysisRequestsByPatient(Long patient, Pageable pageable);
 	
-	public Page<AnalysisRequest> findAllAnalysisRequests(String firstName, String lastName, String patientExternalId,
-			String cellPhone, String cnamNumber, String idCardNumber, String state, Pageable pageable);
+	public Page<AnalysisRequest> findAnalysisRequestsByAdmissionNumber(String admissionNumber, Pageable pageable);
+
+	
+	public Page<AnalysisRequest> findAll (Pageable pageable);
+	
+//	public Page<AnalysisRequest> findAllAnalysisRequests(String firstName, String lastName, String patientExternalId,
+//			String cellPhone, String cnamNumber, String idCardNumber, String state, Pageable pageable);
+	
+	public Page<AnalysisRequest> findAllAnalysisRequests(String patientExternalId, String cnamNumber, String idCardNumber, String state, Pageable pageable);
+
+	public Long findAnalyseNumber(Long patientId);
+
 }

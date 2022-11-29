@@ -55,7 +55,6 @@ public class AnalysisRequestServiceImpl implements AnalysisRequestService {
 		if (admission == null) {
 			throw new ResourceNotFoundByIdException("aucune admission trouvée pour l'identifiant " );
 		}
-		System.out.print(admission.getAdmissionNumber());
 		for(Long a : analysDto.getActs()) {
 			AnalysisRequest analys = new AnalysisRequest();
 			Act act = actService.findActById(a).orElse(null);
@@ -67,6 +66,7 @@ public class AnalysisRequestServiceImpl implements AnalysisRequestService {
 			analys.setCreatedAt(new Date());
 			analys.setObservation(analysDto.getObservation());
 			analys.setPratician(getCurrentUserId());
+			analys.setState(false);
 			analysisRequestRepository.save(analys);
 		}
 		return null;
@@ -82,10 +82,27 @@ public class AnalysisRequestServiceImpl implements AnalysisRequestService {
 		return analysisRequestRepository.findAnalysisRequestByPatient(patient, pageable);
 	}
 
+
+
 	@Override
-	public Page<AnalysisRequest> findAllAnalysisRequests(String firstName, String lastName, String patientExternalId,
-			String cellPhone, String cnamNumber, String idCardNumber, String state, Pageable pageable) {
-		return analysisRequestRepository.findAllAnalysisRequests(firstName, lastName, patientExternalId, cellPhone, cnamNumber, idCardNumber, state, pageable);
+	public Page<AnalysisRequest> findAll(Pageable pageable) {
+		return analysisRequestRepository.findAll(pageable);
+	}
+
+	@Override
+	public Page<AnalysisRequest> findAllAnalysisRequests(String patientExternalId, String cnamNumber,
+			String idCardNumber, String state, Pageable pageable) {
+		return analysisRequestRepository.findAllAnalysisRequests(patientExternalId, cnamNumber, idCardNumber, state, pageable);
+	}
+
+	@Override
+	public Page<AnalysisRequest> findAnalysisRequestsByAdmissionNumber(String admissionNumber, Pageable pageable) {
+		return analysisRequestRepository.findAnalysisRequestsByAdmissionNumber(admissionNumber, pageable);
+	}
+
+	@Override
+	public Long findAnalyseNumber(Long patientId) {
+		return analysisRequestRepository.findAnalyseRequestNumber(patientId);
 	}
 
 	

@@ -58,7 +58,7 @@ public class AnalysisRequest implements Serializable {
 	@Column(name = "updated_by")
 	private Long updatedBy;
 	
-	private String state;
+	private boolean state;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "performed_at")
