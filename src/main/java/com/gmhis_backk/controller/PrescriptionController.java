@@ -1,5 +1,6 @@
 package com.gmhis_backk.controller;
 
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -35,6 +36,9 @@ import com.gmhis_backk.service.PrescriptionItemService;
 import com.gmhis_backk.service.PrescriptionService;
 
 import io.swagger.annotations.ApiOperation;
+import net.sourceforge.barbecue.Barcode;
+import net.sourceforge.barbecue.BarcodeFactory;
+import net.sourceforge.barbecue.BarcodeImageHandler;
 
 /**
  * 
@@ -142,7 +146,7 @@ public class PrescriptionController {
 			examsMap.put("drugPrice", prescriptionItemDto.getDrug().getDrugPrice());
 			examsMap.put("collected", prescriptionItemDto.getCollected());
 			examsMap.put("duration", prescriptionItemDto.getDuration());
-			examsMap.put("collected", prescriptionItemDto.getCollected());
+			examsMap.put("coverredByCMU", prescriptionItemDto.getDrug().getCoveredByCmu());
 			prescriptionItemList.add(examsMap);
 		});
 		return prescriptionItemList;
@@ -157,7 +161,7 @@ public class PrescriptionController {
 	
 	@GetMapping("/get-detail/{id}")
 	@ApiOperation("detail d'une ordonnance ")
-	public  ResponseEntity<Map<String, Object>> getDetail(@PathVariable UUID id){
+	public  ResponseEntity<Map<String, Object>> getDetail(@PathVariable UUID id) throws Exception{
 		Map<String, Object> response = new HashMap<>();
 
 		Prescription prescription = prescriptionService.findPrescriptionById(id).orElse(null);
@@ -175,7 +179,7 @@ public class PrescriptionController {
 		response.put("facilityContact", prescription.getExamination().getFacility().getContact());
 		response.put("prescriptionDate", prescription.getPrescriptionDate());
 		response.put("prescriptionNumber", prescription.getPrescriptionNumber());
-		response.put("prescriptionObservation", prescription.getObservation());
+//		response.put("prescriptionCodeBar", this.generateEAN13BarcodeImage(prescription.getPrescriptionNumber()));
 		response.put("patientFirstName", prescription.getExamination().getAdmission().getPatient().getFirstName());
 		response.put("patientLastName", prescription.getExamination().getAdmission().getPatient().getLastName());
 		response.put("patientCivility", prescription.getExamination().getAdmission().getPatient().getCivility());
@@ -229,6 +233,13 @@ public class PrescriptionController {
 			  prescriptionItemRepository.save(prescriptionItem);
 			}
 		return true;
+	}
+	
+	public static BufferedImage generateEAN13BarcodeImage(String barcodeText) throws Exception {
+	    Barcode barcode = BarcodeFactory.createEAN13(barcodeText);
+//	    barcode.setFont(BARCODE_TEXT_FONT);
+
+	    return BarcodeImageHandler.getImage(barcode);
 	}
 	
 	}

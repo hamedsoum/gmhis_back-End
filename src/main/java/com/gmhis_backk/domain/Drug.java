@@ -57,6 +57,9 @@ private static final long serialVersionUID = 1L;
 	@Column(name = "created_by")
 	private Long createdBy;
 	
+	@Column(name = "covered_by_cmu")
+	private Boolean coveredByCmu;
+	
 	@JoinColumn(name = "drug_price")
 	private double drugPrice;
 
