@@ -4,6 +4,7 @@ package com.gmhis_backk.controller;
 import static org.springframework.http.HttpStatus.OK;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,11 +26,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gmhis_backk.AppUtils;
 import com.gmhis_backk.domain.Admission;
 import com.gmhis_backk.domain.AnalysisRequest;
+import com.gmhis_backk.domain.User;
 import com.gmhis_backk.dto.AnalysisRequestDTO;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
+import com.gmhis_backk.repository.AnalysisRequestRepository;
 import com.gmhis_backk.repository.UserRepository;
 import com.gmhis_backk.service.AdmissionService;
 import com.gmhis_backk.service.AnalysisRequestService;
@@ -46,6 +51,9 @@ public class AnalysisRequestController {
 
 	@Autowired
 	private AnalysisRequestService analysisRequestService;
+	
+	@Autowired
+	AnalysisRequestRepository analysisRequestRepository;
 
 	@Autowired
 	private PatientService patientService;
@@ -71,7 +79,7 @@ public class AnalysisRequestController {
 	@GetMapping("/p_list")
 	public ResponseEntity<Map<String, Object>>p_list(
 			 @RequestParam(required = false, defaultValue = "") String date,
-				@RequestParam(required = false, defaultValue = "N") String  state,
+				@RequestParam(required = false, defaultValue = "") String  state,
 				@RequestParam(required = false, defaultValue = "") String firstName,
 				@RequestParam(required = false, defaultValue = "") String lastName,
 				@RequestParam(required = false, defaultValue = "") String patientExternalId,
@@ -121,6 +129,7 @@ public class AnalysisRequestController {
 			analystMap.put("patientNumber", analystDto.getAdmission().getPatient().getPatientExternalId());
 			analystMap.put("admissionNumber", analystDto.getAdmission().getAdmissionNumber());
 			analystMap.put("idCardNumber", analystDto.getAdmission().getPatient().getIdCardNumber());
+			analystMap.put("state", analystDto.isState());
 			analystRequestList.add(analystMap);
 		});
 		return analystRequestList;
@@ -170,7 +179,6 @@ public class AnalysisRequestController {
 		return analystRequestList;
 	}
 	
-	
 
 	@GetMapping("/getanalyseRequestNumber/{patientId}")
 	@ApiOperation("nombre de consultation d'un patient ")
@@ -179,5 +187,21 @@ public class AnalysisRequestController {
 	return analysisRequestService.findAnalyseNumber(patientId);
 	}
 	
-
+	protected  User getCurrentUserId() {
+		return this.userRepository.findUserByUsername(AppUtils.getUsername());
+	}
+	@ApiOperation(value = "Marquer une demande d'examens comme effectuée")
+	@GetMapping("/performed/{id}")
+	@Transactional
+	public AnalysisRequest performed(@PathVariable Long id) {
+		AnalysisRequest analysisRequest = new AnalysisRequest();
+		analysisRequest = analysisRequestService.findAnalysisRequestById(id).orElseGet(() -> {
+			return null;
+		});
+		analysisRequest.setState(true);
+		analysisRequest.setPerformedAt(new Date());
+		analysisRequest.setPerformedBy(this.getCurrentUserId().getId());
+		analysisRequest = analysisRequestRepository.save(analysisRequest);
+		return null;
+	}
 }
