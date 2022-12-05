@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -119,7 +120,7 @@ public class ActServiceImpl implements ActService{
 		}
 		
 	 ActCategory actCategory = actCategoryService.getActCategoryDetails(actDto.getActCategory()).orElse(null);
-		if (actCategory == null) {
+		if (ObjectUtils.isNotEmpty(actDto.getActCategory()) && actCategory == null) {
 			throw new ResourceNotFoundByIdException("aucune categorie d'acte trouvé pour l'identifiant " );
 		}
 		

@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -27,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gmhis_backk.domain.ActCode;
-import com.gmhis_backk.domain.User;
 import com.gmhis_backk.dto.ActCodeDto;
 import com.gmhis_backk.exception.domain.ApplicationErrorException;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
@@ -99,20 +97,11 @@ public class ActCodeController {
 		actCodes.stream().forEach(actCodeDto -> {
 
 			Map<String, Object> actGroupsMap = new HashMap<>();
-			User createdBy = ObjectUtils.isEmpty(actCodeDto.getCreatedBy()) ? new User()
-					: userRepository.findById(actCodeDto.getCreatedBy()).orElse(null);
-			User updatedBy = ObjectUtils.isEmpty(actCodeDto.getUpdatedBy()) ? new User()
-					: userRepository.findById(actCodeDto.getUpdatedBy()).orElse(null);
 			actGroupsMap.put("id", actCodeDto.getId());
 			actGroupsMap.put("name", actCodeDto.getName());
 			actGroupsMap.put("active", actCodeDto.getActive());
 			actGroupsMap.put("value", actCodeDto.getValue());
-			actGroupsMap.put("createdAt", actCodeDto.getCreatedAt());
-			actGroupsMap.put("updatedAt", actCodeDto.getUpdatedAt());
-			actGroupsMap.put("createdByFirstName", ObjectUtils.isEmpty(createdBy) ? "--" : createdBy.getFirstName());
-			actGroupsMap.put("createdByLastName", ObjectUtils.isEmpty(createdBy) ? "--" : createdBy.getLastName());
-			actGroupsMap.put("UpdatedByFirstName", ObjectUtils.isEmpty(updatedBy) ? "--" : updatedBy.getFirstName());
-			actGroupsMap.put("UpdatedByLastName", ObjectUtils.isEmpty(updatedBy) ? "--" : updatedBy.getLastName());
+			actGroupsMap.put("libelle", actCodeDto.getLibelle());
 			actCodeList.add(actGroupsMap);
 		});
 		return actCodeList;

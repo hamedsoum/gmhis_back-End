@@ -12,5 +12,5 @@ public class ActCodeDto {
 	private String name;
 	private Boolean active;
 	private int value;
-	
+	private String libelle;
 }

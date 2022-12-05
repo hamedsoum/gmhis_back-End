@@ -45,6 +45,10 @@ public class ActCode implements Serializable{
 	@Column
 	private int value;
 	
+
+	@Column
+	private String libelle;
+	
 	@Column
 	private Boolean active;
 	

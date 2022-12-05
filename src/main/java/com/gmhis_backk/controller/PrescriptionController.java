@@ -125,8 +125,6 @@ public class PrescriptionController {
 	@GetMapping("/getPrescriptionItems/{prescriptionId}")
 	@ApiOperation("listes des prescription par l'id de l'ordonnance ")
 	public  ResponseEntity<List<Map<String, Object>>> getPrescriptionItemsByPrescriptionId(@PathVariable UUID prescriptionId){
-		Map<String, Object> response = new HashMap<>();
-
 		List<PrescriptionItem> prescriptions = prescriptionItemService.findPrescriptionItemsByPrescription(prescriptionId);
 		List<Map<String, Object>> prescriptionItemList = this.getMapFromPrescriptionItemList(prescriptions);
 
@@ -187,7 +185,7 @@ public class PrescriptionController {
 		response.put("patientHeight", prescription.getExamination().getAdmission().getPatient().getHeight());
 		response.put("patientWeight", prescription.getExamination().getAdmission().getPatient().getHeight());
 
-//		response.put("prescriptionItem", prescription.getPrescriptionItems());
+		response.put("prescriptionObservation", prescription.getObservation());
 
 
 //		response.put("facilityName", prescription.getName());

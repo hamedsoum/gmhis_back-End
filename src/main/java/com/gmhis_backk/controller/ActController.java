@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.gmhis_backk.domain.Act;
 import com.gmhis_backk.domain.ActCategory;
-import com.gmhis_backk.domain.ActGroup;
 import com.gmhis_backk.domain.Bill;
 import com.gmhis_backk.domain.User;
 import com.gmhis_backk.dto.ActDTO;
@@ -35,7 +34,6 @@ import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
 import com.gmhis_backk.repository.UserRepository;
 import com.gmhis_backk.service.ActCategoryService;
-import com.gmhis_backk.service.ActGroupService;
 import com.gmhis_backk.service.ActService;
 import com.gmhis_backk.service.BillService;
 
@@ -113,27 +111,18 @@ public class ActController {
 		List<Map<String, Object>> actList = new ArrayList<>();
 		acts.stream().forEach(actDto -> {
 			Map<String, Object> actsMap = new HashMap<>();
-			User createdBy = ObjectUtils.isEmpty(actDto.getCreatedBy()) ? new User()
-					: userRepository.findById(actDto.getCreatedBy()).orElse(null);
-			User updatedBy = ObjectUtils.isEmpty(actDto.getUpdatedBy()) ? new User()
-					: userRepository.findById(actDto.getUpdatedBy()).orElse(null);
+
 			actsMap.put("id", actDto.getId());
 			actsMap.put("name", actDto.getName());
 			actsMap.put("codification", actDto.getCodification());
 			actsMap.put("coefficient", actDto.getCoefficient());
 			actsMap.put("amount", actDto.getActCode().getValue() * actDto.getCoefficient());
-			actsMap.put("actCategory", actDto.getActCategory().getName());
+			if (ObjectUtils.isNotEmpty(actDto.getActCategory())) {
+				actsMap.put("actCategory", actDto.getActCategory().getName());
+			}
 			actsMap.put("actCode", actDto.getActCode().getName());
 			actsMap.put("actGroup", actDto.getActGroup().getName());
 			actsMap.put("active", actDto.getActive());
-			actsMap.put("createdAt", actDto.getCreatedAt());
-			actsMap.put("updatedAt", actDto.getUpdatedAt());
-			actsMap.put("createdByLogin", ObjectUtils.isEmpty(createdBy) ? "--" : createdBy.getLogin());
-			actsMap.put("createdByFirstName", ObjectUtils.isEmpty(createdBy) ? "--" : createdBy.getFirstName());
-			actsMap.put("createdByLastName", ObjectUtils.isEmpty(createdBy) ? "--" : createdBy.getLastName());
-			actsMap.put("UpdatedByLogin", ObjectUtils.isEmpty(updatedBy) ? "--" : updatedBy.getLogin());
-			actsMap.put("UpdatedByFirstName", ObjectUtils.isEmpty(updatedBy) ? "--" : updatedBy.getFirstName());
-			actsMap.put("UpdatedByLastName", ObjectUtils.isEmpty(updatedBy) ? "--" : updatedBy.getLastName());
 			actList.add(actsMap);
 		});
 		return actList;
@@ -161,14 +150,14 @@ public class ActController {
 		Map<String, Object> response = new HashMap<>();
 
 		Act act= actService.findActById(id).orElse(null);
-		System.out.print(act.getActCategory().getId());
-		response.put("actCategory", act.getActCategory().getId());
 		response.put("id", act.getId());
 		response.put("name", act.getName());
 		response.put("codification", act.getCodification());
 		response.put("coefficient", act.getCoefficient());
 		response.put("amount", act.getActCode().getValue() * act.getCoefficient());
-		response.put("actCategory", act.getActCategory().getId());
+		if (ObjectUtils.isNotEmpty(act.getActCategory())) {
+			response.put("actCategory", act.getActCategory().getId());
+		}
 		response.put("actCode", act.getActCode().getId());
 		response.put("actGroup", act.getActGroup().getId());
 		response.put("active", act.getActive());
