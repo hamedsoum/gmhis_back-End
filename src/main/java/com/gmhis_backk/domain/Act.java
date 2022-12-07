@@ -79,6 +79,12 @@ public class Act implements Serializable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="act_group_id")
 	public ActGroup actGroup;
+	
+	@JsonBackReference
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="medical_analysis_speciality_id")
+	public MedicalAnalysisSpecilaity medicalAnalysisSpeciality;
+
 
 
 	@JsonBackReference

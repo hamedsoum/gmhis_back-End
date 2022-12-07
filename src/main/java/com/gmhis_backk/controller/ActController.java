@@ -160,6 +160,7 @@ public class ActController {
 		}
 		response.put("actCode", act.getActCode().getId());
 		response.put("actGroup", act.getActGroup().getId());
+//		response.put("medicalAnalysisSpeciality", act.getMedicalAnalysisSpeciality().getId());
 		response.put("active", act.getActive());
 		return new ResponseEntity<>(response,HttpStatus.OK);
 	}
@@ -182,7 +183,6 @@ public class ActController {
 	@ApiOperation(value = "Lister la liste des ids et noms des actes actifs par category dans le système")
 	@GetMapping("/active_acts_name_by_Category/{categoryId}")
 	public ResponseEntity<List<Map<String, Object>>> activeActNameAndIdByCategory(@PathVariable Long categoryId) throws ResourceNotFoundByIdException {
-		System.out.print(categoryId);
 		ActCategory actCategory = actCategoryService.getActCategoryDetails(categoryId).orElse(null);
 			if (actCategory == null) {
 				throw new ResourceNotFoundByIdException("aucune specialite d'acte trouvé pour l'identifiant" );
@@ -226,6 +226,25 @@ public class ActController {
 	  
 		return new ResponseEntity<>(actList, HttpStatus.OK);
 
+	}
+	
+	@ApiOperation(value = "Retourne la liste des actes d'analyse medicale")
+	@GetMapping("/find-All-medical-Analysis") 
+	public ResponseEntity<List<Map<String,Object>>> findNamesAndIdsByMedicalAnalysisSpeciality(){
+		List<Map<String, Object>> actList = new ArrayList<>();
+
+		actService.findNamesAndIdsByMedicalAnalysisSpeciality().stream().forEach(actDto -> {
+			Map<String, Object> actMap = new HashMap<>();
+			actMap.put("id", actDto.getId());
+			actMap.put("name", actDto.getName());
+			actMap.put("category", actDto.getActCategory().getName());
+			actMap.put("group", actDto.getActGroup().getName());
+			actMap.put("medicalAnalysisId", actDto.getMedicalAnalysisSpeciality().getId());
+			actMap.put("actCode", actDto.getCodification());
+			actList.add(actMap);
+		});
+
+		return new ResponseEntity<>(actList, HttpStatus.OK);
 	}
 
 }

@@ -2,6 +2,8 @@ package com.gmhis_backk.dto;
 
 
 
+import java.util.UUID;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,5 +27,6 @@ public class ActDTO {
 	private Long actCategory;
 	private Long actCode;
 	private Long actGroup;
+	private UUID medicalAnalysisSpeciality;
 
 }

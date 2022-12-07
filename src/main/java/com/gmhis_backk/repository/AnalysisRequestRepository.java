@@ -35,4 +35,7 @@ public interface AnalysisRequestRepository extends JpaRepository<AnalysisRequest
 	
 	@Query(value = "select Count(a) from AnalysisRequest a where a.admission.patient.id = :patientId")
 	public Long findAnalyseRequestNumber(@Param("patientId") Long patientId);
+	
+	@Query(value = "select * from Analysis_request p order by p.created_at desc LIMIT 0,1", nativeQuery = true)
+	public  AnalysisRequest findLastAnalysisMedical();
 }

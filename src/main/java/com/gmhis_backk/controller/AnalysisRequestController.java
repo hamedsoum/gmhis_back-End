@@ -4,6 +4,7 @@ package com.gmhis_backk.controller;
 import static org.springframework.http.HttpStatus.OK;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.gmhis_backk.AppUtils;
 import com.gmhis_backk.domain.Admission;
 import com.gmhis_backk.domain.AnalysisRequest;
+import com.gmhis_backk.domain.Prescription;
 import com.gmhis_backk.domain.User;
 import com.gmhis_backk.dto.AnalysisRequestDTO;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
@@ -123,11 +125,13 @@ public class AnalysisRequestController {
 		analystResquest.stream().forEach(analystDto -> {
 			Map<String, Object> analystMap = new HashMap<>();
 			analystMap.put("id", analystDto.getId());
-			analystMap.put("act", analystDto.getAct().getName());
 			analystMap.put("date", analystDto.getCreatedAt());
 			analystMap.put("facilityName", analystDto.getAdmission().getFacility().getName());
 			analystMap.put("patientNumber", analystDto.getAdmission().getPatient().getPatientExternalId());
 			analystMap.put("admissionNumber", analystDto.getAdmission().getAdmissionNumber());
+			analystMap.put("analysisNumber", analystDto.getAnalysisNumber());
+			analystMap.put("patientFirstName", analystDto.getAdmission().getPatient().getFirstName());
+			analystMap.put("patientLastName", analystDto.getAdmission().getPatient().getLastName());
 			analystMap.put("idCardNumber", analystDto.getAdmission().getPatient().getIdCardNumber());
 			analystMap.put("state", analystDto.isState());
 			analystRequestList.add(analystMap);
@@ -170,10 +174,12 @@ public class AnalysisRequestController {
 		analystResquest.stream().forEach(analystDto -> {
 			Map<String, Object> analystMap = new HashMap<>();
 			analystMap.put("id", analystDto.getId());
-			analystMap.put("act", analystDto.getAct().getName());
 			analystMap.put("date", analystDto.getCreatedAt());
 			analystMap.put("facilityName", analystDto.getAdmission().getFacility().getName());
 			analystMap.put("state", analystDto.isState());
+			analystMap.put("analysisNumber", analystDto.getAnalysisNumber());
+			analystMap.put("practicienFirstName", analystDto.getAdmission().getPractician().getUser().getFirstName());
+			analystMap.put("practicienLastName", analystDto.getAdmission().getPractician().getUser().getLastName());
 			analystRequestList.add(analystMap);
 		});
 		return analystRequestList;
@@ -204,4 +210,6 @@ public class AnalysisRequestController {
 		analysisRequest = analysisRequestRepository.save(analysisRequest);
 		return null;
 	}
+	
+	
 }

@@ -49,14 +49,13 @@ public class MedicalAnalysisSpecilalityServiceImpl implements MedicalAnalysisSpe
 
 	@Override
 	public List<MedicalAnalysisSpecilaity> findAllActive() {
-		// TODO Auto-generated method stub
-		return null;
+		return medicalAnalysisSpecialityRepository.findAllActive();
 	}
 
 	@Override
 	public Optional<MedicalAnalysisSpecilaity> getMedicalAnalysisSpecilaityDetails(UUID id) {
 		// TODO Auto-generated method stub
-		return Optional.empty();
+		return medicalAnalysisSpecialityRepository.findById(id);
 	}
 
 	@Override

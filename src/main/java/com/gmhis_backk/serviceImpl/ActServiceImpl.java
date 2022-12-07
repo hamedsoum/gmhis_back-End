@@ -20,6 +20,7 @@ import com.gmhis_backk.domain.ActGroup;
 import com.gmhis_backk.domain.AdmissionHasAct;
 import com.gmhis_backk.domain.Convention;
 import com.gmhis_backk.domain.ConventionHasAct;
+import com.gmhis_backk.domain.MedicalAnalysisSpecilaity;
 import com.gmhis_backk.domain.User;
 import com.gmhis_backk.dto.ActDTO;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
@@ -30,6 +31,7 @@ import com.gmhis_backk.service.ActCategoryService;
 import com.gmhis_backk.service.ActCodeService;
 import com.gmhis_backk.service.ActGroupService;
 import com.gmhis_backk.service.ActService;
+import com.gmhis_backk.service.MedicalAnalysisSpecilaityService;
 
 @Service
 public class ActServiceImpl implements ActService{
@@ -46,6 +48,8 @@ public class ActServiceImpl implements ActService{
 	@Autowired
 	private ActCodeService actCodeService;
 	
+	@Autowired
+	private MedicalAnalysisSpecilaityService medicalAnalysisSpecilaityService;
 	@Autowired private UserRepository userRepository;
 	@Override
 	public List<Act> findActs() {
@@ -124,20 +128,26 @@ public class ActServiceImpl implements ActService{
 			throw new ResourceNotFoundByIdException("aucune categorie d'acte trouvé pour l'identifiant " );
 		}
 		
-		 ActGroup actGroup = actGroupService.getActGroupDetails(actDto.getActGroup()).orElse(null);
+	 ActGroup actGroup = actGroupService.getActGroupDetails(actDto.getActGroup()).orElse(null);
 			if (actGroup == null) {
 				throw new ResourceNotFoundByIdException("aucune famille d'acte trouvé pour l'identifiant ");
-			}
+	   }
 		
-			 ActCode actCode = actCodeService.getActCodeDetails(actDto.getActCode()).orElse(null);
+	 ActCode actCode = actCodeService.getActCodeDetails(actDto.getActCode()).orElse(null);
 				if (actCode == null) {
 					throw new ResourceNotFoundByIdException("aucun code d'acte d'acte trouvé pour l'identifiant ");
+				}
+	
+	 MedicalAnalysisSpecilaity medicalAnalysisSpecilaity = medicalAnalysisSpecilaityService.getMedicalAnalysisSpecilaityDetails(actDto.getMedicalAnalysisSpeciality()).orElse(null);
+			if (medicalAnalysisSpecilaity == null) {
+					throw new ResourceNotFoundByIdException("aucune specialite trouvée pour l'identifiant ");
 				}
 		Act act = new Act();
 		BeanUtils.copyProperties(actDto,act,"id");
 		act.setActCategory(actCategory);
 		act.setActGroup(actGroup);
 		act.setActCode(actCode);
+		act.setMedicalAnalysisSpeciality(medicalAnalysisSpecilaity);
 		act.setCreatedAt(new Date());
 		act.setCreatedBy(getCurrentUserId().getId());
 		return actRepository.save(act);
@@ -173,10 +183,16 @@ public class ActServiceImpl implements ActService{
 			if (actCode == null) {
 				throw new ResourceNotFoundByIdException("aucun code d'acte d'acte trouvé pour l'identifiant ");
 			}
+			
+			 MedicalAnalysisSpecilaity medicalAnalysisSpecilaity = medicalAnalysisSpecilaityService.getMedicalAnalysisSpecilaityDetails(actDto.getMedicalAnalysisSpeciality()).orElse(null);
+					if (medicalAnalysisSpecilaity == null) {
+							throw new ResourceNotFoundByIdException("aucune specialite trouvée pour l'identifiant ");
+						}
 			BeanUtils.copyProperties(actDto,updateActe,"id");
 			updateActe.setActCategory(actCategory);
 			updateActe.setActGroup(actGroup);
 			updateActe.setActCode(actCode);
+			updateActe.setMedicalAnalysisSpeciality(medicalAnalysisSpecilaity);
 			updateActe.setUpdatedAt(new Date());
 			updateActe.setUpdatedBy(getCurrentUserId().getId());
 			return actRepository.save(updateActe);
@@ -188,8 +204,10 @@ public class ActServiceImpl implements ActService{
 		return actRepository.findNamesAndIdsByCategory(category);
 	}
 
-	
+	@Override
+	public List<Act> findNamesAndIdsByMedicalAnalysisSpeciality() {
+		return actRepository.findNamesAndIdsByMedicalAnalysisSpeciality();
+	}
 
-	
 
 }

@@ -1,5 +1,6 @@
 package com.gmhis_backk.serviceImpl;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Optional;
 
@@ -13,10 +14,12 @@ import com.gmhis_backk.AppUtils;
 import com.gmhis_backk.domain.Act;
 import com.gmhis_backk.domain.Admission;
 import com.gmhis_backk.domain.AnalysisRequest;
+import com.gmhis_backk.domain.AnalysisRequestItem;
 import com.gmhis_backk.domain.User;
 import com.gmhis_backk.dto.AnalysisRequestDTO;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
+import com.gmhis_backk.repository.AnalysisRequestItemRepository;
 import com.gmhis_backk.repository.AnalysisRequestRepository;
 import com.gmhis_backk.repository.UserRepository;
 import com.gmhis_backk.service.ActService;
@@ -37,6 +40,9 @@ public class AnalysisRequestServiceImpl implements AnalysisRequestService {
 	private AnalysisRequestRepository analysisRequestRepository;
 	
 	@Autowired
+	private AnalysisRequestItemRepository analysisRequestItemRepository;
+	
+	@Autowired
 	private AdmissionService admissionService;
 	
 	@Autowired
@@ -55,19 +61,29 @@ public class AnalysisRequestServiceImpl implements AnalysisRequestService {
 		if (admission == null) {
 			throw new ResourceNotFoundByIdException("aucune admission trouvée pour l'identifiant " );
 		}
+		
+		AnalysisRequest analys = new AnalysisRequest();
+		
+		analys.setAnalysisNumber(getanalysisNumber());
+		analys.setAdmission(admission);
+		analys.setCreatedAt(new Date());
+		analys.setObservation(analysDto.getObservation());
+		analys.setPratician(getCurrentUserId());
+		analys.setState(false);
+		analys.setCreatedAt(new Date());
+		analysisRequestRepository.save(analys);
 		for(Long a : analysDto.getActs()) {
-			AnalysisRequest analys = new AnalysisRequest();
 			Act act = actService.findActById(a).orElse(null);
 			if (act == null) {
-				throw new ResourceNotFoundByIdException("aucune acte trouvée pour l'identifiant "+ a  );
+				throw new ResourceNotFoundByIdException("aucun acte trouvée pour l'identifiant "+ a  );
 			}
-			analys.setAct(act);
-			analys.setAdmission(admission);
-			analys.setCreatedAt(new Date());
-			analys.setObservation(analysDto.getObservation());
-			analys.setPratician(getCurrentUserId());
-			analys.setState(false);
-			analysisRequestRepository.save(analys);
+			System.out.print(act.getName());
+			AnalysisRequestItem analysisRequestItem = new AnalysisRequestItem();
+			analysisRequestItem.setAct(act);
+			analysisRequestItem.setAnalysisRequest(analys);
+			analysisRequestItem.setState(false);
+			analysisRequestItem.setCreatedAt(new Date());
+			analysisRequestItemRepository.save(analysisRequestItem);
 		}
 		return null;
 	}
@@ -105,5 +121,33 @@ public class AnalysisRequestServiceImpl implements AnalysisRequestService {
 		return analysisRequestRepository.findAnalyseRequestNumber(patientId);
 	}
 
+	   public String getanalysisNumber() {
+			
+			AnalysisRequest analysisNumber = analysisRequestRepository.findLastAnalysisMedical();
+			Calendar calendar = Calendar.getInstance();
+			String month= String.format("%02d", calendar.get( Calendar.MONTH ) + 1) ;
+			String year = String.format("%02d",calendar.get( Calendar.YEAR ) % 100);
+			String lanalysisYearandMonth = "";
+			String analysisNumberNb = "";
+			int  number= 0;
+			
+			if(analysisNumber ==  null) {
+				lanalysisYearandMonth = year + month;
+				analysisNumberNb = "0000";
+			}else {
+				 String an = analysisNumber.getAnalysisNumber().substring(2);
+				 lanalysisYearandMonth = an.substring(0, 4);
+				 analysisNumberNb = an.substring(4);	
+			}
+			
+			if(lanalysisYearandMonth.equals( year + month)) {
+				number = Integer.parseInt(analysisNumberNb) + 1 ;
+			} else {
+				number = number +1;
+			}
+			
+			return "MA" + year + month +String.format("%04d", number);
+				
+		}
 	
 }

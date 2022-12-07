@@ -50,4 +50,6 @@ public List<Act> findActs();
 	 public Act addAct(ActDTO actDto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException;
 	
 	 public Act updateAct(Long id,ActDTO actDto) throws ResourceNotFoundByIdException, ResourceNameAlreadyExistException;
+	 
+	 public List<Act> findNamesAndIdsByMedicalAnalysisSpeciality();
 }

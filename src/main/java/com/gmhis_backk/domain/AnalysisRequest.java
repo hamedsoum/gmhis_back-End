@@ -29,6 +29,11 @@ public class AnalysisRequest implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	
+	@Column(name="analysis_number")
+	private String analysisNumber;
+	
+	
 	@ManyToOne
 	@JoinColumn(name="admission_id")
 	private Admission admission;
@@ -36,10 +41,6 @@ public class AnalysisRequest implements Serializable {
 	@ManyToOne
 	@JoinColumn(name="pratician_id")
 	private User pratician;
-	
-	@ManyToOne
-	@JoinColumn(name="act_id")
-	private Act act;
 	
 	@Column(columnDefinition = "json")
 	@JsonRawValue

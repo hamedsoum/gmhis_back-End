@@ -214,6 +214,7 @@ public class PrescriptionController {
 		response.put("patientFirstName", prescription.getExamination().getAdmission().getPatient().getFirstName());
 		response.put("patientLastName", prescription.getExamination().getAdmission().getPatient().getLastName());
 		response.put("patientCivility", prescription.getExamination().getAdmission().getPatient().getCivility());
+		response.put("cmuNumber", prescription.getExamination().getAdmission().getPatient().getCnamNumber());
 		return new ResponseEntity<>(response,HttpStatus.OK);
 		}
 	
