@@ -4,11 +4,11 @@ package com.gmhis_backk.controller;
 import static org.springframework.http.HttpStatus.OK;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,18 +28,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gmhis_backk.AppUtils;
-import com.gmhis_backk.domain.Admission;
 import com.gmhis_backk.domain.AnalysisRequest;
-import com.gmhis_backk.domain.Prescription;
+import com.gmhis_backk.domain.AnalysisRequestItem;
 import com.gmhis_backk.domain.User;
 import com.gmhis_backk.dto.AnalysisRequestDTO;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
+import com.gmhis_backk.repository.AnalysisRequestItemRepository;
 import com.gmhis_backk.repository.AnalysisRequestRepository;
 import com.gmhis_backk.repository.UserRepository;
-import com.gmhis_backk.service.AdmissionService;
+import com.gmhis_backk.service.AnalysisRequestItemService;
 import com.gmhis_backk.service.AnalysisRequestService;
-import com.gmhis_backk.service.PatientService;
 import io.swagger.annotations.ApiOperation;
 
 /**
@@ -55,16 +54,18 @@ public class AnalysisRequestController {
 	private AnalysisRequestService analysisRequestService;
 	
 	@Autowired
+	private AnalysisRequestItemService analysisRequestItemService;
+	
+	@Autowired
 	AnalysisRequestRepository analysisRequestRepository;
+	
+	@Autowired
+	AnalysisRequestItemRepository analysisRequestItemRepository;
 
 	@Autowired
-	private PatientService patientService;
-	
-	@Autowired
-	private AdmissionService admissionService;
-	
-	@Autowired
 	UserRepository 	userRepository;
+
+	
 
 	
 	@ApiOperation(value = "Ajouter les demandes d'analyses")
@@ -132,8 +133,12 @@ public class AnalysisRequestController {
 			analystMap.put("analysisNumber", analystDto.getAnalysisNumber());
 			analystMap.put("patientFirstName", analystDto.getAdmission().getPatient().getFirstName());
 			analystMap.put("patientLastName", analystDto.getAdmission().getPatient().getLastName());
+			analystMap.put("patientGender", analystDto.getAdmission().getPatient().getGender());
+			analystMap.put("patientAge", analystDto.getAdmission().getPatient().getAge());
+			analystMap.put("patientTel1", analystDto.getAdmission().getPatient().getCellPhone1());
+			analystMap.put("patientTel2", analystDto.getAdmission().getPatient().getCellPhone2());
 			analystMap.put("idCardNumber", analystDto.getAdmission().getPatient().getIdCardNumber());
-			analystMap.put("state", analystDto.isState());
+			analystMap.put("state", analystDto.getState());
 			analystRequestList.add(analystMap);
 		});
 		return analystRequestList;
@@ -150,9 +155,7 @@ public class AnalysisRequestController {
 		Sort.Direction dir = sort[1].equalsIgnoreCase("asc") ? dir = Sort.Direction.ASC : Sort.Direction.DESC;
 
 		Pageable paging = PageRequest.of(page, size, Sort.by(dir, sort[0]));
-		
-		System.out.print(patientId);
-		Page<AnalysisRequest> p_analysisRequest = analysisRequestService.findAnalysisRequestsByPatient(Long.parseLong(patientId), paging);
+				Page<AnalysisRequest> p_analysisRequest = analysisRequestService.findAnalysisRequestsByPatient(Long.parseLong(patientId), paging);
 //		
 	    List<AnalysisRequest> lAnalyst = p_analysisRequest.getContent();
 	    
@@ -176,7 +179,7 @@ public class AnalysisRequestController {
 			analystMap.put("id", analystDto.getId());
 			analystMap.put("date", analystDto.getCreatedAt());
 			analystMap.put("facilityName", analystDto.getAdmission().getFacility().getName());
-			analystMap.put("state", analystDto.isState());
+			analystMap.put("state", analystDto.getState());
 			analystMap.put("analysisNumber", analystDto.getAnalysisNumber());
 			analystMap.put("practicienFirstName", analystDto.getAdmission().getPractician().getUser().getFirstName());
 			analystMap.put("practicienLastName", analystDto.getAdmission().getPractician().getUser().getLastName());
@@ -196,20 +199,57 @@ public class AnalysisRequestController {
 	protected  User getCurrentUserId() {
 		return this.userRepository.findUserByUsername(AppUtils.getUsername());
 	}
-	@ApiOperation(value = "Marquer une demande d'examens comme effectuée")
-	@GetMapping("/performed/{id}")
+	@ApiOperation(value = "Marquer une ou des demandes d'examens comme effectuée")
+	@PostMapping("/performed")
 	@Transactional
-	public AnalysisRequest performed(@PathVariable Long id) {
+	public AnalysisRequest performed( @RequestBody List<String> ids) {
 		AnalysisRequest analysisRequest = new AnalysisRequest();
-		analysisRequest = analysisRequestService.findAnalysisRequestById(id).orElseGet(() -> {
-			return null;
-		});
-		analysisRequest.setState(true);
-		analysisRequest.setPerformedAt(new Date());
-		analysisRequest.setPerformedBy(this.getCurrentUserId().getId());
-		analysisRequest = analysisRequestRepository.save(analysisRequest);
+		for(String id : ids) {
+			analysisRequest = null;
+			AnalysisRequestItem analysisItem = analysisRequestItemService.findAnalysisRequestItemById(UUID.fromString(id)).orElse(null);
+			analysisItem.setState(true);
+			AnalysisRequestItem newAnalysisRequestItem = analysisRequestItemRepository.save(analysisItem);
+			analysisRequest = newAnalysisRequestItem.getAnalysisRequest();
+			if (analysisRequest != null) {
+				List<AnalysisRequestItem> analysisRequestItem = analysisRequestItemService.findAnalysisRequestItemsByAnalysisRequest(analysisRequest.getId());
+				boolean res = analysisRequestItem.stream().allMatch(a ->  a.isState() == true);
+				if (!res) {
+					boolean res2 = analysisRequestItem.stream().allMatch(a ->  a.isState() == false);
+					if (!res2) {
+						analysisRequest.setState('P');
+					} else {
+						analysisRequest.setState('N');
+					}
+				}else {
+					analysisRequest.setState('E');
+				}
+				System.out.println(res);
+				}
+			
+		}
 		return null;
 	}
+
+	@GetMapping("/getAnalysisRequestItems/{analysisRequestId}")
+	@ApiOperation("listes des items d'analyses demandes par l'id de l'analyse ")
+	public  ResponseEntity<List<Map<String, Object>>> getAnalysisRequestItemsByPrescriptionId(@PathVariable Long analysisRequestId){
+		List<AnalysisRequestItem> analysisRequestItem = analysisRequestItemService.findAnalysisRequestItemsByAnalysisRequest(analysisRequestId);
+		List<Map<String, Object>> analysisRequestItemList = this.getMapFromAnalysisRequestItemList(analysisRequestItem);
+
+		return new ResponseEntity<>(analysisRequestItemList, HttpStatus.OK);
+	}
 	
+	protected List<Map<String, Object>> getMapFromAnalysisRequestItemList(List<AnalysisRequestItem> analysisRequestItem) {
+		List<Map<String, Object>> analysisRequestItemList = new ArrayList<>();
+		analysisRequestItem.stream().forEach(analysisRequestItemDto -> {
+			Map<String, Object> analysisRequestMap = new HashMap<>();
+			analysisRequestMap.put("id", analysisRequestItemDto.getId());
+			analysisRequestMap.put("actName", analysisRequestItemDto.getAct().getName());
+			analysisRequestMap.put("state", analysisRequestItemDto.isState());
+			analysisRequestMap.put("medicalAnalysisName", analysisRequestItemDto.getAct().getMedicalAnalysisSpeciality().getName());
+			analysisRequestItemList.add(analysisRequestMap);
+		});
+		return analysisRequestItemList;
+	}
 	
 }

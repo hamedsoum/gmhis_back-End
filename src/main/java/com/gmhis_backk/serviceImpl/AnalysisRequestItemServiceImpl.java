@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.gmhis_backk.domain.AnalysisRequestItem;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
@@ -12,6 +13,7 @@ import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
 import com.gmhis_backk.repository.AnalysisRequestItemRepository;
 import com.gmhis_backk.service.AnalysisRequestItemService;
 
+@Service
 public class AnalysisRequestItemServiceImpl implements AnalysisRequestItemService {
 
 	@Autowired
@@ -23,7 +25,7 @@ public class AnalysisRequestItemServiceImpl implements AnalysisRequestItemServic
 	}
 
 	@Override
-	public List<AnalysisRequestItem> findAnalysisRequestItemsByPrescription(UUID analysisRequestId) {
+	public List<AnalysisRequestItem> findAnalysisRequestItemsByAnalysisRequest(Long analysisRequestId) {
 		return analysisRequestItemRepository.findAnalysisRequestItemByAnalysisRequest(analysisRequestId);
 	}
 

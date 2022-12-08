@@ -69,7 +69,7 @@ public class AnalysisRequestServiceImpl implements AnalysisRequestService {
 		analys.setCreatedAt(new Date());
 		analys.setObservation(analysDto.getObservation());
 		analys.setPratician(getCurrentUserId());
-		analys.setState(false);
+		analys.setState('N');
 		analys.setCreatedAt(new Date());
 		analysisRequestRepository.save(analys);
 		for(Long a : analysDto.getActs()) {

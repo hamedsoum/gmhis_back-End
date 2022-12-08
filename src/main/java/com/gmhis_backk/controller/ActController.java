@@ -202,7 +202,6 @@ public class ActController {
 	@ApiOperation(value = "Retourne la liste des actes d'une facture")
 	@GetMapping("/find-by-bill/{bill_id}")
 	public ResponseEntity<List<Map<String, Object>>> findActsByBill( @PathVariable Long bill_id) {
-		  System.out.print(bill_id);
 
 		Bill bill = billService.findBillById(bill_id).orElse(null);
 	  List<Map<String, Object>> actList = new ArrayList<>();
@@ -240,6 +239,7 @@ public class ActController {
 			actMap.put("category", actDto.getActCategory().getName());
 			actMap.put("group", actDto.getActGroup().getName());
 			actMap.put("medicalAnalysisId", actDto.getMedicalAnalysisSpeciality().getId());
+			actMap.put("medicalAnalysisName", actDto.getMedicalAnalysisSpeciality().getName());
 			actMap.put("actCode", actDto.getCodification());
 			actList.add(actMap);
 		});

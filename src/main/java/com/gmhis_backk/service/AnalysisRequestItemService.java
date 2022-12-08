@@ -21,7 +21,7 @@ public interface AnalysisRequestItemService {
 
 	public AnalysisRequestItem saveAnalysisRequestItem(AnalysisRequestItem aItem) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException;
 		
-	public List<AnalysisRequestItem> findAnalysisRequestItemsByPrescription(UUID analysisRequestId);
+	public List<AnalysisRequestItem> findAnalysisRequestItemsByAnalysisRequest(Long analysisRequestId);
 	
 	public Optional<AnalysisRequestItem> findAnalysisRequestItemById(UUID id);
 
