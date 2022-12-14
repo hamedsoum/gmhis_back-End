@@ -25,7 +25,7 @@ public class AnalysisRequestItemServiceImpl implements AnalysisRequestItemServic
 	}
 
 	@Override
-	public List<AnalysisRequestItem> findAnalysisRequestItemsByAnalysisRequest(Long analysisRequestId) {
+	public List<AnalysisRequestItem> findAnalysisRequestItemsByAnalysisRequest(UUID analysisRequestId) {
 		return analysisRequestItemRepository.findAnalysisRequestItemByAnalysisRequest(analysisRequestId);
 	}
 

@@ -3,6 +3,7 @@ package com.gmhis_backk.serviceImpl;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -63,7 +64,7 @@ public class AnalysisRequestServiceImpl implements AnalysisRequestService {
 		}
 		
 		AnalysisRequest analys = new AnalysisRequest();
-		
+		System.out.print(getanalysisNumber());
 		analys.setAnalysisNumber(getanalysisNumber());
 		analys.setAdmission(admission);
 		analys.setCreatedAt(new Date());
@@ -71,13 +72,13 @@ public class AnalysisRequestServiceImpl implements AnalysisRequestService {
 		analys.setPratician(getCurrentUserId());
 		analys.setState('N');
 		analys.setCreatedAt(new Date());
+		analys.setFacility(analys.getPratician().getFacility());
 		analysisRequestRepository.save(analys);
 		for(Long a : analysDto.getActs()) {
 			Act act = actService.findActById(a).orElse(null);
 			if (act == null) {
 				throw new ResourceNotFoundByIdException("aucun acte trouvée pour l'identifiant "+ a  );
 			}
-			System.out.print(act.getName());
 			AnalysisRequestItem analysisRequestItem = new AnalysisRequestItem();
 			analysisRequestItem.setAct(act);
 			analysisRequestItem.setAnalysisRequest(analys);
@@ -89,7 +90,7 @@ public class AnalysisRequestServiceImpl implements AnalysisRequestService {
 	}
 
 	@Override
-	public Optional<AnalysisRequest> findAnalysisRequestById(Long id) {
+	public Optional<AnalysisRequest> findAnalysisRequestById(UUID id) {
 		return analysisRequestRepository.findById(id);
 	}
 
@@ -97,8 +98,6 @@ public class AnalysisRequestServiceImpl implements AnalysisRequestService {
 	public Page<AnalysisRequest> findAnalysisRequestsByPatient(Long patient, Pageable pageable) {
 		return analysisRequestRepository.findAnalysisRequestByPatient(patient, pageable);
 	}
-
-
 
 	@Override
 	public Page<AnalysisRequest> findAll(Pageable pageable) {

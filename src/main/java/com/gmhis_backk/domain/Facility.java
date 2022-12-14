@@ -95,9 +95,6 @@ public class Facility implements Serializable {
 	@JoinColumn(name = "facility_category_id", insertable = false, updatable = false)
 	private FaciityCategory facilityCategory;
 	
-	@Column(name = "logo_id")
-	private String logoId;
-	
 	private String address;
 	
 	private String contact;

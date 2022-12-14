@@ -1,6 +1,7 @@
 package com.gmhis_backk.domain;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.UUID;
 
 import javax.persistence.Column;
@@ -17,7 +18,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name="image")
+@Table(name="files")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -36,4 +37,7 @@ public class Files implements Serializable {
 	String location;
 	
 	String type;
+		
+	@Column(name = "entity_id")
+	private String entityId;
 }

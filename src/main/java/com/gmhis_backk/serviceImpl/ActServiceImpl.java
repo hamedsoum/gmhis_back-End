@@ -118,6 +118,7 @@ public class ActServiceImpl implements ActService{
 
 	@Override @Transactional
 	public Act addAct(ActDTO actDto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException {
+		 MedicalAnalysisSpecilaity medicalAnalysisSpecilaity  = null;
 		Act actByName = actRepository.findByName(actDto.getName());
 		if (actByName != null) {
 			throw new ResourceNameAlreadyExistException("Le nom de l'acte existe déjà "); 
@@ -138,10 +139,13 @@ public class ActServiceImpl implements ActService{
 					throw new ResourceNotFoundByIdException("aucun code d'acte d'acte trouvé pour l'identifiant ");
 				}
 	
-	 MedicalAnalysisSpecilaity medicalAnalysisSpecilaity = medicalAnalysisSpecilaityService.getMedicalAnalysisSpecilaityDetails(actDto.getMedicalAnalysisSpeciality()).orElse(null);
-			if (medicalAnalysisSpecilaity == null) {
-					throw new ResourceNotFoundByIdException("aucune specialite trouvée pour l'identifiant ");
+				if (ObjectUtils.isNotEmpty(actDto.getMedicalAnalysisSpeciality())) {
+					  medicalAnalysisSpecilaity = medicalAnalysisSpecilaityService.getMedicalAnalysisSpecilaityDetails(actDto.getMedicalAnalysisSpeciality()).orElse(null);
+						if (medicalAnalysisSpecilaity == null) {
+								throw new ResourceNotFoundByIdException("aucune specialite trouvée pour l'identifiant ");
+							}	
 				}
+
 		Act act = new Act();
 		BeanUtils.copyProperties(actDto,act,"id");
 		act.setActCategory(actCategory);
@@ -157,6 +161,7 @@ public class ActServiceImpl implements ActService{
 	@Override @Transactional
 	public Act updateAct(Long id, ActDTO actDto)
 			throws ResourceNotFoundByIdException, ResourceNameAlreadyExistException {
+		 MedicalAnalysisSpecilaity medicalAnalysisSpecilaity  = null;
 		Act updateActe = actRepository.findById(id).orElse(null);
 		if (updateActe == null) {
 			 throw new ResourceNotFoundByIdException("Aucun acte trouvé pour l'identifiant");
@@ -184,15 +189,18 @@ public class ActServiceImpl implements ActService{
 				throw new ResourceNotFoundByIdException("aucun code d'acte d'acte trouvé pour l'identifiant ");
 			}
 			
-			 MedicalAnalysisSpecilaity medicalAnalysisSpecilaity = medicalAnalysisSpecilaityService.getMedicalAnalysisSpecilaityDetails(actDto.getMedicalAnalysisSpeciality()).orElse(null);
+			if (ObjectUtils.isNotEmpty(actDto.getMedicalAnalysisSpeciality())) {
+				  medicalAnalysisSpecilaity = medicalAnalysisSpecilaityService.getMedicalAnalysisSpecilaityDetails(actDto.getMedicalAnalysisSpeciality()).orElse(null);
 					if (medicalAnalysisSpecilaity == null) {
 							throw new ResourceNotFoundByIdException("aucune specialite trouvée pour l'identifiant ");
-						}
+						}	
+					updateActe.setMedicalAnalysisSpeciality(medicalAnalysisSpecilaity);
+			}
+			
 			BeanUtils.copyProperties(actDto,updateActe,"id");
 			updateActe.setActCategory(actCategory);
 			updateActe.setActGroup(actGroup);
 			updateActe.setActCode(actCode);
-			updateActe.setMedicalAnalysisSpeciality(medicalAnalysisSpecilaity);
 			updateActe.setUpdatedAt(new Date());
 			updateActe.setUpdatedBy(getCurrentUserId().getId());
 			return actRepository.save(updateActe);

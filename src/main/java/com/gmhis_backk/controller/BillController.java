@@ -811,7 +811,7 @@ public class BillController {
 		billMap.put("accountNumber", bill.getAccountNumber());
 		billMap.put("admissionNumber", bill.getAdmission().getAdmissionNumber());
 		billMap.put("facilityName", bill.getAdmission().getFacility().getName());
-		billMap.put("facilityLogo", this.facilityLogoInBase64(bill.getAdmission().getFacility().getLogoId()));
+		billMap.put("facilityLogo", this.facilityLogoInBase64(bill.getAdmission().getFacility().getId()));
 		billMap.put("admissionId", bill.getAdmission().getId());
 		billMap.put("admissionStartDate", bill.getAdmission().getAdmissionStartDate());
 		billMap.put("admissionEndDate", bill.getAdmission().getAdmissionEndDate());
@@ -1102,8 +1102,9 @@ public class BillController {
 	}
 	
 	
-	public String facilityLogoInBase64(String logoId) throws IOException {	
-			Files file = fileRepository.findById(UUID.fromString(logoId)).orElse(null);
+	public String facilityLogoInBase64(UUID facilityID) throws IOException {	
+			List<Files> fileList = fileRepository.findFIleByFacilityId(facilityID.toString());
+			Files file = fileList.get(0);
 			var imgFile = new FileSystemResource(Paths.get(file.getLocation()));
 		    byte[] bytes = StreamUtils.copyToByteArray(imgFile.getInputStream());
 		    String encodedString = Base64.getEncoder().encodeToString(bytes);

@@ -23,10 +23,9 @@ public class FileLocationService {
 	    @Autowired
 	   FileSystemRepository fileSystemRepository;
 
-	    public UUID save(byte[] bytes, String imageName, String type) throws Exception {
+	    public UUID save(byte[] bytes, String imageName, String type, UUID entityiD) throws Exception {
 	        String location = fileSystemRepository.save(bytes, imageName);
-
-	        return imageDbRepository.save(new Files(null,imageName, location, type)).getId();
+	        return imageDbRepository.save(new Files(null,imageName, location, type,  entityiD.toString())).getId();
 	    }
 	    
 	    public FileSystemResource find(UUID imageId) {

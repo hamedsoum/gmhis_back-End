@@ -4,6 +4,9 @@ package com.gmhis_backk.domain;
 import java.io.Serializable;
 import javax.persistence.*;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
+
 import com.fasterxml.jackson.annotation.JsonRawValue;
 
 import lombok.AllArgsConstructor;
@@ -12,6 +15,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  *
@@ -26,8 +30,11 @@ public class AnalysisRequest implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	 @GeneratedValue(generator = "uuid2")
+   @GenericGenerator(name = "uuid2", strategy = "uuid2")
+   @Column(name = "id", updatable = false, nullable = false, columnDefinition = "VARCHAR(36)")
+   @Type(type = "uuid-char")
+	private UUID id;
 
 	
 	@Column(name="analysis_number")
@@ -41,13 +48,7 @@ public class AnalysisRequest implements Serializable {
 	@ManyToOne
 	@JoinColumn(name="pratician_id")
 	private User pratician;
-	
-	@Column(columnDefinition = "json")
-	@JsonRawValue
-	private String analysis; 
-	
-	private String otherAnalysis;
-	
+		
 	private String observation;
 	
 	private String diagnostic;

@@ -1,9 +1,7 @@
 package com.gmhis_backk.controller;
 
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,14 +9,12 @@ import java.util.UUID;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,7 +26,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 import com.gmhis_backk.domain.Facility;
-import com.gmhis_backk.domain.Files;
 import com.gmhis_backk.domain.User;
 import com.gmhis_backk.dto.FacilityDTO;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
@@ -58,15 +53,7 @@ public class FacilityController {
 	 
 	 @Autowired
      FileDbRepository fileRepository;
-//	
-//	@PostMapping("/add")
-//	@ApiOperation("/Ajouter un centre de sante")
-//	public ResponseEntity<Facility>addFacility(@RequestBody FacilityDTO facilityDto) throws ResourceNameAlreadyExistException,ResourceNotFoundByIdException{
-//		Facility facility = facilityService.saveFacility(facilityDto);
-//		return new ResponseEntity<Facility>(facility, HttpStatus.OK);
-//	} 
-	
-	
+
 	@PostMapping("/add")
 	@ApiOperation("/Ajouter un centre de sante")
 	public ResponseEntity<Facility>addFacility(
@@ -85,7 +72,6 @@ public class FacilityController {
 			@RequestParam(required = false) String email,
     		@RequestParam(required = false) MultipartFile logo
 			) throws ResourceNameAlreadyExistException,ResourceNotFoundByIdException, Exception{
-		UUID logoId = fileLocationService.save(logo.getBytes(), logo.getOriginalFilename(), logo.getContentType());
 		FacilityDTO facilityDto = new FacilityDTO();
 		facilityDto.setActive(Boolean.parseBoolean(active));
 		facilityDto.setName(name);
@@ -100,8 +86,8 @@ public class FacilityController {
 		facilityDto.setContact(contact);
 		facilityDto.setEmail(email);
 		facilityDto.setShortName(shortName);
-		facilityDto.setLogoId(logoId.toString());
 		Facility facility = facilityService.saveFacility(facilityDto);
+		fileLocationService.save(logo.getBytes(), logo.getOriginalFilename(), logo.getContentType(),facility.getId());
 		return new ResponseEntity<Facility>(facility, HttpStatus.OK);
 	} 
 	
@@ -124,7 +110,6 @@ public class FacilityController {
 			@RequestParam(required = false) String email,
     		@RequestParam(required = false) MultipartFile logo
 			) throws IOException, Exception{
-//		UUID logoId = fileLocationService.save(logo.getBytes(), logo.getOriginalFilename(), logo.getContentType());
 		FacilityDTO facilityDto = new FacilityDTO();
 		facilityDto.setActive(Boolean.parseBoolean(active));
 		facilityDto.setName(name);
@@ -139,7 +124,6 @@ public class FacilityController {
 		facilityDto.setContact(contact);
 		facilityDto.setEmail(email);
 		facilityDto.setShortName(shortName);
-//		facilityDto.setLogoId(logoId.toString());
 		Facility facility = facilityService.updateFacility(facilityDto, UUID.fromString(id));
 		return new ResponseEntity<Facility>(facility, HttpStatus.OK);
 	}
@@ -244,15 +228,15 @@ public class FacilityController {
 		Map<String, Object> response = new HashMap<>();
 	
 		Facility falicity = facilityService.findFacilityById(UUID.fromString(id)).orElse(null);
-	if (ObjectUtils.isNotEmpty(falicity.getLogoId())) {
-		Files file = fileRepository.findById(UUID.fromString(falicity.getLogoId())).orElse(null);
-		var imgFile = new FileSystemResource(Paths.get(file.getLocation()));
-	    byte[] bytes = StreamUtils.copyToByteArray(imgFile.getInputStream());
-	    String encodedString = Base64.getEncoder().encodeToString(bytes);
-	    String basse64 = "data:"+file.getType()+";base64," + encodedString ;	
-		response.put("logo", basse64);
-
-	}
+//	if (ObjectUtils.isNotEmpty(falicity.getLogoId())) {
+//		Files file = fileRepository.findById(UUID.fromString(falicity.getLogoId())).orElse(null);
+//		var imgFile = new FileSystemResource(Paths.get(file.getLocation()));
+//	    byte[] bytes = StreamUtils.copyToByteArray(imgFile.getInputStream());
+//	    String encodedString = Base64.getEncoder().encodeToString(bytes);
+//	    String basse64 = "data:"+file.getType()+";base64," + encodedString ;	
+//		response.put("logo", basse64);
+//
+//	}
 	response.put("id", falicity.getId());
 	response.put("name", falicity.getName());
 	response.put("active", falicity.getActive());

@@ -11,6 +11,6 @@ import com.gmhis_backk.domain.AnalysisRequestItem;
 
 public interface AnalysisRequestItemRepository extends JpaRepository<AnalysisRequestItem, UUID> {
 	@Query(value = "select p from AnalysisRequestItem p where p.analysisRequest.id = :analysisRequest")
-	public List<AnalysisRequestItem> findAnalysisRequestItemByAnalysisRequest(@Param("analysisRequest") Long analysisRequest);
+	public List<AnalysisRequestItem> findAnalysisRequestItemByAnalysisRequest(@Param("analysisRequest") UUID analysisRequest);
 
 }

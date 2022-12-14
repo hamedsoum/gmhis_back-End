@@ -48,6 +48,11 @@ public class AnalysisRequestItem implements Serializable {
 	private Act act; 
  	
  	@ManyToOne
+	@JoinColumn(name="perform_by")
+	private User pratician;
+ 	
+ 	
+ 	@ManyToOne
 	@JoinColumn(name="analysis_request_id")
 	private AnalysisRequest analysisRequest; 
  	

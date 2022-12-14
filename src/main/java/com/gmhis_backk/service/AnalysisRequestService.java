@@ -1,6 +1,7 @@
 package com.gmhis_backk.service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,7 +24,7 @@ public interface AnalysisRequestService {
 
     public AnalysisRequest saveAnalysisRequest(AnalysisRequestDTO a)  throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException;
 	
-	public Optional<AnalysisRequest> findAnalysisRequestById(Long id);
+	public Optional<AnalysisRequest> findAnalysisRequestById(UUID id);
 	
 	public Page<AnalysisRequest> findAnalysisRequestsByPatient(Long patient, Pageable pageable);
 	

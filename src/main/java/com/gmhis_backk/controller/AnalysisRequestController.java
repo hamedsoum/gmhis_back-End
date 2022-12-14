@@ -3,8 +3,10 @@ package com.gmhis_backk.controller;
 
 import static org.springframework.http.HttpStatus.OK;
 
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +14,7 @@ import java.util.UUID;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +22,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,19 +30,24 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.gmhis_backk.AppUtils;
 import com.gmhis_backk.domain.AnalysisRequest;
 import com.gmhis_backk.domain.AnalysisRequestItem;
+import com.gmhis_backk.domain.Files;
 import com.gmhis_backk.domain.User;
 import com.gmhis_backk.dto.AnalysisRequestDTO;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
 import com.gmhis_backk.repository.AnalysisRequestItemRepository;
 import com.gmhis_backk.repository.AnalysisRequestRepository;
+import com.gmhis_backk.repository.FileDbRepository;
 import com.gmhis_backk.repository.UserRepository;
 import com.gmhis_backk.service.AnalysisRequestItemService;
 import com.gmhis_backk.service.AnalysisRequestService;
+import com.gmhis_backk.service.FileLocationService;
+
 import io.swagger.annotations.ApiOperation;
 
 /**
@@ -64,8 +73,12 @@ public class AnalysisRequestController {
 
 	@Autowired
 	UserRepository 	userRepository;
-
 	
+	@Autowired
+	FileLocationService fileLocationService;
+
+	 @Autowired
+     FileDbRepository fileRepository;
 
 	
 	@ApiOperation(value = "Ajouter les demandes d'analyses")
@@ -138,6 +151,7 @@ public class AnalysisRequestController {
 			analystMap.put("patientTel1", analystDto.getAdmission().getPatient().getCellPhone1());
 			analystMap.put("patientTel2", analystDto.getAdmission().getPatient().getCellPhone2());
 			analystMap.put("idCardNumber", analystDto.getAdmission().getPatient().getIdCardNumber());
+			analystMap.put("observation", analystDto.getObservation());
 			analystMap.put("state", analystDto.getState());
 			analystRequestList.add(analystMap);
 		});
@@ -159,7 +173,7 @@ public class AnalysisRequestController {
 //		
 	    List<AnalysisRequest> lAnalyst = p_analysisRequest.getContent();
 	    
-		List<Map<String, Object>> analysis = this.getMapFromAnalystRequestList(lAnalyst);
+		List<Map<String, Object>> analysis = this.getMapFromAnalystRequestAllList(lAnalyst);
 		response.put("items", analysis);
 		response.put("currentPage", p_analysisRequest.getNumber());
 		response.put("totalItems", p_analysisRequest.getTotalElements());
@@ -172,21 +186,6 @@ public class AnalysisRequestController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 	
-	protected List<Map<String, Object>> getMapFromAnalystRequestList(List<AnalysisRequest> analystResquest) {
-		List<Map<String, Object>> analystRequestList = new ArrayList<>();
-		analystResquest.stream().forEach(analystDto -> {
-			Map<String, Object> analystMap = new HashMap<>();
-			analystMap.put("id", analystDto.getId());
-			analystMap.put("date", analystDto.getCreatedAt());
-			analystMap.put("facilityName", analystDto.getAdmission().getFacility().getName());
-			analystMap.put("state", analystDto.getState());
-			analystMap.put("analysisNumber", analystDto.getAnalysisNumber());
-			analystMap.put("practicienFirstName", analystDto.getAdmission().getPractician().getUser().getFirstName());
-			analystMap.put("practicienLastName", analystDto.getAdmission().getPractician().getUser().getLastName());
-			analystRequestList.add(analystMap);
-		});
-		return analystRequestList;
-	}
 	
 
 	@GetMapping("/getanalyseRequestNumber/{patientId}")
@@ -199,15 +198,22 @@ public class AnalysisRequestController {
 	protected  User getCurrentUserId() {
 		return this.userRepository.findUserByUsername(AppUtils.getUsername());
 	}
+	
+	
 	@ApiOperation(value = "Marquer une ou des demandes d'examens comme effectuée")
 	@PostMapping("/performed")
 	@Transactional
-	public AnalysisRequest performed( @RequestBody List<String> ids) {
+	public AnalysisRequest performed( 
+			@RequestParam(required = false) MultipartFile file,
+			@RequestParam(required = false)  List<String> examId
+			) throws IOException, Exception {
 		AnalysisRequest analysisRequest = new AnalysisRequest();
-		for(String id : ids) {
+		for(String id : examId) {
+			System.out.print(id);
 			analysisRequest = null;
 			AnalysisRequestItem analysisItem = analysisRequestItemService.findAnalysisRequestItemById(UUID.fromString(id)).orElse(null);
 			analysisItem.setState(true);
+			analysisItem.setPratician(getCurrentUserId());
 			AnalysisRequestItem newAnalysisRequestItem = analysisRequestItemRepository.save(analysisItem);
 			analysisRequest = newAnalysisRequestItem.getAnalysisRequest();
 			if (analysisRequest != null) {
@@ -223,16 +229,15 @@ public class AnalysisRequestController {
 				}else {
 					analysisRequest.setState('E');
 				}
-				System.out.println(res);
 				}
-			
 		}
+		fileLocationService.save(file.getBytes(), file.getOriginalFilename(), file.getContentType(),analysisRequest.getId());
 		return null;
 	}
 
 	@GetMapping("/getAnalysisRequestItems/{analysisRequestId}")
 	@ApiOperation("listes des items d'analyses demandes par l'id de l'analyse ")
-	public  ResponseEntity<List<Map<String, Object>>> getAnalysisRequestItemsByPrescriptionId(@PathVariable Long analysisRequestId){
+	public  ResponseEntity<List<Map<String, Object>>> getAnalysisRequestItemsByPrescriptionId(@PathVariable UUID analysisRequestId){
 		List<AnalysisRequestItem> analysisRequestItem = analysisRequestItemService.findAnalysisRequestItemsByAnalysisRequest(analysisRequestId);
 		List<Map<String, Object>> analysisRequestItemList = this.getMapFromAnalysisRequestItemList(analysisRequestItem);
 
@@ -252,4 +257,32 @@ public class AnalysisRequestController {
 		return analysisRequestItemList;
 	}
 	
+	
+	@GetMapping("/getAnalysisRequestResultFile/{analysisRequestId}")
+	@ApiOperation("listes des fichier de resultats d'une  demande d'nanalyse par l'id de l'analyse ")
+	public ResponseEntity<List<Map<String, Object>>> getAnalysisRequestIFiles(@PathVariable String analysisRequestId) throws IOException{
+		List<Map<String, Object>>  fileList = new ArrayList<>();
+		fileRepository.findFIleByFacilityId(analysisRequestId).forEach( fileDto -> {
+			var pdfFile = new FileSystemResource(Paths.get(fileDto.getLocation()));
+		    byte[] bytes = null;
+			try {
+				bytes = StreamUtils.copyToByteArray(pdfFile.getInputStream());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		    String encodedString = Base64.getEncoder().encodeToString(bytes);
+		    String basse64 = "data:"+fileDto.getType()+";base64," + encodedString ;
+			Map<String, Object> listMap = new HashMap<>();
+			listMap.put("id", fileDto.getId());
+			listMap.put("fileName", fileDto.getName());
+			listMap.put("file", basse64);
+			fileList.add(listMap);
+		});
+	
+		return new ResponseEntity<>(fileList, HttpStatus.OK);
+
+	}
+	
+
 }

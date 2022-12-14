@@ -34,14 +34,14 @@ public class FileSystemImageController {
 	  @Autowired
 	    FileLocationService fileLocationService;
 
-	    @PostMapping("/image")
-	    UUID uploadImage(
-	    		@RequestParam String name,
-	    		@RequestParam MultipartFile image
-	    		) throws Exception {
-	    	System.out.println(image.getContentType());
-	        return fileLocationService.save(image.getBytes(), image.getOriginalFilename(), image.getContentType());
-	    }
+//	    @PostMapping("/image")
+//	    UUID uploadImage(
+//	    		@RequestParam String name,
+//	    		@RequestParam MultipartFile image
+//	    		) throws Exception {
+//	    	System.out.println(image.getContentType());
+//	        return fileLocationService.save(image.getBytes(), image.getOriginalFilename(), image.getContentType());
+//	    }
 
 	    @GetMapping(value = "/image/{imageId}", produces = MediaType.IMAGE_JPEG_VALUE)
 	    FileSystemResource downloadImage(@PathVariable UUID imageId) throws Exception {
