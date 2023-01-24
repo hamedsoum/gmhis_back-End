@@ -211,8 +211,8 @@ public class ActController {
 			actService.findActsByBill(bill.getId()).stream().forEach(actDto -> {
 				Map<String, Object> actMap = new HashMap<>();
 				actMap.put("id", actDto.getId());
-				actMap.put("practicianFirstName", actDto.getPractician().getFirstName());
-				actMap.put("practicianLastName", actDto.getPractician().getLastName());
+				actMap.put("practicianFirstName", actDto.getPractician().getUser().getFirstName());
+				actMap.put("practicianLastName", actDto.getPractician().getUser().getLastName());
 				actMap.put("practicianName", actDto.getPractician().getId());
 				actMap.put("bill", actDto.getBill().getId());
 				actMap.put("admission", actDto.getAdmission().getId());

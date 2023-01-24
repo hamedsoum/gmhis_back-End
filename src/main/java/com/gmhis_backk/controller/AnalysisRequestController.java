@@ -149,7 +149,7 @@ public class AnalysisRequestController {
 			analystMap.put("patientGender", analystDto.getAdmission().getPatient().getGender());
 			analystMap.put("patientAge", analystDto.getAdmission().getPatient().getAge());
 			analystMap.put("patientTel1", analystDto.getAdmission().getPatient().getCellPhone1());
-			analystMap.put("patientTel2", analystDto.getAdmission().getPatient().getCellPhone2());
+//			analystMap.put("patientTel2", analystDto.getAdmission().getPatient().getCellPhone2());
 			analystMap.put("idCardNumber", analystDto.getAdmission().getPatient().getIdCardNumber());
 			analystMap.put("observation", analystDto.getObservation());
 			analystMap.put("state", analystDto.getState());
@@ -209,7 +209,6 @@ public class AnalysisRequestController {
 			) throws IOException, Exception {
 		AnalysisRequest analysisRequest = new AnalysisRequest();
 		for(String id : examId) {
-			System.out.print(id);
 			analysisRequest = null;
 			AnalysisRequestItem analysisItem = analysisRequestItemService.findAnalysisRequestItemById(UUID.fromString(id)).orElse(null);
 			analysisItem.setState(true);
@@ -231,7 +230,7 @@ public class AnalysisRequestController {
 				}
 				}
 		}
-		fileLocationService.save(file.getBytes(), file.getOriginalFilename(), file.getContentType(),analysisRequest.getId());
+		fileLocationService.save(file, file.getBytes(), file.getOriginalFilename(), file.getContentType(),analysisRequest.getId());
 		return null;
 	}
 
@@ -268,7 +267,6 @@ public class AnalysisRequestController {
 			try {
 				bytes = StreamUtils.copyToByteArray(pdfFile.getInputStream());
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		    String encodedString = Base64.getEncoder().encodeToString(bytes);

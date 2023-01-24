@@ -101,7 +101,7 @@ public class UserController extends ExceptionHandling{
 
 	    @ApiOperation(value = "Mofifier un utilisateur")
 	    @PutMapping("/update/{id}")
-	    public ResponseEntity<User> update(@PathVariable("id")Long id,@RequestBody UserDto userDto) throws UserNotFoundException, UsernameExistException, EmailExistException, IOException, NotAnImageFileException, ResourceNotFoundByIdException,  ResourceNameAlreadyExistException,ApplicationErrorException, InvalidInputException {
+	    public ResponseEntity<User> update(@PathVariable("id")Long id,@RequestBody UserDto userDto) throws UserNotFoundException, UsernameExistException, EmailExistException, IOException, NotAnImageFileException, ResourceNotFoundByIdException,  ResourceNameAlreadyExistException,ApplicationErrorException,MessagingException, InvalidInputException {
 	    	if(!currentUserService.checkIfCurrentUserHasAuthority("user:update")) throw new ApplicationErrorException(ACTION_PERFORM_DENIED_MESSAGE);
 	    	User updatedUser = userService.updateUser(id, userDto);
 	        return new ResponseEntity<>(updatedUser, OK);

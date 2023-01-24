@@ -2,11 +2,14 @@ package com.gmhis_backk.service;
 
 import java.util.UUID;
 
+import javax.mail.Multipart;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.gmhis_backk.domain.Files;
@@ -23,8 +26,8 @@ public class FileLocationService {
 	    @Autowired
 	   FileSystemRepository fileSystemRepository;
 
-	    public UUID save(byte[] bytes, String imageName, String type, UUID entityiD) throws Exception {
-	        String location = fileSystemRepository.save(bytes, imageName);
+	    public UUID save(MultipartFile file, byte[] bytes, String imageName, String type, UUID entityiD) throws Exception {
+	        String location = fileSystemRepository.save(file,bytes, imageName);
 	        return imageDbRepository.save(new Files(null,imageName, location, type,  entityiD.toString())).getId();
 	    }
 	    

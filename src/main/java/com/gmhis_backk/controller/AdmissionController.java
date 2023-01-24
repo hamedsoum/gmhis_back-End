@@ -102,12 +102,10 @@ public class AdmissionController {
 		}
 		
 		if( ObjectUtils.isNotEmpty(admissionNumber) ) {
-			System.out.print(admissionNumber);
 			pAdmissions = admissionService.findAdmissionsByAdmissionNumber(admissionNumber, admissionStatus,this.getCurrentUserId().getFacilityId(), paging);
 		}
 		
 		if( ObjectUtils.isNotEmpty(patientExternalId)  ) {
-			System.out.print(patientExternalId);
 			pAdmissions = admissionService.findAdmissionsByPatientExternalId(patientExternalId, admissionStatus,this.getCurrentUserId().getFacilityId(), paging);
 		} 
 	
@@ -159,7 +157,6 @@ public class AdmissionController {
 	protected List<Map<String, Object>> getMapFromAdmissionList(List<Admission> admissions) {
 		List<Map<String, Object>> admissionList = new ArrayList<>();
 		admissions.stream().forEach(admissionDto -> {
-//			System.out.print(admissionDto.getAdmissionNumber());
 			Map<String, Object> admissionsMap = new HashMap<>();
 			User createdBy = ObjectUtils.isEmpty(admissionDto.getCreatedBy()) ? new User()
 					: userRepository.findById(admissionDto.getCreatedBy()).orElse(null);
@@ -174,7 +171,7 @@ public class AdmissionController {
 			admissionsMap.put("patientExternalId", admissionDto.getPatient().getPatientExternalId());
 			admissionsMap.put("patientFirstName", admissionDto.getPatient().getFirstName());
 			admissionsMap.put("patientLastName", admissionDto.getPatient().getLastName());
-			admissionsMap.put("patientMaidenName", admissionDto.getPatient().getMaidenName());
+//			admissionsMap.put("patientMaidenName", admissionDto.getPatient().getMaidenName());
 			admissionsMap.put("patientType", admissionDto.getPatient().getIsAssured());
 			admissionsMap.put("admissionDate", admissionDto.getCreatedAt());
 			admissionsMap.put("act", admissionDto.getAct().getName());

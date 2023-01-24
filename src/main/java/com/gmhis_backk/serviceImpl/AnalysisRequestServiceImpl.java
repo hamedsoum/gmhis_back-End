@@ -101,7 +101,7 @@ public class AnalysisRequestServiceImpl implements AnalysisRequestService {
 
 	@Override
 	public Page<AnalysisRequest> findAll(Pageable pageable) {
-		return analysisRequestRepository.findAll(pageable);
+		return analysisRequestRepository.findAllAnalysis(pageable);
 	}
 
 	@Override

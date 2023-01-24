@@ -80,12 +80,11 @@ public class PatientController {
 //				Page<Patient> pPatients = patientService.findAll(firstName, lastName, patientExternalId, cellPhone,
 //						cnamNumber, idCardNumber, patientService);
 
-		Page<Patient> pPatients;
+		Page<Patient> pPatients = null;
 		
-		pPatients = patientService.findAll(paging);
+//		pPatients = patientService.findAll(paging);
 
-
-//		pPatients = patientService.findByPatientExternalId("@@@@@@@######@@@@", paging);
+		pPatients = patientService.findByPatientExternalId("@@@@@@@######@@@@", paging);
 
 		if (ObjectUtils.isNotEmpty(firstName) || ObjectUtils.isNotEmpty(lastName)) {
 			pPatients = patientService.findByFullName(firstName, lastName, paging);

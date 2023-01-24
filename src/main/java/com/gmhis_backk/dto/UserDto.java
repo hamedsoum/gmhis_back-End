@@ -28,9 +28,9 @@ public class UserDto {
     
     List<Integer> roles;  
     
-    private boolean isActive;
+    private boolean active;
     
-    private boolean isNotLocked;
+    private boolean notLocked;
     
     private boolean passwordMustBeChange;
     

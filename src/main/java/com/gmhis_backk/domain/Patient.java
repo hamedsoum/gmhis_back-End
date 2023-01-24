@@ -42,8 +42,8 @@ public class Patient implements Serializable {
 	@Column(name = "cell_phone_1", nullable = true)
 	private String cellPhone1;
 
-	@Column(name = "cell_phone_2", nullable = true)
-	private String cellPhone2;
+//	@Column(name = "cell_phone_2", nullable = true)
+//	private String cellPhone2;
 
 	@Column
 	private String correspondant;
@@ -83,8 +83,8 @@ public class Patient implements Serializable {
 	@Column(name = "marital_status")
 	private String maritalStatus;
 
-	@Column(name = "father_name", nullable = true)
-	private String fatherName;
+//	@Column(name = "father_name", nullable = true)
+//	private String fatherName;
 
 	@Column(name = "father_profession", nullable = true)
 	private String fatherProfession;
@@ -117,8 +117,8 @@ public class Patient implements Serializable {
 	@Column(name = "updated_by")
 	private Long updatedBy;
 
-	@Column(name = "maiden_name", nullable = true)
-	private String maidenName;
+//	@Column(name = "maiden_name", nullable = true)
+//	private String maidenName;
 
 	@Column(nullable = true)
 	private String civility;
@@ -129,14 +129,14 @@ public class Patient implements Serializable {
 	@Column(nullable = true)
 	private String email;
 
-	@Column(name = "mother_last_name")
-	private String motherLastName;
+//	@Column(name = "mother_last_name")
+//	private String motherLastName;
 
-	@Column(name = "mother_first_name")
-	private String motherFirstName;
+//	@Column(name = "mother_first_name")
+//	private String motherFirstName;
 
-	@Column(name = "mother_maiden_name", nullable = true)
-	private String motherMaidenName;
+//	@Column(name = "mother_maiden_name", nullable = true)
+//	private String motherMaidenName;
 
 	@Column(name = "number_of_children")
 	private String numberOfChildren;

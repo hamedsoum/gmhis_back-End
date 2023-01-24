@@ -79,19 +79,22 @@ public class PatientServiceImpl implements PatientService {
 	@Transactional(rollbackFor = Exception.class)
 
 	public Patient save(PatientDTO patientdto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException,EmailExistException {
-		if(ObjectUtils.isEmpty(patientdto.getEmail()) || patientdto.getEmail() == null) {
-			throw new ResourceNotFoundByIdException("l'adresse email est requise");
-		}else {
-		 Boolean isEmailUsed =	patientRepository.findByEmail(patientdto.getEmail()).isEmpty();
+//		if(ObjectUtils.isEmpty(patientdto.getEmail()) || patientdto.getEmail() == null) {
+//			throw new ResourceNotFoundByIdException("l'adresse email est requise");
+//		}else {
+//		 Boolean isEmailUsed =	patientRepository.findByEmail(patientdto.getEmail()).isEmpty();
+//		 if(!isEmailUsed) throw new ResourceNotFoundByIdException("Email deja utilise");
+//		}
+		
+		Boolean isEmailUsed =	patientRepository.findByEmail(patientdto.getEmail()).isEmpty();
 		 if(!isEmailUsed) throw new ResourceNotFoundByIdException("Email deja utilise");
-		}
 		
 		
 		if(ObjectUtils.isEmpty(patientdto.getCellPhone1()) || patientdto.getCellPhone1() == null) {
 			throw new ResourceNotFoundByIdException("le numero de telephone est requis");
 		}else {
 			 Boolean isPhone1Used =	patientRepository.findByCellPhone1(patientdto.getCellPhone1()).isEmpty();
-			 if(!isPhone1Used) throw new ResourceNotFoundByIdException("le premier numero de telephone est deja utilisé");	
+			 if(!isPhone1Used) throw new ResourceNotFoundByIdException("le numero de telephone est deja utilisé");	
 		}
 		
 		if(ObjectUtils.isEmpty(patientdto.getIdCardNumber()) || patientdto.getIdCardNumber() == null) {
@@ -145,7 +148,8 @@ public class PatientServiceImpl implements PatientService {
 					}
 					
 					 Boolean isCardNumberUsed = insuredRepository.findByCardNumber(insuredDTO.getCardNumber()).isEmpty();
-					 if(!isCardNumberUsed) throw new ResourceNotFoundByIdException("le numero de carte de l' assurance " +insurance.getName() +  " est deja utilisé");
+					 System.out.println(isCardNumberUsed);
+					 if(!isCardNumberUsed) throw new ResourceNotFoundByIdException("le numero de carte de l'assurance " +insurance.getName() +  " est deja utilisé");
 
 					insured.setCardNumber(insuredDTO.getCardNumber());
 					insured.setCoverage(insuredDTO.getCoverage());
@@ -153,11 +157,11 @@ public class PatientServiceImpl implements PatientService {
 					insured.setCreatedBy(this.getCurrentUserId().getId());
 					insured.setInsurance(insurance);
 					insured.setInsuranceSuscriber(iSubscriber);
-					insured.setIsPrincipalInsured(insuredDTO.getIsPrincipalInsured());
+//					insured.setIsPrincipalInsured(insuredDTO.getIsPrincipalInsured());
 					insured.setPatient(newPatient);
-					insured.setPrincipalInsuredAffiliation(insuredDTO.getPrincipalInsuredAffiliation());
-					insured.setPrincipalInsuredContact(insuredDTO.getPrincipalInsuredContact());
-					insured.setPrincipalInsuredName(insuredDTO.getPrincipalInsuredName());
+//					insured.setPrincipalInsuredAffiliation(insuredDTO.getPrincipalInsuredAffiliation());
+//					insured.setPrincipalInsuredContact(insuredDTO.getPrincipalInsuredContact());
+//					insured.setPrincipalInsuredName(insuredDTO.getPrincipalInsuredName());
 					insured.setSociety(insuredDTO.getSociety());
 					insuredRepository.save(insured);
 				}
@@ -344,11 +348,11 @@ public class PatientServiceImpl implements PatientService {
 							insured.setCreatedBy(this.getCurrentUserId().getId());
 							insured.setInsurance(insurance);
 							insured.setInsuranceSuscriber(iSubscriber);
-							insured.setIsPrincipalInsured(insuredDTO.getIsPrincipalInsured());
+//							insured.setIsPrincipalInsured(insuredDTO.getIsPrincipalInsured());
 							insured.setPatient(patient);
-							insured.setPrincipalInsuredAffiliation(insuredDTO.getPrincipalInsuredAffiliation());
-							insured.setPrincipalInsuredContact(insuredDTO.getPrincipalInsuredContact());
-							insured.setPrincipalInsuredName(insuredDTO.getPrincipalInsuredName());
+//							insured.setPrincipalInsuredAffiliation(insuredDTO.getPrincipalInsuredAffiliation());
+//							insured.setPrincipalInsuredContact(insuredDTO.getPrincipalInsuredContact());
+//							insured.setPrincipalInsuredName(insuredDTO.getPrincipalInsuredName());
 							insured.setSociety(insuredDTO.getSociety());
 							insured.setDeleted("N");
 							insured.setUpdatedAt(new Date());

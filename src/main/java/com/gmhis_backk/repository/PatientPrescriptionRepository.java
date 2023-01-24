@@ -22,7 +22,7 @@ public interface PatientPrescriptionRepository extends JpaRepository<PatientPres
 	@Query(value="select p from PatientPrescription p where p.admission.patient.id = :patient")
 	public Page<PatientPrescription> findAllPatientPrescriptions(@Param("patient") Long patient, Pageable pageable);
 
-	@Query(value = "select p from PatientPrescription p where p.admission.patient.firstName like %:firstName%  and p.admission.patient.lastName like %:lastName% and (p.admission.patient.cellPhone1 like %:cellPhone% or p.admission.patient.cellPhone2 like %:cellPhone%)"
+	@Query(value = "select p from PatientPrescription p where p.admission.patient.firstName like %:firstName%  and p.admission.patient.lastName like %:lastName% and (p.admission.patient.cellPhone1 like %:cellPhone% )"
 			+ " and p.admission.patient.patientExternalId like %:patientExternalId% and p.admission.patient.cnamNumber like %:cnamNumber% and p.admission.patient.idCardNumber like %:idCardNumber% and p.state=:state")
 	public Page<PatientPrescription> findAllPrescriptions(@Param("firstName") String firstName, @Param("lastName") String lastName,
 			@Param("patientExternalId") String patientExternalId, @Param("cellPhone") String cellPhone,

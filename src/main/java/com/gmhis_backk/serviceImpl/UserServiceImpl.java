@@ -131,7 +131,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 //
 //		validateNewUsernameAndEmail(EMPTY, null, userDto.getEmail(), userDto.getTel());
 
-	    System.out.println(userDto.getFacilityId());
+//	    System.out.println(userDto.getFacilityId());
 		User user = new User();
 		BeanUtils.copyProperties(userDto, user,"id");
 		String password = generatePassword();
@@ -154,15 +154,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		}
 		
 		this.setUserRoleAndAuthorities(user);
-//		emailService.sendNewPasswordEmail(user.getFirstName(), username, password, user.getEmail());
-		eventLogService.addEvent("creation de l'utilisateur: " + user.getFirstName() + " " + user.getLastName(),user.getClass().getSimpleName());
+		emailService.sendNewPasswordEmail(user.getFirstName(), username, password, user.getEmail());
+//		eventLogService.addEvent("creation de l'utilisateur: " + user.getFirstName() + " " + user.getLastName(),user.getClass().getSimpleName());
 		return user;
 	}
 
 	@Override
 	public User updateUser(Long id,UserDto userDto)
 			throws UserNotFoundException, UsernameExistException, EmailExistException, IOException,
-			NotAnImageFileException, ResourceNotFoundByIdException, InvalidInputException, com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException {
+			NotAnImageFileException, ResourceNotFoundByIdException, InvalidInputException, ResourceNameAlreadyExistException, MessagingException {
 
 		User currentUser = userRepository.findById(id).orElse(null);
 		if (currentUser==null) throw new ResourceNameAlreadyExistException(NO_USER_FOUND_BY_USERNAME);
@@ -170,14 +170,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 //		 User currentUser = validateNewUsernameAndEmail(currentFirstName, currentLastName, newEmail, newTel);
 		validateFirstNameAndLastNameAndPassword(userDto.getFirstName(), userDto.getLastName(), null, null);
 		
-		
+		currentUser.setEmail(userDto.getEmail());
 		currentUser.setFirstName(StringUtils.capitalize(userDto.getFirstName()));
 		currentUser.setLastName(StringUtils.capitalize(userDto.getLastName()));
 		if (userDto.getRoles().size() != 0) currentUser.setRoleIds(StringUtils.join(userDto.getRoles(), ","));
 		currentUser.setNotLocked(userDto.isNotLocked());
 		currentUser.setPasswordMustBeChange(userDto.isPasswordMustBeChange());
 		userRepository.save(currentUser);
-
 		if (userDto.getRoles().size() != 0) {
 			roleRepo.removeUserRoles(currentUser.getId());
 			for (int i = 0; i < userDto.getRoles().size(); i++) {
@@ -428,12 +427,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		} else {
 			String password = generatePassword();
 			user.setPassword(encodePassword(password));
-			user.setPasswordMustBeChange(true);
+//			user.setPasswordMustBeChange(true);
 			user = userRepository.save(user);
 			emailService.sendNewPasswordEmail(user.getFirstName(), user.getUsername(), password, user.getEmail());
-			eventLogService.addEvent(
-					"l'utilisateur: " + user.getFirstName() + " " + user.getLastName() + " a changé son mot de passe",
-					user.getClass().getSimpleName());
+//			eventLogService.addEvent(
+//					"l'utilisateur: " + user.getFirstName() + " " + user.getLastName() + " a changé son mot de passe",
+//					user.getClass().getSimpleName());
 			return user.getEmail();
 		}
 

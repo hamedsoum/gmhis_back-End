@@ -224,18 +224,9 @@ public class BillController {
 		bill = billService.saveBill(bill);
 		
 		billDto.getInsuredList().forEach(billHasInsuredDto -> {
-			
-			System.out.println(billHasInsuredDto.getAdmission());
-			System.out.println(billHasInsuredDto.getInsured());
-			System.out.println(billHasInsuredDto.getInsuredCoverage());
-			System.out.println(billHasInsuredDto.getInsuredPart());
-			System.out.println(billHasInsuredDto.getBill());
-			
 			Admission admission = admissionService.findAdmissionById(billHasInsuredDto.getAdmission()).orElse(null);
 			Insured Insured = insuredService.findInsuredById(billHasInsuredDto.getInsured()).orElse(null);
 			Insurance insurance = insuranceService.findInsuranceById(billHasInsuredDto.getInsurrance()).orElse(null);
-
-			
 			BillHasInsured billHasInsured = new BillHasInsured();
 			billHasInsured.setAdmission(admission);
 			billHasInsured.setInsured(Insured);
@@ -245,14 +236,12 @@ public class BillController {
 			billHasInsured.setInsurance(insurance);
 			billHasInsured.setCreatedAt(new Date());
 			billHasInsured.setCreatedBy(this.getCurrentUserId().getId());
-
+			
 			billHasInsuredRepository.save(billHasInsured);
 
 		});
         
 		billDto.getActs().forEach(admissionHasAct -> {
-			System.out.print(admissionHasAct.getPratician());
-
 			Admission admission = admissionService.findAdmissionById(admissionHasAct.getAdmission()).orElse(null);
 			Act act = actService.findActById(admissionHasAct.getAct()).orElse(null);
 			Pratician pratician = practicianService.findPracticianById(admissionHasAct.getPratician()).orElse(null);
@@ -742,8 +731,9 @@ public class BillController {
 
 				billDto.getActs().stream().forEach(act -> {
 					Map<String, Object> actsMap = new HashMap<>();
-					actsMap.put("act", act.getAct());
-					actsMap.put("practician", act.getPractician());
+					actsMap.put("act", act.getAct().getName());
+					actsMap.put("practicianFirstName", act.getPractician().getUser().getFirstName());
+					actsMap.put("practicianLastName", act.getPractician().getUser().getLastName());
 					actsMap.put("actCost", act.getActCost());	
 					actList.add(actsMap);
 				});
@@ -806,7 +796,7 @@ public class BillController {
 		billMap.put("patientAge", bill.getAdmission().getPatient().getAge());
 		billMap.put("patientHeight", bill.getAdmission().getPatient().getHeight());
 		billMap.put("patientWeight", bill.getAdmission().getPatient().getHeight());
-		billMap.put("patientMaidenName", bill.getAdmission().getPatient().getMaidenName());
+//		billMap.put("patientMaidenName", bill.getAdmission().getPatient().getMaidenName());
 		billMap.put("billDate", bill.getCreatedAt());
 		billMap.put("accountNumber", bill.getAccountNumber());
 		billMap.put("admissionNumber", bill.getAdmission().getAdmissionNumber());
@@ -1056,7 +1046,7 @@ public class BillController {
 					billsMap.put("billNumber", bill.getBillNumber());
 					billsMap.put("patientExternalId", patient.getPatientExternalId());
 					billsMap.put("patientFirstName",patient.getFirstName());
-					billsMap.put("patientMaidenName", patient.getMaidenName());
+//					billsMap.put("patientMaidenName", patient.getMaidenName());
 					billsMap.put("patientLastName", patient.getLastName());
 					billsMap.put("patientContact", patient.getCellPhone1());
 					billsMap.put("clientType", bill.getPatientType());
@@ -1083,8 +1073,8 @@ public class BillController {
 					bill.getActs().stream().forEach(act -> {
 						Map<String, Object> actsMap = new HashMap<>();
 						actsMap.put("name", act.getAct().getName());
-						actsMap.put("practicianFirstName", act.getPractician().getFirstName());
-						actsMap.put("practicianLastName", act.getPractician().getLastName());
+						actsMap.put("practicianFirstName", act.getPractician().getUser().getFirstName());
+						actsMap.put("practicianLastName", act.getPractician().getUser().getLastName());
 						actsMap.put("actCost", act.getActCost());	
 						actList.add(actsMap);
 					});

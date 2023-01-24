@@ -19,7 +19,7 @@ public class PatientDTO {
 	private Long id;
 	private String lastName;
 	private String firstName;
-	private String maidenName = "";
+//	private String maidenName = "";
 	private String idcardType;
 	private String idCardNumber;
 	private String cnamNumber = "";
@@ -36,14 +36,14 @@ public class PatientDTO {
 	private String numberOfChildren;
 	private Long country;
 	private Long cityId;
-	private String motherLastName;
-	private String motherFirstName;
+//	private String motherLastName;
+//	private String motherFirstName;
+//	private String motherProfession;
 	private String profession;
 	private String maritalStatus;
 	private String cellPhone1;
-	private String cellPhone2;
-	private String motherProfession;
-	private String fatherName;
+//	private String cellPhone2;
+//	private String fatherName;
 	private int age;
 	private double height;
 	private double weight;

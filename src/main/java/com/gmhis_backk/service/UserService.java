@@ -47,7 +47,7 @@ public interface UserService {
     
     User addNewUser(UserDto userDto) throws UserNotFoundException, UsernameExistException, EmailExistException, IOException, NotAnImageFileException, ResourceNotFoundByIdException, MessagingException, InvalidInputException;
 
-    User updateUser(Long id,UserDto userDto) throws UserNotFoundException, UsernameExistException, EmailExistException, IOException, NotAnImageFileException, ResourceNotFoundByIdException, InvalidInputException, ResourceNameAlreadyExistException;
+    User updateUser(Long id,UserDto userDto) throws UserNotFoundException, UsernameExistException, EmailExistException, IOException, NotAnImageFileException, ResourceNotFoundByIdException, InvalidInputException, ResourceNameAlreadyExistException,MessagingException;
 
    // void deleteUser(String username) throws IOException;
 

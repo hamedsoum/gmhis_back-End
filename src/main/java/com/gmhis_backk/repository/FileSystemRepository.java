@@ -7,19 +7,30 @@ import java.util.Date;
 
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.multipart.MultipartFile;
 
 @Repository
 public class FileSystemRepository {
+	
+	private final Path rootLocation = Paths.get("upload-dir");
+	
 	 String RESOURCES_DIR = FileSystemRepository.class.getResource("/")
 		        .getPath();
 
-		    public String save(byte[] content, String imageName) throws Exception {
+		    public String save(MultipartFile file,byte[] content, String imageName) throws Exception {
+		    	
 		        Path newFile = Paths.get(RESOURCES_DIR +"/images/"+ new Date().getTime() + "-" + imageName);
-		        Files.createDirectories(newFile.getParent());
+		        
+		        Path destinationFile = this.rootLocation.resolve(
+						Paths.get(file.getOriginalFilename()))
+						.normalize().toAbsolutePath();
+		        
+		        
+		        Files.createDirectories(destinationFile.getParent());
 
-		        Files.write(newFile, content);
+		        Files.write(destinationFile, content);
 
-		        return newFile.toAbsolutePath()
+		        return destinationFile.toAbsolutePath()
 		            .toString();
 		    }
 		    

@@ -45,7 +45,7 @@ public interface AdmissionRepository extends JpaRepository<Admission, Long> {
 
 	// admissions
 	/****************************************************************************/
-	@Query(value = "SELECT a FROM Admission a WHERE a.patient.firstName like %:firstName% and  (a.patient.lastName like %:lastName% or a.patient.maidenName like %:lastName% ) and a.admissionStatus= :admissionStatus  AND a.facilityId =:facilityId")
+	@Query(value = "SELECT a FROM Admission a WHERE a.patient.firstName like %:firstName% and  (a.patient.lastName like %:lastName% ) and a.admissionStatus= :admissionStatus  AND a.facilityId =:facilityId")
 	public Page<Admission> findAdmissionsByPatientName(@Param("firstName") String firstName,
 			@Param("lastName") String lastName, @Param("admissionStatus") String admissionStatus, @Param("facilityId") String facilityId, Pageable pageable);
 
@@ -57,7 +57,7 @@ public interface AdmissionRepository extends JpaRepository<Admission, Long> {
 	public Page<Admission> findAdmissionsByPatientExternalId(@Param("patientExternalId") String patientExternalId,
 			@Param("admissionStatus") String admissionStatus, @Param("facilityId") String facilityId, Pageable pageable);
 
-	@Query(value = "SELECT a FROM Admission a WHERE a.patient.cellPhone1 like %:cellPhone% or a.patient.cellPhone2 like %:cellPhone% and a.admissionStatus= :admissionStatus AND a.facilityId =:facilityId")
+	@Query(value = "SELECT a FROM Admission a WHERE a.patient.cellPhone1 like %:cellPhone% and a.admissionStatus= :admissionStatus AND a.facilityId =:facilityId")
 	public Page<Admission> findAdmissionsByCellPhone(@Param("cellPhone") String cellPhone,
 			@Param("admissionStatus") String admissionStatus, @Param("facilityId") String facilityId, Pageable pageable);
 

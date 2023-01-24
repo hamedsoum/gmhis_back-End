@@ -11,8 +11,8 @@ public class EmailConstant {
     public static final String PASSWORD = "8Ql0HuAt";
     public static final String FROM_EMAIL = "infos@groupeaaa.com ";
     public static final String CC_EMAIL = "";
-    public static final String EMAIL_SUBJECT = "INFO RYC - Nouveau nom d'utilisateur et mot de passe";
-    public static final String EMAIL_SUBJECT1 = "INFO RYC - Changement de mot de passe";
+    public static final String EMAIL_SUBJECT = "INFO GMHIS - Nouveau nom d'utilisateur et mot de passe";
+    public static final String EMAIL_SUBJECT1 = "INFO GMHIS - Changement de mot de passe";
     public static final String GMAIL_SMTP_SERVER = "mail.groupeaaa.com";
     public static final String SMTP_HOST = "mail.groupeaaa.com";
     public static final String SMTP_AUTH = "mail.groupeaaa.com";

@@ -73,21 +73,15 @@ public class User implements Serializable{
     @Column(name = "facility_id")
 	private String facilityId;
     
-    
+  
 	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "facility_id", insertable = false, updatable = false)
 	private Facility facility;
     
-//    private Long hotelId;
-    
     @Column
 	private String login;
 
-    
-//    @ManyToOne
-//    @JoinColumn(name = "police_id")
-//    private Polices police;
     
     private String code;
     

@@ -93,7 +93,6 @@ public class EmailService {
         message.setRecipients(CC, InternetAddress.parse(CC_EMAIL, false));
         message.setSubject(EMAIL_SUBJECT);
         message.setContent(body, "text/html");
-//      message.setText("Salut " + firstName + ", \n \n Votre nom d'utilisateur est: " +username  + "\n \n le mot de passe est :" + password + "\n \n A la première connexion vous serez invité à changer votre mot de passe. \n \n Equipe technique!");
         message.setSentDate(new Date());
         message.saveChanges();
         return message;

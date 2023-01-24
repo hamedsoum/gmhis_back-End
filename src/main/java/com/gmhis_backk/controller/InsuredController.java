@@ -113,11 +113,11 @@ public class InsuredController {
 		insured.setCoverage(insuredDto.getCoverage());
 		insured.setInsurance(insurance);
 		insured.setInsuranceSuscriber(insuranceSubscriber);
-		insured.setIsPrincipalInsured(insuredDto.getIsPrincipalInsured());
+//		insured.setIsPrincipalInsured(insuredDto.getIsPrincipalInsured());
 		insured.setPatient(patient);
-		insured.setPrincipalInsuredAffiliation(insuredDto.getPrincipalInsuredAffiliation());
-		insured.setPrincipalInsuredContact(insuredDto.getPrincipalInsuredContact());
-		insured.setPrincipalInsuredName(insuredDto.getPrincipalInsuredName());
+//		insured.setPrincipalInsuredAffiliation(insuredDto.getPrincipalInsuredAffiliation());
+//		insured.setPrincipalInsuredContact(insuredDto.getPrincipalInsuredContact());
+//		insured.setPrincipalInsuredName(insuredDto.getPrincipalInsuredName());
 		insured.setDeleted("N");
 		insured.setCreatedAt(new Date());
 		insured.setCreatedBy(this.getCurrentUserId());
@@ -204,7 +204,7 @@ public class InsuredController {
 			insuredsMap.put("isPrincipalInsured", insured.getIsPrincipalInsured());
 			insuredsMap.put("patientId", insured.getPatient().getId());
 			insuredsMap.put("patientFirstName", insured.getPatient().getFirstName());
-			insuredsMap.put("patientMaidenName", insured.getPatient().getMaidenName());
+//			insuredsMap.put("patientMaidenName", insured.getPatient().getMaidenName());
 			insuredsMap.put("patientLastName", insured.getPatient().getLastName());
 			insuredsMap.put("principalInsuredAffiliation", insured.getPrincipalInsuredAffiliation());
 			insuredsMap.put("principalInsuredContact", insured.getPrincipalInsuredContact());
@@ -241,7 +241,7 @@ public class InsuredController {
 		insuredMap.put("isPrincipalInsured", insured.getIsPrincipalInsured());
 		insuredMap.put("patientId", insured.getPatient().getId());
 		insuredMap.put("patientFirstName", insured.getPatient().getFirstName());
-		insuredMap.put("patientMaidenName", insured.getPatient().getMaidenName());
+//		insuredMap.put("patientMaidenName", insured.getPatient().getMaidenName());
 		insuredMap.put("patientLastName", insured.getPatient().getLastName());
 		insuredMap.put("principalInsuredAffiliation", insured.getPrincipalInsuredAffiliation());
 		insuredMap.put("principalInsuredContact", insured.getPrincipalInsuredContact());
@@ -269,7 +269,7 @@ public class InsuredController {
 			Map<String, Object> insuredMap = new HashMap<>();
 			insuredMap.put("id", insured.getId());
 			insuredMap.put("patientFirstName", insured.getPatient().getFirstName());
-			insuredMap.put("patientMaidenName", insured.getPatient().getMaidenName());
+//			insuredMap.put("patientMaidenName", insured.getPatient().getMaidenName());
 			insuredMap.put("patientLastName", insured.getPatient().getLastName());
 			insuredList.add(insuredMap);
 		});
@@ -343,11 +343,11 @@ public class InsuredController {
 			updateInsured.setCoverage(insuredDto.getCoverage());
 			updateInsured.setInsurance(insurance);
 			updateInsured.setInsuranceSuscriber(insuranceSubscriber);
-			updateInsured.setIsPrincipalInsured(insuredDto.getIsPrincipalInsured());
+//			updateInsured.setIsPrincipalInsured(insuredDto.getIsPrincipalInsured());
 			updateInsured.setPatient(patient);
-			updateInsured.setPrincipalInsuredAffiliation(insuredDto.getPrincipalInsuredAffiliation());
-			updateInsured.setPrincipalInsuredContact(insuredDto.getPrincipalInsuredContact());
-			updateInsured.setPrincipalInsuredName(insuredDto.getPrincipalInsuredName());
+//			updateInsured.setPrincipalInsuredAffiliation(insuredDto.getPrincipalInsuredAffiliation());
+//			updateInsured.setPrincipalInsuredContact(insuredDto.getPrincipalInsuredContact());
+//			updateInsured.setPrincipalInsuredName(insuredDto.getPrincipalInsuredName());
 			updateInsured.setSociety(insuredDto.getSociety());
 			updateInsured.setDeleted("N");
 			updateInsured.setUpdatedAt(new Date());

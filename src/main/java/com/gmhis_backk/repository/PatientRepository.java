@@ -31,7 +31,7 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
 
 	public List<Patient> findByCellPhone1(String cellPhone1);
 	
-	public List<Patient> findByCellPhone2(String cellPhone2);
+//	public List<Patient> findByCellPhone2(String cellPhone2);
 
 
 	public List<Patient> findByCnamNumber(String cnamNumber);
@@ -41,8 +41,7 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
 	@Query(value = "select max(cast(substring(p.patient_external_id,:prefixLength) as UNSIGNED)) from patient p", nativeQuery = true)
 	public String findLastExernalId(@Param("prefixLength") int prefixLength);
 
-	@Query(value = "select p from Patient p where (p.firstName like %:firstName%  and p.lastName like %:lastName%) and (p.cellPhone1 like %:cellPhone% or p.cellPhone2 like %:cellPhone% "
-			+ " or p.patientExternalId like %:patientExternalId% or p.cnamNumber like %:cnamNumber% or p.idCardNumber like %:idCardNumber% )")
+	@Query(value = "select p from Patient p where (p.firstName like %:firstName%  and p.lastName like %:lastName%) and (p.cellPhone1 like %:cellPhone% or p.patientExternalId =:patientExternalId or p.cnamNumber like %:cnamNumber% or p.idCardNumber like %:idCardNumber% )")
 	public Page<Patient> findPatients(@Param("firstName") String firstName, @Param("lastName") String lastName,
 			@Param("patientExternalId") String patientExternalId, @Param("cellPhone") String cellPhone,
 			@Param("cnamNumber") String cnamNumber, @Param("idCardNumber") String idCardNumber, Pageable pageable);
@@ -56,16 +55,17 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
 
 	public Page<Patient> findByLastNameContainingIgnoreCase(@Param("lastName") String lastName, Pageable pageable);
 
+	@Query(value = "select p from Patient p where p.patientExternalId =:patientExternalId")
 	public Page<Patient> findByPatientExternalIdContainingIgnoreCase(@Param("patientExternalId") String patientExternalId, Pageable pageable);
 
-	@Query(value="select p from Patient p where p.cellPhone1 like %:cellPhone% or p.cellPhone2 like %:cellPhone% ")
+	@Query(value="select p from Patient p where p.cellPhone1 like %:cellPhone%")
 	public Page<Patient> findByCellPhone(@Param("cellPhone") String cellPhone, Pageable pageable);
 
 	public Page<Patient> findByCnamNumberContainingIgnoreCase(@Param("cnamNumber") String cnamNumber, Pageable pageable);
 
 	public Page<Patient> findByIdCardNumberContainingIgnoreCase(@Param("idCardNumber") String idCardNumber, Pageable pageable);
 
-	@Query(value="select p from Patient p where p.firstName like %:firstName% and ( p.lastName like %:lastName% or p.maidenName like %:lastName%)")
+	@Query(value="select p from Patient p where p.firstName like %:firstName% and ( p.lastName like %:lastName%)")
 	public Page<Patient> findByFullName(@Param("firstName") String firstName, @Param("lastName") String lastName, Pageable pageable);
 
 	@Query(value = "select * from  patient p order by p.created_at desc LIMIT 0,1", nativeQuery = true)

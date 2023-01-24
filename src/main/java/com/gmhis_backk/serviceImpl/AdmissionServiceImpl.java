@@ -61,10 +61,6 @@ public class AdmissionServiceImpl implements AdmissionService{
 	private UserRepository userRepo;
 	
 	@Autowired
-	private PracticianRepository practicianRepo;
-	
-	
-	@Autowired
 	private PracticianService practicianService;
 	
 	protected User getCurrentUserId() {
@@ -98,7 +94,6 @@ public class AdmissionServiceImpl implements AdmissionService{
 			}
 			
 			
-		System.out.print(praticien.getId());
 		Admission admission = new Admission();
 		
 		BeanUtils.copyProperties(admissionDto, admission, "id");
@@ -159,7 +154,6 @@ public class AdmissionServiceImpl implements AdmissionService{
 	
 	@Override
 	public Page<Admission> findAdmissionsByPatientName (String firstName, String lastName, String admissionStatus,String facilityId, Pageable pageable){
-		System.out.print(facilityId);
 		return repo.findAdmissionsByPatientName(firstName, lastName, admissionStatus ,facilityId, pageable);
 	}
 
@@ -205,7 +199,6 @@ public class AdmissionServiceImpl implements AdmissionService{
 	
 	@Override
 	public Page<Admission> findAdmissionsByDate (Date fromDate, Date toDate, String admissionStatus,String facilityId, Pageable pageable){
-		System.out.print(fromDate);
 		return repo.findAdmissionByDate(fromDate, toDate, admissionStatus,facilityId, pageable);
 	}
 	
@@ -317,7 +310,6 @@ public class AdmissionServiceImpl implements AdmissionService{
 
 	@Override
 	public Page<Admission> findAdmissionsByFacility(String facilityId, String admissionStatus, Pageable pageable) {
-		System.out.print(facilityId);
 		return repo.findAdmissionsByFacility( admissionStatus, facilityId, pageable);
 	}
 
