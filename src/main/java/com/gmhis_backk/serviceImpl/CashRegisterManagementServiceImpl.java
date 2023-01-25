@@ -1,6 +1,5 @@
 package com.gmhis_backk.serviceImpl;
 
-import java.awt.print.Pageable;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -11,6 +10,7 @@ import javax.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.gmhis_backk.domain.CashRegister;
@@ -92,21 +92,53 @@ public class CashRegisterManagementServiceImpl implements CashRegisterManagement
 
 	@Override
 	public Page<CashRegisterManagement> findAllCashRegistersMangement(Pageable page) {
-		// TODO Auto-generated method stub
-		return null;
+		return cashRegisterManagementRepository.findAll(page);
 	}
 
 	@Override
 	public Page<CashRegisterManagement> findAllCashRegistersMangementByCashRegister(Long cashRegister,
 			Pageable pageable) {
-		// TODO Auto-generated method stub
-		return null;
+		return cashRegisterManagementRepository.findAllCashRegisterManagementByCashRegister(cashRegister, pageable);
 	}
 
 	@Override
 	public Optional<CashRegisterManagement> getCashRegisterManagement(UUID id) {
 		System.out.println(id);
 		return cashRegisterManagementRepository.findById(id);
+	}
+
+	@Override
+	public Page<CashRegisterManagement> findAllCashRegistersMangementByCashier(Long cashier, Pageable pageable) {
+		return cashRegisterManagementRepository.findAllCashRegisterManagementByCashier(cashier, pageable);
+	}
+
+	@Override
+	public Page<CashRegisterManagement> findAllCashRegistersMangementByState(Boolean state, Pageable pageable) {
+		return cashRegisterManagementRepository.findAllCashRegisterManagementByState(state, pageable);
+	}
+
+	@Override
+	public Page<CashRegisterManagement> findAllCashRegistersMangementByCashRegisterAndCashier(Long cashRegister,
+			Long cashier, Pageable pageable) {
+		return cashRegisterManagementRepository.findAllCashRegisterManagementByCashRegisterAndCashier(cashRegister, cashier, pageable);
+	}
+
+	@Override
+	public Page<CashRegisterManagement> findAllCashRegistersMangementByCashRegisterAndState(Long cashRegister,
+			Boolean state, Pageable pageable) {
+		return cashRegisterManagementRepository.findAllCashRegisterManagementByCashRegisterAndState(cashRegister, state, pageable);
+	}
+
+	@Override
+	public Page<CashRegisterManagement> findAllCashRegistersMangementByCashierAndState(Long cashier, Boolean state,
+			Pageable pageable) {
+		return cashRegisterManagementRepository.findAllCashRegisterManagementByCashierAndState(cashier, state, pageable);
+	}
+
+	@Override
+	public Page<CashRegisterManagement> findAllCashRegistersMangementByCashRegisterAndCashierAndState(Long cashRegister,
+			Long cashier, Boolean state, Pageable pageable) {
+		return cashRegisterManagementRepository.findAllCashRegisterManagementByCashRegisterAndCashierAndState(cashRegister, cashier, state, pageable);
 	}
 
 }

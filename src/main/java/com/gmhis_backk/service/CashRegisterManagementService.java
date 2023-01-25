@@ -1,11 +1,11 @@
 package com.gmhis_backk.service;
 
-import java.awt.print.Pageable;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.gmhis_backk.domain.CashRegisterManagement;
@@ -28,6 +28,22 @@ public interface CashRegisterManagementService {
 	
 	public Page<CashRegisterManagement> findAllCashRegistersMangementByCashRegister(Long cashRegister,Pageable pageable);
 	
+	public Page<CashRegisterManagement> findAllCashRegistersMangementByCashier(Long cashier,Pageable pageable);
 	
+	public Page<CashRegisterManagement> findAllCashRegistersMangementByState(Boolean state,Pageable pageable);
+	
+	public Page<CashRegisterManagement> findAllCashRegistersMangementByCashRegisterAndCashier(Long cashRegister, Long cashier, Pageable pageable);
+	
+	public Page<CashRegisterManagement> findAllCashRegistersMangementByCashRegisterAndState(Long cashRegister, Boolean state, Pageable pageable);
+
+	public Page<CashRegisterManagement> findAllCashRegistersMangementByCashierAndState(Long cashier, Boolean state, Pageable pageable);
+	
+	public Page<CashRegisterManagement> findAllCashRegistersMangementByCashRegisterAndCashierAndState(Long cashRegister,Long cashier, Boolean state, Pageable pageable);
+
+
+
+	
+	
+
 
 }
