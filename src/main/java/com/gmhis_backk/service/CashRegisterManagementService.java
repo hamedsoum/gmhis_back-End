@@ -2,6 +2,7 @@ package com.gmhis_backk.service;
 
 import java.awt.print.Pageable;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -19,6 +20,8 @@ public interface CashRegisterManagementService {
 	
 	public CashRegisterManagement updateCashRegisterManagement(UUID id, CashRegisterManagementDto cashRegisterManagementDto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException;
 
+	public Optional<CashRegisterManagement> getCashRegisterManagement(UUID id);
+	
 	public List<CashRegisterManagement> findAllCashRegistersMangement();
 	
 	public Page<CashRegisterManagement> findAllCashRegistersMangement(Pageable page);

@@ -3,6 +3,7 @@ package com.gmhis_backk.serviceImpl;
 import java.awt.print.Pageable;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.transaction.Transactional;
@@ -48,23 +49,39 @@ public class CashRegisterManagementServiceImpl implements CashRegisterManagement
 		if (cashier == null) 
 		throw new ResourceNotFoundByIdException("aucun utilisateur trouve pour l'identifiant");
 			
-			
 		System.out.println(cashRegisterManagementDto.getCashier());
 		CashRegisterManagement cashRegisterManagement = new CashRegisterManagement();	
 		BeanUtils.copyProperties(cashRegisterManagementDto,cashRegisterManagement,"id");
 		cashRegisterManagement.setCashier(cashier);
 		cashRegisterManagement.setCashRegister(cashRegister);
 		cashRegisterManagement.setOpeningDate(new Date());
-		cashRegisterManagementRepository.save(cashRegisterManagement);
 
-		return null;
+		return cashRegisterManagementRepository.save(cashRegisterManagement);
+
 	}
 
-	@Override
+	@Override @Transactional
 	public CashRegisterManagement updateCashRegisterManagement(UUID id, CashRegisterManagementDto cashRegisterManagementDto)
 			throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException {
-		// TODO Auto-generated method stub
-		return null;
+			
+		CashRegisterManagement updateCashRegisterManagement = cashRegisterManagementRepository.findById(id).orElse(null);
+		if (updateCashRegisterManagement == null) 
+			throw new ResourceNotFoundByIdException("Aucune gestion de caisse trouve pour l'identifiant");
+		
+		CashRegister cashRegister = cashRegisterService.findCashRegisterById(cashRegisterManagementDto.getCashRegister()).orElse(null);
+		if (cashRegister == null) 
+			throw new ResourceNotFoundByIdException("aucune caisse trouvé pour l'identifiant");
+		
+		User cashier = userService.findUserById(cashRegisterManagementDto.getCashier());
+		if (cashier == null) 
+		throw new ResourceNotFoundByIdException("aucun utilisateur trouve pour l'identifiant");
+		
+		BeanUtils.copyProperties(cashRegisterManagementDto,updateCashRegisterManagement,"id");
+		updateCashRegisterManagement.setCashier(cashier);
+		updateCashRegisterManagement.setCashRegister(cashRegister);
+		updateCashRegisterManagement.setOpeningDate(new Date());
+
+		return cashRegisterManagementRepository.save(updateCashRegisterManagement);
 	}
 
 	@Override
@@ -84,6 +101,12 @@ public class CashRegisterManagementServiceImpl implements CashRegisterManagement
 			Pageable pageable) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public Optional<CashRegisterManagement> getCashRegisterManagement(UUID id) {
+		System.out.println(id);
+		return cashRegisterManagementRepository.findById(id);
 	}
 
 }

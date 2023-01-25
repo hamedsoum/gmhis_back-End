@@ -14,9 +14,9 @@ import com.gmhis_backk.domain.CashRegisterManagement;
 @Repository
 public interface CashRegisterManagementRepository extends JpaRepository<CashRegisterManagement, UUID> {
 
-//	@Query("Select c FROM CashRegisterManagement c")
-//	List<CashRegisterManagement> findAllCashRegisterManagement();
-//	
+	@Query("Select c FROM CashRegisterManagement c")
+	List<CashRegisterManagement> findAllCashRegisterManagement();
+	
 //	@Query(value = "SELECT c FROM CashRegisterManagement c where c.id =: id")
 //	Optional<CashRegisterManagement> findById(UUID id);
 	
