@@ -49,7 +49,7 @@ import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping("/role")
-public class RoleController  extends  ExceptionHandling{
+public class RoleController {
 
 	@Autowired
 	RoleService roleService;

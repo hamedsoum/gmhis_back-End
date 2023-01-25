@@ -9,8 +9,11 @@ import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -18,6 +21,7 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -34,7 +38,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CashRegisterManagement implements Serializable {
-
 	private static final long serialVersionUID = 1L;
 
    @Id
@@ -45,12 +48,16 @@ public class CashRegisterManagement implements Serializable {
 	private UUID id;
    
    //caisse 
-   @Column(name = "cash_register")
+	@JsonBackReference
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="cash_register")
    private CashRegister cashRegister;
    
    //caissier 
-   @Column(name = "cashier")
-   private User cashier;
+	@JsonBackReference
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="cashier")
+	private User cashier;
    
    //date d'ouverture de la caisse
    @Temporal(TemporalType.TIMESTAMP)
@@ -60,5 +67,8 @@ public class CashRegisterManagement implements Serializable {
    //etat de la caisse(ouverte ou ferme) 
    @Column(name = "state")
    private Boolean state;
+   
+   @Column(name = "opening_balance")
+   private double openingBalance;
    
 }
