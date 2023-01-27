@@ -58,7 +58,7 @@ public class CashRegisterManagementController {
 	public ResponseEntity<Map<String, Object>> getCashRegisterManagement(@PathVariable("id") UUID id){
 		Map<String, Object> response = new HashMap<>();
 		CashRegisterManagement cashRegisterManagement= cashRegisterManagementService.getCashRegisterManagement(id).orElse(null);
-		
+		 
 		response.put("id",cashRegisterManagement.getId());
 		response.put("cashier",cashRegisterManagement.getCashRegister().getName());
 		response.put("cashRegister",cashRegisterManagement.getCashier().getFirstName() + " " + cashRegisterManagement.getCashier().getLastName());
@@ -72,8 +72,8 @@ public class CashRegisterManagementController {
 	@ApiOperation(value = "Retourner la liste des activite de caisse")
 	@GetMapping()
 	public ResponseEntity<Map<String, Object>>getCashRegisterManagements(
-			@RequestParam(required = false, defaultValue = "") Long cashier,
-			@RequestParam(required = false, defaultValue = "") Long cashRegister,
+			@RequestParam(required = false, defaultValue = "") String cashier,
+			@RequestParam(required = false, defaultValue = "") String cashRegister,
 			@RequestParam(required = false, defaultValue = "") String state,
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size,
@@ -88,19 +88,19 @@ public class CashRegisterManagementController {
 		Page<CashRegisterManagement> pageCRM ;
 		
 		if (ObjectUtils.isNotEmpty(cashRegister) && ObjectUtils.isEmpty(cashier) && StringUtils.isEmpty(state)) {
-			 pageCRM = cashRegisterManagementService.findAllCashRegistersMangementByCashRegister(cashRegister,paging);
+			 pageCRM = cashRegisterManagementService.findAllCashRegistersMangementByCashRegister(Long.parseLong(cashRegister),paging);
 		}else if(ObjectUtils.isEmpty(cashRegister) && ObjectUtils.isNotEmpty(cashier) && StringUtils.isEmpty(state)) {
-			 pageCRM = cashRegisterManagementService.findAllCashRegistersMangementByCashier(cashier,paging);	
+			 pageCRM = cashRegisterManagementService.findAllCashRegistersMangementByCashier(Long.parseLong(cashier),paging);	
 		}else if (ObjectUtils.isEmpty(cashRegister) && ObjectUtils.isEmpty(cashier) && StringUtils.isNotEmpty(state)) {
 			 pageCRM = cashRegisterManagementService.findAllCashRegistersMangementByState(Boolean.parseBoolean(state),paging);	
 		}else if (ObjectUtils.isNotEmpty(cashRegister) && ObjectUtils.isNotEmpty(cashier) && StringUtils.isEmpty(state)) {
-			 pageCRM = cashRegisterManagementService.findAllCashRegistersMangementByCashRegisterAndCashier(cashRegister,cashier,paging);		
+			 pageCRM = cashRegisterManagementService.findAllCashRegistersMangementByCashRegisterAndCashier(Long.parseLong(cashRegister),Long.parseLong(cashier),paging);		
 		}else if (ObjectUtils.isNotEmpty(cashRegister) && ObjectUtils.isEmpty(cashier) && StringUtils.isNotEmpty(state)) {
-			 pageCRM = cashRegisterManagementService.findAllCashRegistersMangementByCashRegisterAndState(cashRegister, Boolean.parseBoolean(state),paging);		
+			 pageCRM = cashRegisterManagementService.findAllCashRegistersMangementByCashRegisterAndState(Long.parseLong(cashRegister), Boolean.parseBoolean(state),paging);		
 		}else if (ObjectUtils.isEmpty(cashRegister) && ObjectUtils.isNotEmpty(cashier) && StringUtils.isNotEmpty(state)) {
-			 pageCRM = cashRegisterManagementService.findAllCashRegistersMangementByCashierAndState(cashier, Boolean.parseBoolean(state),paging);		
+			 pageCRM = cashRegisterManagementService.findAllCashRegistersMangementByCashierAndState(Long.parseLong(cashier), Boolean.parseBoolean(state),paging);		
 		}else if (ObjectUtils.isNotEmpty(cashRegister) && ObjectUtils.isNotEmpty(cashier) && StringUtils.isNotEmpty(state)) {
-			 pageCRM = cashRegisterManagementService.findAllCashRegistersMangementByCashRegisterAndCashierAndState(cashRegister,cashier, Boolean.parseBoolean(state),paging);		
+			 pageCRM = cashRegisterManagementService.findAllCashRegistersMangementByCashRegisterAndCashierAndState(Long.parseLong(cashRegister),Long.parseLong(cashier), Boolean.parseBoolean(state),paging);		
 		}
 		else {
 			 pageCRM = cashRegisterManagementService.findAllCashRegistersMangement(paging);

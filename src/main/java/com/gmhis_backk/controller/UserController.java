@@ -240,5 +240,18 @@ public class UserController{
 	    }
 	    
 	    
+		@ApiOperation(value = "Lister la liste des ids et noms des utilisateurs actifs dans le système")
+		@GetMapping("/active_user_name")
+		public ResponseEntity<List<Map<String, Object>>> activeActName() {
+			List<Map<String, Object>> userList = new ArrayList<>();
 
+			userService.findAllActive().stream().forEach(userDto -> {
+				Map<String, Object> userMap = new HashMap<>();
+				userMap.put("id", userDto.getId());
+				userMap.put("name", userDto.getFirstName() + " " + userDto.getLastName());
+				userList.add(userMap);
+			});
+
+			return new ResponseEntity<>(userList, HttpStatus.OK);
+		}
 }
