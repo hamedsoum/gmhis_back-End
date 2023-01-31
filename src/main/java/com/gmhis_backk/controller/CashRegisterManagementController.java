@@ -39,6 +39,8 @@ public class CashRegisterManagementController {
 	@Autowired
 	CashRegisterManagementService cashRegisterManagementService ;
 	
+	
+	
 	@ApiOperation(value = "Creer une nouvelle activite de caisse")
 	@PostMapping()
 	public ResponseEntity<CashRegisterManagement> newCashRegisterManagement(@RequestBody CashRegisterManagementDto crmDto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException{
@@ -106,8 +108,6 @@ public class CashRegisterManagementController {
 			 pageCRM = cashRegisterManagementService.findAllCashRegistersMangement(paging);
 		}
 		
-		
-		System.out.print(pageCRM.getSize());
 		List<CashRegisterManagement> crMList = pageCRM.getContent();
 		
 		List<Map<String, Object>> crMs = this.getMaFromCashRegisterManagementlist(crMList);
@@ -120,8 +120,6 @@ public class CashRegisterManagementController {
 		response.put("first", pageCRM.isFirst());
 		response.put("last", pageCRM.isLast());
 		response.put("empty", pageCRM.isEmpty());
-
-
 		return new ResponseEntity<>(response, HttpStatus.OK);
 		
 	}
@@ -134,8 +132,10 @@ public class CashRegisterManagementController {
 			
 			Map<String, Object> crmMap = new HashMap<>();
 			crmMap.put("id",el.getId());
-			crmMap.put("cashier",el.getCashRegister().getName());
-			crmMap.put("cashRegister",el.getCashier().getFirstName() + " " + el.getCashier().getLastName());
+			crmMap.put("cashRegisterName",el.getCashRegister().getName());
+			crmMap.put("cashRegister",el.getCashRegister().getId());
+			crmMap.put("cashierName",el.getCashier().getFirstName() + " " + el.getCashier().getLastName());
+			crmMap.put("cashier",el.getCashier().getId());
 			crmMap.put("openingDate",el.getOpeningDate());
 			crmMap.put("state",el.getState());
 			crmMap.put("openingBalance",el.getOpeningBalance());

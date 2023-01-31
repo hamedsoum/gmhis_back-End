@@ -71,4 +71,16 @@ public class CashRegisterManagement implements Serializable {
    @Column(name = "opening_balance")
    private double openingBalance;
    
+   
+   @Column(name = "closing_balance")
+   private double closingBalance;
+   
+   @Column(name = "real_closing_balance")
+   private double realClosingBalance;
+   
+   //date d'ouverture de la caisse
+   @Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "closing_date")
+	private Date closingDate;
+
 }

@@ -36,10 +36,17 @@ public interface CashRegisterManagementRepository extends JpaRepository<CashRegi
 	Page<CashRegisterManagement> findAllCashRegisterManagementByCashRegisterAndState(@Param("cashRegister") Long cashRegister, @Param("state") Boolean state,  Pageable pageable);
 	
 	@Query(value = "SELECT c FROM CashRegisterManagement c where c.cashier.id =:cashier AND c.state =:state")
-	Page<CashRegisterManagement> findAllCashRegisterManagementByCashierAndState(@Param("cashier") Long cashier, @Param("state") Boolean state,  Pageable pageable);
+	Page<CashRegisterManagement> findAllCashierManagementByCashierAndState(@Param("cashier") Long cashier, @Param("state") Boolean state,  Pageable pageable);
 	
 	@Query(value = "SELECT c FROM CashRegisterManagement c where c.cashRegister.id =:cashRegister AND c.cashier.id =:cashier AND c.state =:state")
 	Page<CashRegisterManagement> findAllCashRegisterManagementByCashRegisterAndCashierAndState(@Param("cashRegister") Long cashRegister, @Param("cashier") Long cashier, @Param("state") Boolean state,  Pageable pageable);
 	
+	
+	@Query(value = "SELECT c FROM CashRegisterManagement c where c.cashRegister.id =:cashRegister AND c.state = true")
+	List<CashRegisterManagement> findAllCashRegisterManagementByCashRegisterAndStateOpenened(@Param("cashRegister") Long cashRegister);
+	
+	
+	@Query(value = "SELECT c FROM CashRegisterManagement c where c.cashier.id =:cashier AND c.state = true")
+	List<CashRegisterManagement> findAllCashierrManagementByCashierAndStateOpened(@Param("cashier") Long cashier);
 
 }

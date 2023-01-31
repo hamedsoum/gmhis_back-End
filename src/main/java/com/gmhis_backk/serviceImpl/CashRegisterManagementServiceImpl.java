@@ -49,12 +49,14 @@ public class CashRegisterManagementServiceImpl implements CashRegisterManagement
 		if (cashier == null) 
 		throw new ResourceNotFoundByIdException("aucun utilisateur trouve pour l'identifiant");
 			
-		System.out.println(cashRegisterManagementDto.getCashier());
+	      this.verifyCashRegisterAndCashier(cashRegisterManagementDto.getCashier(), cashRegisterManagementDto.getCashRegister());
+
 		CashRegisterManagement cashRegisterManagement = new CashRegisterManagement();	
 		BeanUtils.copyProperties(cashRegisterManagementDto,cashRegisterManagement,"id");
 		cashRegisterManagement.setCashier(cashier);
 		cashRegisterManagement.setCashRegister(cashRegister);
 		cashRegisterManagement.setOpeningDate(new Date());
+		cashRegisterManagement.setState(true);
 
 		return cashRegisterManagementRepository.save(cashRegisterManagement);
 
@@ -76,10 +78,13 @@ public class CashRegisterManagementServiceImpl implements CashRegisterManagement
 		if (cashier == null) 
 		throw new ResourceNotFoundByIdException("aucun utilisateur trouve pour l'identifiant");
 		
+      this.verifyCashRegisterAndCashier(cashRegisterManagementDto.getCashier(), cashRegisterManagementDto.getCashRegister());
+		
 		BeanUtils.copyProperties(cashRegisterManagementDto,updateCashRegisterManagement,"id");
 		updateCashRegisterManagement.setCashier(cashier);
 		updateCashRegisterManagement.setCashRegister(cashRegister);
 		updateCashRegisterManagement.setOpeningDate(new Date());
+		updateCashRegisterManagement.setState(true);
 
 		return cashRegisterManagementRepository.save(updateCashRegisterManagement);
 	}
@@ -132,13 +137,29 @@ public class CashRegisterManagementServiceImpl implements CashRegisterManagement
 	@Override
 	public Page<CashRegisterManagement> findAllCashRegistersMangementByCashierAndState(Long cashier, Boolean state,
 			Pageable pageable) {
-		return cashRegisterManagementRepository.findAllCashRegisterManagementByCashierAndState(cashier, state, pageable);
+		return cashRegisterManagementRepository.findAllCashierManagementByCashierAndState(cashier, state, pageable);
 	}
 
 	@Override
 	public Page<CashRegisterManagement> findAllCashRegistersMangementByCashRegisterAndCashierAndState(Long cashRegister,
 			Long cashier, Boolean state, Pageable pageable) {
 		return cashRegisterManagementRepository.findAllCashRegisterManagementByCashRegisterAndCashierAndState(cashRegister, cashier, state, pageable);
+	}
+	
+	protected  void  verifyCashRegisterAndCashier(Long cashier, Long cashRegister) throws ResourceNotFoundByIdException{
+		List<CashRegisterManagement> cashRegisterManagementList = cashRegisterManagementRepository.findAllCashRegisterManagementByCashRegisterAndStateOpenened(cashRegister);
+		
+		List<CashRegisterManagement> cashierManagementList = cashRegisterManagementRepository.findAllCashierrManagementByCashierAndStateOpened(cashier);
+		
+
+		if (cashRegisterManagementList.size() > 0) {
+			throw new ResourceNotFoundByIdException("caisse deja en activitee");
+		}
+		
+		if (cashierManagementList.size() > 0) {
+			throw new ResourceNotFoundByIdException("caissier deja en activitee");
+		}
+		
 	}
 
 }
