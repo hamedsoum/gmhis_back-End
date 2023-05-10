@@ -1,10 +1,10 @@
-package com.ryc;
+package com.gmhis_backk;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class GiaoApplicationTests {
+class GmhisApplicationTests {
 
 	@Test
 	void contextLoads() {

@@ -24,25 +24,22 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-
 @CrossOrigin(origins = "*")
 @SpringBootApplication
 @EnableSwagger2
 @EnableScheduling
 @EnableJpaRepositories(enableDefaultTransactions = false)
-public class GiaoApplication extends SpringBootServletInitializer {
-
-	
+public class GmhisApplication extends SpringBootServletInitializer {
 
 	public static void main(String[] args) {
-		SpringApplication.run(GiaoApplication.class, args);
-		new File(IMAGE_FOLDER).mkdirs(); 
+		SpringApplication.run(GmhisApplication.class, args);
+		new File(IMAGE_FOLDER).mkdirs();
 		new File(APP_PARAM_FOLDER).mkdirs();
 		new File(ARTICLE_FOLDER).mkdirs();
 		new File(CUSTOMER_GUARANTEE_FOLDER).mkdirs();
-		
+
 	}
-	
+
 	@Bean
 	public CorsFilter corsFilter() {
 		UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
@@ -52,14 +49,14 @@ public class GiaoApplication extends SpringBootServletInitializer {
 		corsConfiguration.setAllowedHeaders(Arrays.asList("Origin", "Access-Control-Allow-Origin", "Content-Type",
 				"Accept", "Jwt-Token", "Authorization", "Origin, Accept", "X-Requested-With",
 				"Access-Control-Request-Method", "Access-Control-Request-Headers"));
-		corsConfiguration.setExposedHeaders(Arrays.asList("Origin", "Content-Type", "Accept", "Jwt-Token", "Authorization",
+		corsConfiguration.setExposedHeaders(Arrays.asList("Origin", "Content-Type", "Accept", "Jwt-Token",
+				"Authorization",
 				"Access-Control-Allow-Origin", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"));
-		corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS","HEAD"));
+		corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
 		urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
 		return new CorsFilter(urlBasedCorsConfigurationSource);
 	}
 
-	
 	@Bean
 	public BCryptPasswordEncoder bCryptPasswordEncoder() {
 		return new BCryptPasswordEncoder();
