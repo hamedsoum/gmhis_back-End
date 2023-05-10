@@ -67,8 +67,9 @@ public class BuildingServiceImpl implements BuildingService{
 			throw new ResourceNotFoundByIdException(NO_BUILDING_FOUND_BY_ID);
 			
 		}else {
-			
-			Building buildingByLibelle = buildingRepo.findByLibelleAndFacility(buildingDto.getLibelle(), facility);
+			System.out.println("le libelle "+buildingDto.getLibelle());
+			System.out.println("facility "+facility);
+			Building buildingByLibelle = buildingRepo.findByLibelleAndFacility(buildingToUpdate.getLibelle(), facility);
 			
 			if (buildingByLibelle.getId() != null) {
 				
