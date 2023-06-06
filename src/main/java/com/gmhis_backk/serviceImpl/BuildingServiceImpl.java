@@ -7,12 +7,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.gmhis_backk.domain.Bedroom;
 import com.gmhis_backk.domain.Building;
+import com.gmhis_backk.domain.Storey;
 import com.gmhis_backk.domain.User;
 import com.gmhis_backk.dto.BuildingDto;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
+import com.gmhis_backk.repository.BedroomRepository;
 import com.gmhis_backk.repository.BuildingRepository;
+import com.gmhis_backk.repository.StoreyRepository;
 import com.gmhis_backk.service.BuildingService;
 import com.gmhis_backk.service.CurrentUserService;
 import static com.gmhis_backk.constant.BuildingConstant.*;
@@ -32,9 +36,15 @@ public class BuildingServiceImpl implements BuildingService{
 	
 	private BuildingRepository buildingRepo;
 	
-	public BuildingServiceImpl(CurrentUserService currentUser,BuildingRepository buildingRepo) {
+	private BedroomRepository bedroomRepo;
+	
+	private StoreyRepository storeyRepo;
+	
+	public BuildingServiceImpl(CurrentUserService currentUser,BuildingRepository buildingRepo,StoreyRepository storeyRepo,BedroomRepository bedroomRepo) {
 		this.currentUser = currentUser;
 		this.buildingRepo = buildingRepo;
+		this.storeyRepo = storeyRepo;
+		this.bedroomRepo = bedroomRepo;
 	}
 
 	@Override
@@ -67,8 +77,6 @@ public class BuildingServiceImpl implements BuildingService{
 			throw new ResourceNotFoundByIdException(NO_BUILDING_FOUND_BY_ID);
 			
 		}else {
-			System.out.println("le libelle "+buildingDto.getLibelle());
-			System.out.println("facility "+facility);
 			Building buildingByLibelle = buildingRepo.findByLibelleAndFacility(buildingToUpdate.getLibelle(), facility);
 			
 			if (buildingByLibelle.getId() != null) {
@@ -106,12 +114,20 @@ public class BuildingServiceImpl implements BuildingService{
 		
 		if(buildingToDelete == null) throw new ResourceNotFoundByIdException(NO_BUILDING_FOUND_BY_ID);
 		
+		List<Storey> storeyListByBuilding = storeyRepo.findByBuilding(id);
+		storeyRepo.deleteAll(storeyListByBuilding);
+		
+		List<Bedroom> bedroomListByBuilding = bedroomRepo.findByBuilding(id);
+		bedroomRepo.deleteAll(bedroomListByBuilding);
+		
 		buildingRepo.delete(buildingToDelete);
 	}
 
 	@Override
 	public List<Building> buildingSimpleList() {
-		return buildingRepo.findAll();
+        User user = currentUser.getCurrentUser();
+		String facility = user.getFacilityId();
+		return buildingRepo.findByFacility(facility);
 	}
 
 }

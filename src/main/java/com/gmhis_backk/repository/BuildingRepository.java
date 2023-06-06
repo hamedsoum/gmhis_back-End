@@ -1,6 +1,8 @@
 package com.gmhis_backk.repository;
 
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,5 +22,8 @@ public interface BuildingRepository extends JpaRepository<Building, Long> {
 	
 	@Query("SELECT b FROM Building b WHERE b.libelle LIKE %:libelle% AND b.facilityId=:facilityId")
 	Page<Building>  findByLibelle(String libelle, String facilityId,Pageable pageable);
+	
+	@Query("SELECT b FROM Building b WHERE b.facilityId=:facilityId")
+	List<Building> findByFacility(String facilityId);
 	
 }
