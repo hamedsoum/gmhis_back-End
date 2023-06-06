@@ -80,4 +80,7 @@ public class AnalysisRequest implements Serializable {
 	@OneToMany(mappedBy = "analysisRequest")
 	private List<SampleItem> sampleItems;
 
+	
+	@Column(name = "examen_type")
+	private Boolean examenType;
 }

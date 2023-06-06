@@ -78,7 +78,6 @@ public class PatientConstantTypeController {
 		Page<PatientConstantType> pPatientConstantTypes = null;
 
 		if (ObjectUtils.isEmpty(active) && ObjectUtils.isEmpty(domain)) {
-			//pPatientConstantTypes = constantTypeService.findAll(pageable);
 			pPatientConstantTypes = patientConstantTypeService.findPatientConstantTypesContaining(name, paging);
 		} else if (ObjectUtils.isNotEmpty(active)  && ObjectUtils.isEmpty(domain)) {
 			pPatientConstantTypes = patientConstantTypeService.findByActive(name, active, paging);
@@ -119,8 +118,7 @@ public class PatientConstantTypeController {
 			constantTypeMap.put("active", constType.getActive());
 			constantTypeMap.put("constantDomainName", constType.getPatientConstantDomain().getName());
 			constantTypeMap.put("constantDomain", constType.getPatientConstantDomain().getId());
-			constantTypeMap.put("unitOfMesureName", constType.getUnitOfMesure().getName());
-			constantTypeMap.put("unitOfMesure", constType.getUnitOfMesure().getId());
+			constantTypeMap.put("unitOfMesure", constType.getUnitOfMesure());
 			constantTypeMap.put("description", constType.getDescription());
 			constantTypeMap.put("shortName", constType.getShortName());
 			constantTypeMap.put("significantDigits", constType.getSignificantDigits());

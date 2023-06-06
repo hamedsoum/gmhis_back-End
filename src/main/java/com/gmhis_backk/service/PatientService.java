@@ -30,42 +30,17 @@ public interface PatientService {
 
 	public Patient findById(Long id);
 
-	public List<Patient> findByFirstName(String s);
-
-	public List<Patient> findByLastName(String s);
-
-	public List<Patient> findByPatientExternalId(String s);
-
-	public List<Patient> findByCellPhone(String s);
-
-	public List<Patient> findByEmail(String s);
-
-	public List<Patient> findByCnamNumber(String s);
-
-	public List<Patient> findByIdCardNumber(String s);
+	
 
 	public List<Patient> findAll();
 
 	public Page<Patient> findAll(Pageable pageable);
 
-	public Page<Patient> findAllContaining(String firstName, String lastName, String patientExternalId,
-			String cellPhone, String cnamNumber, String idCardNumber, Pageable pageable);
 
 	public String getLastExternalId(int prefixLength);
 	
-	public Page<Patient> findByFullName(String firstName, String lastName, Pageable pageable);
-	
-	public Page<Patient> findByFirstName(String firstName, Pageable pageable);
+	public Page<Patient> findByFullName(String firstName, String lastName,String cellPhone1,String correspondant,String emergencyContact,String patientExternalId,String idCardNumber,String cnamNumber, Pageable pageable);
 
-	public Page<Patient> findByLastName(String lastName, Pageable pageable);
 
-	public Page<Patient> findByPatientExternalId(String patientExternalId, Pageable pageable);
-
-	public Page<Patient> findByCellPhone(String cellPhone, Pageable pageable);
-
-	public Page<Patient> findByCnamNumber(String cnamNumber, Pageable pageable);
-
-	public Page<Patient> findByIdCardNumber(String idCardNumber, Pageable pageable);
-	
 	
 }

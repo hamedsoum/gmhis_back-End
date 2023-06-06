@@ -19,7 +19,7 @@ public class PatientConstantTypeDTO {
 	private Long constantDomain;
 	private String description;
 	private String shortName;
-	private Long unitOfMesure;
+	private String unitOfMesure;
 	private int significantDigits = 0;
 	private String resultType;
 

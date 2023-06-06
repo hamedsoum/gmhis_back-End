@@ -36,8 +36,6 @@ public class PatientConstantTypeServiceImpl implements PatientConstantTypeServic
 	@Autowired
 	private PatientConstantDomainService patientConstantDomainService;
 	
-	@Autowired
-	private UnitOfMeasureService unitOfMeasureService;
 	
 	
 	@Autowired private UserRepository userRepository;
@@ -57,16 +55,12 @@ public class PatientConstantTypeServiceImpl implements PatientConstantTypeServic
 			throw new ResourceNotFoundByIdException("aucun Domaine d'acte trouvé pour l'identifiant " );
 		}
 		
-		UnitOfMeasure unitOfMeasure = unitOfMeasureService.getUnitOfMeasureDetails(pcDto.getUnitOfMesure()).orElse(null);
-		if (unitOfMeasure == null) {
-			throw new ResourceNotFoundByIdException("aucune unite de mesure trouvé pour l'identifiant " );
-		}
+		
 		
 		
 		PatientConstantType patientConstantType = new PatientConstantType();
 		BeanUtils.copyProperties(pcDto,patientConstantType,"id");
 		patientConstantType.setPatientConstantDomain(patientConstantDomain);
-		patientConstantType.setUnitOfMesure(unitOfMeasure);
 		patientConstantType.setCreatedAt(new Date());
 		patientConstantType.setCreatedBy(getCurrentUserId().getId());
 		return patientConstantRepository.save(patientConstantType);
@@ -95,13 +89,9 @@ public class PatientConstantTypeServiceImpl implements PatientConstantTypeServic
 			throw new ResourceNotFoundByIdException("aucun Domaine d'acte trouvé pour l'identifiant " );
 		}
 		
-		UnitOfMeasure unitOfMeasure = unitOfMeasureService.getUnitOfMeasureDetails(pcDto.getUnitOfMesure()).orElse(null);
-		if (unitOfMeasure == null) {
-			throw new ResourceNotFoundByIdException("aucune unite de mesure trouvé pour l'identifiant " );
-		}
+		
 			BeanUtils.copyProperties(pcDto,updatePatientConstantType,"id");
 			updatePatientConstantType.setPatientConstantDomain(patientConstantDomain);
-			updatePatientConstantType.setUnitOfMesure(unitOfMeasure);
 			updatePatientConstantType.setUpdatedAt(new Date());
 			updatePatientConstantType.setUpdatedBy(getCurrentUserId().getId());
 			return patientConstantRepository.save(updatePatientConstantType);

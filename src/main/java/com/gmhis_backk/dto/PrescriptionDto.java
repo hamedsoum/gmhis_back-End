@@ -18,6 +18,7 @@ public class PrescriptionDto {
 	
 	private Long examinationId;
 	private String observation;
+	private Long patientID;
 	private List<PrescriptionItemDto> prescriptionItemsDto;
 
 }

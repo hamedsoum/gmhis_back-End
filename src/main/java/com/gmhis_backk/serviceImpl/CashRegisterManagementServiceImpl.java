@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import com.gmhis_backk.domain.CashRegister;
 import com.gmhis_backk.domain.CashRegisterManagement;
+import com.gmhis_backk.domain.CashRegisterMovement;
 import com.gmhis_backk.domain.User;
 import com.gmhis_backk.dto.CashRegisterManagementDto;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
@@ -53,6 +54,9 @@ public class CashRegisterManagementServiceImpl implements CashRegisterManagement
 
 		CashRegisterManagement cashRegisterManagement = new CashRegisterManagement();	
 		BeanUtils.copyProperties(cashRegisterManagementDto,cashRegisterManagement,"id");
+		if (cashRegisterManagementDto.getOpeningBalance() != 0) {
+			cashRegisterManagement.setCashRegisterBalance(cashRegisterManagementDto.getOpeningBalance());
+		}
 		cashRegisterManagement.setCashier(cashier);
 		cashRegisterManagement.setCashRegister(cashRegister);
 		cashRegisterManagement.setOpeningDate(new Date());
@@ -65,27 +69,34 @@ public class CashRegisterManagementServiceImpl implements CashRegisterManagement
 	@Override @Transactional
 	public CashRegisterManagement updateCashRegisterManagement(UUID id, CashRegisterManagementDto cashRegisterManagementDto)
 			throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException {
-			
 		CashRegisterManagement updateCashRegisterManagement = cashRegisterManagementRepository.findById(id).orElse(null);
-		if (updateCashRegisterManagement == null) 
-			throw new ResourceNotFoundByIdException("Aucune gestion de caisse trouve pour l'identifiant");
 		
-		CashRegister cashRegister = cashRegisterService.findCashRegisterById(cashRegisterManagementDto.getCashRegister()).orElse(null);
-		if (cashRegister == null) 
-			throw new ResourceNotFoundByIdException("aucune caisse trouvé pour l'identifiant");
 		
-		User cashier = userService.findUserById(cashRegisterManagementDto.getCashier());
-		if (cashier == null) 
-		throw new ResourceNotFoundByIdException("aucun utilisateur trouve pour l'identifiant");
+		if (cashRegisterManagementDto.getRealClosingBalance() == 0) {
+			if (updateCashRegisterManagement == null) 
+				throw new ResourceNotFoundByIdException("Aucune gestion de caisse trouve pour l'identifiant");
+			
+			CashRegister cashRegister = cashRegisterService.findCashRegisterById(cashRegisterManagementDto.getCashRegister()).orElse(null);
+			if (cashRegister == null) 
+				throw new ResourceNotFoundByIdException("aucune caisse trouvé pour l'identifiant");
+			
+			User cashier = userService.findUserById(cashRegisterManagementDto.getCashier());
+			if (cashier == null) 
+			throw new ResourceNotFoundByIdException("aucun utilisateur trouve pour l'identifiant");	
+			updateCashRegisterManagement.setCashier(cashier);
+			updateCashRegisterManagement.setCashRegister(cashRegister);
+			updateCashRegisterManagement.setCashRegisterBalance(cashRegisterManagementDto.getCashRegisterBalance());
+			updateCashRegisterManagement.setOpeningBalance(cashRegisterManagementDto.getOpeningBalance());
+			updateCashRegisterManagement.setOpeningDate(new Date());
+			updateCashRegisterManagement.setState(true);
+		}else {
+			updateCashRegisterManagement.setRealClosingBalance(cashRegisterManagementDto.getRealClosingBalance());
+			updateCashRegisterManagement.setClosingDate(new Date());
+			updateCashRegisterManagement.setState(false);
+		}
+	
 		
-      this.verifyCashRegisterAndCashier(cashRegisterManagementDto.getCashier(), cashRegisterManagementDto.getCashRegister());
-		
-		BeanUtils.copyProperties(cashRegisterManagementDto,updateCashRegisterManagement,"id");
-		updateCashRegisterManagement.setCashier(cashier);
-		updateCashRegisterManagement.setCashRegister(cashRegister);
-		updateCashRegisterManagement.setOpeningDate(new Date());
-		updateCashRegisterManagement.setState(true);
-
+//		System.out.println(newCashRegisterBalance);
 		return cashRegisterManagementRepository.save(updateCashRegisterManagement);
 	}
 
@@ -162,4 +173,21 @@ public class CashRegisterManagementServiceImpl implements CashRegisterManagement
 		
 	}
 
+	@Override
+	public List<CashRegisterManagement> getOpenCaByCashier(Long cashRegister) {
+		return cashRegisterManagementRepository.getOpenCaByCashier(cashRegister);
+	}
+
+	@Override
+	public CashRegisterManagement getCashierrManagementByCashierAndStateOpened(Long cashier) {
+		return cashRegisterManagementRepository.getCashierrManagementByCashierAndStateOpened(cashier);
+	}
+
+	public void closeCashRegisterManagement(Long cashier, double realClosingBalance) {
+		CashRegisterManagement cashRegisterManagement = cashRegisterManagementRepository.getCashierrManagementByCashierAndStateOpened(cashier);
+		cashRegisterManagement.setState(false);
+		cashRegisterManagement.setRealClosingBalance(realClosingBalance);
+		cashRegisterManagement.setClosingDate(new Date());
+		cashRegisterManagementRepository.save(cashRegisterManagement);
+	}
 }

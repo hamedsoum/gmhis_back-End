@@ -53,4 +53,9 @@ public class Payment implements Serializable {
 	@JoinColumn(name="payment_type_id")
 	private PaymentType paymentType;
 
+	@Column(name="amount_received")
+	private double amountReceived;
+	
+	@Column(name="amount_returned")
+	private double amountReturned;
 }

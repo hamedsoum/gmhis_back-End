@@ -62,9 +62,8 @@ public class PatientConstantType implements Serializable {
 	@JoinColumn(name = "patient_constant_domain_id")
 	private PatientConstantDomain patientConstantDomain;
 
-	@ManyToOne
-	@JoinColumn(name = "unit_of_mesure_id")
-	private UnitOfMeasure unitOfMesure;
+	@Column(name = "unit_of_mesure")
+	private String unitOfMesure;
 
 	@OneToMany(mappedBy = "patientConstantType")
     private List<PatientConstantValues> options;

@@ -39,7 +39,6 @@ public class CashRegisterMovementController {
 	@ApiOperation(value = "Enregister un nouveau mouvement de caisse")
 	@PostMapping()
 	public ResponseEntity<CashRegisterMovement> registerNewCaMovment(@RequestBody CashRegisterMovementDto caDto) throws ResourceNotFoundByIdException, ResourceNameAlreadyExistException{
-		System.out.println(caDto.getCredit());
 		CashRegisterMovement cashRegisterMovement = cashRegisterMovementService.addNewMovement(caDto);
 		return new ResponseEntity<CashRegisterMovement>(cashRegisterMovement, HttpStatus.OK);
 	}
@@ -51,6 +50,7 @@ public class CashRegisterMovementController {
 	public ResponseEntity<Map<String, Object>> getCaMovements(
 			@RequestParam(required = false, defaultValue = "") String prestationNumber,
 			@RequestParam(required = false, defaultValue = "") Long cashRegister,
+			@RequestParam(required = false, defaultValue = "") Long user,
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size,
 			@RequestParam(defaultValue = "id,desc") String[] sort
@@ -70,6 +70,8 @@ public class CashRegisterMovementController {
 			pageCaM = cashRegisterMovementService.getCaMovementNByCashRegisterAndPrestationNumber(cashRegister,prestationNumber, paging);
 		}else if(ObjectUtils.isEmpty(cashRegister) && ObjectUtils.isNotEmpty(prestationNumber)) {
 			pageCaM = cashRegisterMovementService.getCaMovementNByPrestationNumber(prestationNumber, paging);
+		}else if (ObjectUtils.isNotEmpty(user)) {
+			pageCaM = cashRegisterMovementService.getCaMovementByUser(user, paging);
 		}
 		else {
 			pageCaM = cashRegisterMovementService.getCaMovement(paging);
@@ -103,7 +105,9 @@ public class CashRegisterMovementController {
 			crMap.put("debit", el.getDebit());
 			crMap.put("credit", el.getCredit());
 			crMap.put("caisse", el.getCashRegister().getName());
-			crMap.put("actNeNumber", el.getPrestationNumber());
+			crMap.put("actNumber", el.getPrestationNumber());
+			crMap.put("date", el.getDate());
+			crMap.put("createdBy", el.getUser().getFirstName()+" "+el.getUser().getLastName());
 			crMovementList.add(crMap);
 		});
 		return crMovementList;

@@ -87,7 +87,7 @@ public class AdmissionController {
 			@RequestParam(defaultValue = "id,desc") String[] sort, @RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "50") int size) throws ParseException {
 		   
-
+		
 		Map<String, Object> response = new HashMap<>();
 		Sort.Direction dir = sort[1].equalsIgnoreCase("asc") ? dir = Sort.Direction.ASC : Sort.Direction.DESC;
 
@@ -95,7 +95,6 @@ public class AdmissionController {
 
 		Page<Admission> pAdmissions = null;
 			
-//		pAdmissions = admissionService.findAdmissions(admissionStatus, paging); 
 		pAdmissions = admissionService.findAdmissionsByFacility(this.getCurrentUserId().getFacilityId(),admissionStatus, paging); 	
 		if( ObjectUtils.isNotEmpty(firstName) ||  ObjectUtils.isNotEmpty(lastName) ) {
 			pAdmissions = admissionService.findAdmissionsByPatientName(firstName, lastName, admissionStatus,this.getCurrentUserId().getFacilityId(), paging);
@@ -202,12 +201,26 @@ public class AdmissionController {
 		Admission admission= admissionService.findAdmissionById(id).orElse(null);
 		response.put("id", admission.getId());
 		response.put("patientId", admission.getPatient().getId());
-		response.put("patientName", admission.getPatient().getFirstName());
 		response.put("patientExternalId", admission.getPatient().getPatientExternalId());
-		response.put("act", admission.getAct().getId());
 		response.put("admissionDate", admission.getAdmissionStartDate());
 		response.put("service", admission.getService().getId());
-		response.put("practician", admission.getPractician().getId());
+		response.put("admissionNumber", admission.getAdmissionNumber());
+		response.put("facilityName", admission.getFacility().getName());
+		response.put("facilityType", admission.getFacility().getFacilityType().getName());
+		response.put("admissionStatus", admission.getAdmissionStatus());
+		response.put("patientExternalId", admission.getPatient().getPatientExternalId());
+		response.put("patientFirstName", admission.getPatient().getFirstName());
+		response.put("patientLastName", admission.getPatient().getLastName());
+		response.put("patientType", admission.getPatient().getIsAssured());
+		response.put("act", admission.getAct().getName());
+		response.put("actId", admission.getAct().getId());
+		response.put("actCost", (admission.getAct().getCoefficient() * admission.getAct().getActCode().getValue()));
+		response.put("practicianFirstName", admission.getPractician().getUser().getFirstName());
+		response.put("practicianLastName", admission.getPractician().getUser().getLastName());
+		response.put("practicianId", admission.getPractician().getId());
+		response.put("createdAt", admission.getCreatedAt());
+		response.put("updatedAt", admission.getUpdatedAt());
+
 		return new ResponseEntity<>(response,HttpStatus.OK);
 	}
 	
@@ -267,8 +280,10 @@ public class AdmissionController {
 			waitingRoom = waitingRoomService.findWaitingRoomByPractician(this.getCurrentUserId().getId()) ;
 		}  
 		
-		queue = admissionService.findAdmissionsInQueue(waitingRoom,this.getCurrentUserId().getFacilityId(), pageable); 
 		
+		queue = admissionService.findAdmissionsInQueue(waitingRoom,this.getCurrentUserId().getFacilityId(), pageable); 
+		System.out.print("request response is here " +  queue.getSize());
+
 		if( ObjectUtils.isNotEmpty(firstName) ||  ObjectUtils.isNotEmpty(lastName) ) {
 			queue = admissionService.findAdmissionsInQueueByPatientName(firstName, lastName, waitingRoom, pageable);
 		}

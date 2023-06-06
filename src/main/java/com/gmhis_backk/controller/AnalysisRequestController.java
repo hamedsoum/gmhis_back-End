@@ -35,7 +35,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.gmhis_backk.AppUtils;
 import com.gmhis_backk.domain.AnalysisRequest;
 import com.gmhis_backk.domain.AnalysisRequestItem;
-import com.gmhis_backk.domain.Files;
 import com.gmhis_backk.domain.User;
 import com.gmhis_backk.dto.AnalysisRequestDTO;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
@@ -95,16 +94,13 @@ public class AnalysisRequestController {
 	@GetMapping("/p_list")
 	public ResponseEntity<Map<String, Object>>p_list(
 			 @RequestParam(required = false, defaultValue = "") String date,
-				@RequestParam(required = false, defaultValue = "") String  state,
-				@RequestParam(required = false, defaultValue = "") String firstName,
-				@RequestParam(required = false, defaultValue = "") String lastName,
+				@RequestParam(required = false, defaultValue = "") String state,
 				@RequestParam(required = false, defaultValue = "") String patientExternalId,
-				@RequestParam(required = false, defaultValue = "") String cellPhone,
-				@RequestParam(required = false, defaultValue = "") String cnamNumber,
-				@RequestParam(required = false, defaultValue = "") String idCardNumber,
-				@RequestParam(required = false, defaultValue = "") String admissionNumber,
+				@RequestParam(required = false, defaultValue = "") String analysisNumber,
+				@RequestParam(required = false, defaultValue = "") String examenType,
 				@RequestParam(defaultValue = "id,desc") String[] sort, @RequestParam(defaultValue = "0") int page,
 				@RequestParam(defaultValue = "50") int size){
+		System.out.println(state);
 		Map<String, Object> response = new HashMap<>();
 		Sort.Direction dir = sort[1].equalsIgnoreCase("asc") ? dir = Sort.Direction.ASC : Sort.Direction.DESC;
 
@@ -113,8 +109,9 @@ public class AnalysisRequestController {
 		
 		Page<AnalysisRequest> p_analysisRequest = null; 
 		
-		if (ObjectUtils.isNotEmpty(admissionNumber.trim())) {
-			p_analysisRequest = analysisRequestService.findAnalysisRequestsByAdmissionNumber(admissionNumber, paging);
+		if (ObjectUtils.isNotEmpty(examenType)) {
+			
+			p_analysisRequest = analysisRequestService.findAllAnalysisRequests(Boolean.parseBoolean(examenType) , paging);
 		}else {
 			p_analysisRequest = analysisRequestService.findAll(paging);
 		}			
@@ -139,6 +136,9 @@ public class AnalysisRequestController {
 		analystResquest.stream().forEach(analystDto -> {
 			Map<String, Object> analystMap = new HashMap<>();
 			analystMap.put("id", analystDto.getId());
+			analystMap.put("practicienFirstName", analystDto.getPratician().getFirstName());
+			analystMap.put("practicienLastName", analystDto.getPratician().getLastName());
+			analystMap.put("facilityName", analystDto.getAdmission().getFacility().getName());
 			analystMap.put("date", analystDto.getCreatedAt());
 			analystMap.put("facilityName", analystDto.getAdmission().getFacility().getName());
 			analystMap.put("patientNumber", analystDto.getAdmission().getPatient().getPatientExternalId());
@@ -149,7 +149,6 @@ public class AnalysisRequestController {
 			analystMap.put("patientGender", analystDto.getAdmission().getPatient().getGender());
 			analystMap.put("patientAge", analystDto.getAdmission().getPatient().getAge());
 			analystMap.put("patientTel1", analystDto.getAdmission().getPatient().getCellPhone1());
-//			analystMap.put("patientTel2", analystDto.getAdmission().getPatient().getCellPhone2());
 			analystMap.put("idCardNumber", analystDto.getAdmission().getPatient().getIdCardNumber());
 			analystMap.put("observation", analystDto.getObservation());
 			analystMap.put("state", analystDto.getState());
@@ -163,13 +162,14 @@ public class AnalysisRequestController {
 	public ResponseEntity<Map<String, Object>>analyseRequestByPatient(
 			 @RequestParam(required = false, defaultValue = "") String date,
 			    @RequestParam(required = true, defaultValue = "") String patientId,
+			    @RequestParam(required = true, defaultValue = "") String admissionId,
 				@RequestParam(defaultValue = "id,desc") String[] sort, @RequestParam(defaultValue = "0") int page,
 				@RequestParam(defaultValue = "50") int size){
 		Map<String, Object> response = new HashMap<>();
 		Sort.Direction dir = sort[1].equalsIgnoreCase("asc") ? dir = Sort.Direction.ASC : Sort.Direction.DESC;
-
+ 
 		Pageable paging = PageRequest.of(page, size, Sort.by(dir, sort[0]));
-				Page<AnalysisRequest> p_analysisRequest = analysisRequestService.findAnalysisRequestsByPatient(Long.parseLong(patientId), paging);
+				Page<AnalysisRequest> p_analysisRequest = analysisRequestService.findAnalysisRequestsByPatient(Long.parseLong(patientId), Long.parseLong(admissionId), paging);
 //		
 	    List<AnalysisRequest> lAnalyst = p_analysisRequest.getContent();
 	    
@@ -188,11 +188,11 @@ public class AnalysisRequestController {
 	
 	
 
-	@GetMapping("/getanalyseRequestNumber/{patientId}")
-	@ApiOperation("nombre de consultation d'un patient ")
-	public  Long getDetail(@PathVariable Long patientId){
+	@GetMapping("/getanalyseRequestNumber/{admissionId}")
+	@ApiOperation("nombre de consultation d'un patient par admission ")
+	public  Long getDetail(@PathVariable Long admissionId){
 	
-	return analysisRequestService.findAnalyseNumber(patientId);
+	return analysisRequestService.findAnalyseNumber(admissionId);
 	}
 	
 	protected  User getCurrentUserId() {
@@ -237,6 +237,7 @@ public class AnalysisRequestController {
 	@GetMapping("/getAnalysisRequestItems/{analysisRequestId}")
 	@ApiOperation("listes des items d'analyses demandes par l'id de l'analyse ")
 	public  ResponseEntity<List<Map<String, Object>>> getAnalysisRequestItemsByPrescriptionId(@PathVariable UUID analysisRequestId){
+		System.out.println(analysisRequestId);
 		List<AnalysisRequestItem> analysisRequestItem = analysisRequestItemService.findAnalysisRequestItemsByAnalysisRequest(analysisRequestId);
 		List<Map<String, Object>> analysisRequestItemList = this.getMapFromAnalysisRequestItemList(analysisRequestItem);
 

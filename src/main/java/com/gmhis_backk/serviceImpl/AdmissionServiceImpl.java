@@ -137,7 +137,13 @@ public class AdmissionServiceImpl implements AdmissionService{
 	
 	@Override
 	public void addActToAdmission(AdmisionHasActDTO admissionHasActDto, int actCost, Bill bill) {
-		repo.addActToAdmission(admissionHasActDto.getAdmission(), admissionHasActDto.getAct(), admissionHasActDto.getPratician(), actCost, bill.getId(), getCurrentUserId().getId());	
+		if (admissionHasActDto.getPratician() == 0) {
+			repo.addActToAdmission(admissionHasActDto.getAdmission(), admissionHasActDto.getAct(),(long) 1, actCost, bill.getId(), getCurrentUserId().getId());	
+
+		}else {
+			repo.addActToAdmission(admissionHasActDto.getAdmission(), admissionHasActDto.getAct(),admissionHasActDto.getPratician(), actCost, bill.getId(), getCurrentUserId().getId());	
+
+		}
 	}
 		
 	

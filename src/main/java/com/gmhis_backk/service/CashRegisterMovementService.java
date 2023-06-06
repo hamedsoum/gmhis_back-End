@@ -7,8 +7,10 @@ import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
+import com.gmhis_backk.domain.CashRegisterManagement;
 import com.gmhis_backk.domain.CashRegisterMovement;
 import com.gmhis_backk.dto.CashRegisterMovementDto;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
@@ -31,8 +33,10 @@ public interface CashRegisterMovementService {
 	public Page<CashRegisterMovement> getCaMovementNByPrestationNumber(String prestationNumber, Pageable page);
 	
 	public Page<CashRegisterMovement> getCaMovementNByCashRegister(Long cashRegister, Pageable page);
+	
+	public Page<CashRegisterMovement> getCaMovementByUser(Long User, Pageable page);
 
 	public Page<CashRegisterMovement> getCaMovementNByCashRegisterAndPrestationNumber(Long cashRegister,String prestationNumber, Pageable page);
-
+	
 
 }

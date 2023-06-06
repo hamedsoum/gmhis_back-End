@@ -61,11 +61,12 @@ public class PrescriptionServiceImpl implements PrescriptionService {
 		Prescription prescription = new Prescription();
 		BeanUtils.copyProperties(prescriptionDto, prescription, "id");
 		prescription.setPrescriptionNumber(getPrescriptionNumber());
-		 Examination examinnation = examinationService.findExaminationById(prescriptionDto.getExaminationId()).orElse(null);
-			if (examinnation == null) {
+		List<Examination> examinations = examinationService.findPatientExaminationsOfLastAdmision(prescriptionDto.getPatientID());
+
+			if (examinations == null) {
 				throw new ResourceNotFoundByIdException("aucune consultation trouvée pour l'identifiant " );
 			}else {
-				prescription.setExamination(examinnation);
+				prescription.setExamination(examinations.get(0));
 			}
 			prescription.setPrescriptionDate(new Date());
 			prescription.setCreatedBy(this.getCurrentUserId().getId());
@@ -81,6 +82,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
 					 if (drug == null) {
 							throw new ResourceNotFoundByIdException("aucun medicament trouvé pour l'identifiant ");
 						}
+
 					PrescriptionItem prescriptionItem = new PrescriptionItem();
 					prescriptionItem.setCollected(prescriptionItemDto.getCollected());
 					prescriptionItem.setDosage(prescriptionItemDto.getDosage());
@@ -140,13 +142,16 @@ public String getPrescriptionNumber() {
 	}
 
 @Override
-public Page<Prescription> findAllPatientPrescriptions(Long Patient, Pageable pageable) {
-	return prescriptionRepository.findAllPatientPrescriptions(Patient, pageable);
+public Page<Prescription> findAllPatientPrescriptions(Long patient,Long admissionID, Pageable pageable) {
+	System.out.println("PatientId " + patient);
+	System.out.println("admissionID " + admissionID);
+
+	return prescriptionRepository.findAllPatientPrescriptions(patient,admissionID, pageable);
 }
 
 @Override
-public Long findPrescriptionsNumber(Long patientId) {
-	return prescriptionRepository.findPrescriptionNumber(patientId);
+public Long findPrescriptionsNumber(Long admissionID) {
+	return prescriptionRepository.findPrescriptionNumber(admissionID);
 }
 
 @Override

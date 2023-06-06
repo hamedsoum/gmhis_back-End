@@ -70,11 +70,11 @@ public class PrescriptionController {
 	@GetMapping("/p_list/by_patient")
 	public ResponseEntity<Map<String, Object>> patientPaginatedPrescription (
 			@RequestParam(required = false, defaultValue = "") Long patient,
+			@RequestParam(required = false, defaultValue = "") Long admissionID,
 			@RequestParam(defaultValue = "id,desc") String[] sort,
 			@RequestParam(defaultValue = "0") int page, 
 			@RequestParam(defaultValue = "10") int size ) {
-		
-		Map<String, Object> response = new HashMap<>();
+				Map<String, Object> response = new HashMap<>();
 		Sort.Direction dir = sort[1].equalsIgnoreCase("asc") ? dir = Sort.Direction.ASC : Sort.Direction.DESC;
 
 		Pageable pageable = PageRequest.of(page, size, Sort.by(dir, sort[0]));
@@ -84,7 +84,7 @@ public class PrescriptionController {
 		pPrescriptions = prescriptionService.findAll(pageable);
 		
 		if( ObjectUtils.isNotEmpty(patient) ) {
-			pPrescriptions = prescriptionService.findAllPatientPrescriptions(patient, pageable);
+			pPrescriptions = prescriptionService.findAllPatientPrescriptions(patient,admissionID, pageable);
 		} 
 //		
 //
@@ -150,11 +150,11 @@ public class PrescriptionController {
 		return prescriptionItemList;
 	}
 	
-	@GetMapping("/getPrescriptionNumber/{patientId}")
+	@GetMapping("/getPrescriptionNumber/{admissionID}")
 	@ApiOperation("nombre de consultation d'un patient ")
-	public  Long getDetail(@PathVariable Long patientId){
+	public  Long getPatientPrescriptionNumberByadmissionID(@PathVariable Long admissionID){
 	
-	return prescriptionService.findPrescriptionsNumber(patientId);
+	return prescriptionService.findPrescriptionsNumber(admissionID);
 	}
 	
 	@GetMapping("/get-detail/{id}")
@@ -163,7 +163,6 @@ public class PrescriptionController {
 		Map<String, Object> response = new HashMap<>();
 
 		Prescription prescription = prescriptionService.findPrescriptionById(id).orElse(null);
-//		response.put("prescription", prescription);
 		response.put("id", prescription.getId());
 		response.put("practicienFirstName", prescription.getExamination().getPratician().getUser().getFirstName());
 		response.put("practicienLastName", prescription.getExamination().getPratician().getUser().getLastName());
@@ -177,7 +176,6 @@ public class PrescriptionController {
 		response.put("facilityContact", prescription.getExamination().getFacility().getContact());
 		response.put("prescriptionDate", prescription.getPrescriptionDate());
 		response.put("prescriptionNumber", prescription.getPrescriptionNumber());
-//		response.put("prescriptionCodeBar", this.generateEAN13BarcodeImage(prescription.getPrescriptionNumber()));
 		response.put("patientFirstName", prescription.getExamination().getAdmission().getPatient().getFirstName());
 		response.put("patientLastName", prescription.getExamination().getAdmission().getPatient().getLastName());
 		response.put("patientCivility", prescription.getExamination().getAdmission().getPatient().getCivility());
@@ -187,11 +185,6 @@ public class PrescriptionController {
 
 		response.put("prescriptionObservation", prescription.getObservation());
 
-
-//		response.put("facilityName", prescription.getName());
-//		response.put("facilityShortNameName", falicity.getShortName());
-//		response.put("faciityType", falicity.getFacilityType().getName());
-//		response.put("faciityCategory", falicity.getFacilityCategory().getName());
 		return new ResponseEntity<>(response,HttpStatus.OK);
 	}
 	
@@ -228,7 +221,6 @@ public class PrescriptionController {
 				prescriptionItem.setCollected(true);
 				prescriptionItem.setCollectedAt(new Date());
 
-//				System.out.println(false);
 			  prescriptionItemRepository.save(prescriptionItem);
 			}
 		return true;
@@ -236,7 +228,6 @@ public class PrescriptionController {
 	
 	public static BufferedImage generateEAN13BarcodeImage(String barcodeText) throws Exception {
 	    Barcode barcode = BarcodeFactory.createEAN13(barcodeText);
-//	    barcode.setFont(BARCODE_TEXT_FONT);
 
 	    return BarcodeImageHandler.getImage(barcode);
 	}

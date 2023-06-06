@@ -1,7 +1,11 @@
 package com.gmhis_backk.serviceImpl;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -63,8 +67,8 @@ public class ExaminationServiceImpl implements ExaminationService{
 	}
 	
 	@Override
-	public Page<Examination> findPatientExaminations(Long patient, Pageable pageable){
-		return repo.findPatientExaminations(patient, pageable);
+	public Page<Examination> findPatientExaminations(Long patient, Long admissionID, Pageable pageable){
+		return repo.findPatientExaminations(patient,admissionID, pageable);
 	}
 	
 	@Override
@@ -106,7 +110,33 @@ public class ExaminationServiceImpl implements ExaminationService{
 	}
 
 	@Override
-	public Long findPatientExaminationsNumber(Long patientId) {
-		return repo.findPatientExaminationsNumber(patientId);
+	public Long findPatientExaminationsNumberByAdmission(Long admissionID) {
+		return repo.findPatientExaminationsNumber(admissionID);
+	}
+
+	@Override
+	public Page<Examination> findPatientFirstExaminationsOfAdmisions(Long patientID, Pageable pageable) {
+		System.out.println(patientID);
+		return repo.findPatientFirstExaminationsOfAdmisions(patientID, pageable);
+	}
+
+	@Override
+	public List<Examination> findPatientExaminationsOfLastAdmision(Long patientID) {
+		return repo.findPatientExaminationsOfLastAdmision(patientID);
+	}
+
+	@Override
+	public Long dayNumberBetweenAdmissionFirstExaminationAndCurrentDate(Long admissionID) throws Exception {
+		Examination admissionFirstExamination = repo.findAdmissionFirstExamination(admissionID);
+		if (admissionFirstExamination == null) {
+			throw new Exception("Aucune consultation pour cette admission");
+		}
+		  SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
+		  Date examDate = new Date(admissionFirstExamination.getStartDate().getTime());
+		    Date firstDate = sdf.parse(sdf.format(examDate));
+		    Date secondDate = sdf.parse(sdf.format(new Date()));
+		    long diffInMillies = Math.abs(secondDate.getTime() - firstDate.getTime());
+		    long diff = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+		return diff;
 	}
 }

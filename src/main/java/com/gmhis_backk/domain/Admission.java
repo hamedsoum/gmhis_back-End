@@ -64,6 +64,8 @@ public class Admission implements Serializable {
 
 	@Column(name = "updated_by")
 	private Long updatedBy;
+	
+	private int caution;
 
 	@JsonBackReference
 	@ManyToOne

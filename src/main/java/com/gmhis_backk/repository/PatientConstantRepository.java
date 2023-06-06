@@ -21,10 +21,10 @@ import com.gmhis_backk.domain.PatientConstant;
 @Repository
 public interface PatientConstantRepository extends JpaRepository<PatientConstant, Long> {
 
-	@Query(value = "select p from PatientConstant p join p.patient pat where pat.id = :id GROUP BY p.takenAt")
-	public List<PatientConstant> findPatientConstant(@Param("id") Long patientId);
+	@Query(value = "select p from PatientConstant p join p.patient pat where pat.id = :patientId")
+	public List<PatientConstant> findPatientConstant(@Param("patientId") Long patientId);
 	
-	@Query(value = "select p from PatientConstant p join p.patient pat where pat.id = :id GROUP BY p.takenAt")
+	@Query(value = "select p from PatientConstant p join p.patient pat where pat.id = :id")
 	public Page<PatientConstant> findPatientConstant(@Param("id") Long patientId, Pageable pageable);
 	
 	@Query(value = "select p from PatientConstant p join p.patient pat where pat.id = :id AND p.takenAt=:takenAt")

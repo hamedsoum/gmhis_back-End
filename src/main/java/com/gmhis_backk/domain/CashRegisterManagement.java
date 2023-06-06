@@ -71,6 +71,9 @@ public class CashRegisterManagement implements Serializable {
    @Column(name = "opening_balance")
    private double openingBalance;
    
+   @Column(name = "cash_register_balance")
+   private double cashRegisterBalance;
+   
    
    @Column(name = "closing_balance")
    private double closingBalance;

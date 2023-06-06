@@ -6,9 +6,11 @@ import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import com.gmhis_backk.domain.CashRegisterManagement;
+import com.gmhis_backk.domain.CashRegisterMovement;
 import com.gmhis_backk.dto.CashRegisterManagementDto;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
@@ -39,11 +41,9 @@ public interface CashRegisterManagementService {
 	public Page<CashRegisterManagement> findAllCashRegistersMangementByCashierAndState(Long cashier, Boolean state, Pageable pageable);
 	
 	public Page<CashRegisterManagement> findAllCashRegistersMangementByCashRegisterAndCashierAndState(Long cashRegister,Long cashier, Boolean state, Pageable pageable);
-
-
-
 	
-	
+	public List<CashRegisterManagement> getOpenCaByCashier(Long cashRegister);
 
+	CashRegisterManagement getCashierrManagementByCashierAndStateOpened(Long cashier);
 
 }

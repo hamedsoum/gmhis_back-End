@@ -1,5 +1,7 @@
 package com.gmhis_backk.dto;
 
+import java.util.Date;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,4 +20,8 @@ public class CashRegisterMovementDto {
 	private String prestationNumber;
 	
 	private Long cashRegister;
+	
+	private Date date;
+	
+	private long userId;
 }

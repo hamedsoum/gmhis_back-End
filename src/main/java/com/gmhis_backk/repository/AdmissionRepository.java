@@ -97,7 +97,7 @@ public interface AdmissionRepository extends JpaRepository<Admission, Long> {
 	// admissions queues
 	/*******************************************************************************/
 
-	@Query(value = "SELECT * FROM admission a, bill b, payment p, pratician pr, service s WHERE a.id=b.admission_id and a.facility_id =:facilityId and b.id = p.bill_id and a.service_id = pr.service_id and s.waiting_room_id = :waiting_room and a.admission_status = 'B' and b.bill_status = 'C' and admission_end_date is null GROUP by a.id ", nativeQuery = true)
+	@Query(value = "SELECT * FROM admission a, bill b, payment p, pratician pr, service s WHERE (a.id=b.admission_id and a.facility_id =:facilityId and b.id = p.bill_id and a.service_id = pr.service_id and s.waiting_room_id = :waiting_room and a.admission_status = 'B' and b.bill_status = 'C' and admission_end_date is null) or a.caution >=1000000 GROUP by a.id ", nativeQuery = true)
 	public Page<Admission> findAdmissionsInQueue(Long waiting_room,@Param("facilityId") String facilityId, Pageable pageable);
 
 	@Query(value = "SELECT * FROM admission a, bill b, payment p, patient pa, pratician pr, service s  WHERE a.id=b.admission_id and b.id = p.bill_id and a.patient_id = pa.id and a.service_id = pr.service_id and s.waiting_room_id = :waiting_room  and a.admission_status = 'B' and b.bill_status = 'C' and pa.first_name like %:firstName% and (pa.last_name like %:lastName% or pa.maiden_name like %:lastName%) and admission_end_date is null  GROUP by a.id ", nativeQuery = true)

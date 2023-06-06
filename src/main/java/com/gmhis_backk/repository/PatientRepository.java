@@ -21,6 +21,11 @@ import com.gmhis_backk.domain.Patient;
 @Repository
 public interface PatientRepository extends JpaRepository<Patient, Long> {
 
+	@Query(value="select p from Patient p where p.correspondant like %:correspondant% and ( p.emergencyContact like %:emergencyContact%)")
+	public Page<Patient> findByCorrespondantAndEmergencyContact(@Param("correspondant") String correspondant, @Param("emergencyContact") String emergencyContact, Pageable pageable);
+
+	public Page<Patient> findByEmergencyContactContainingIgnoreCase(@Param("emergencyContact") String emergencyContact, Pageable pageable);
+
 	public List<Patient> findByFirstName(String firstName);
 
 	public List<Patient> findByLastName(String lastName);
@@ -31,43 +36,18 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
 
 	public List<Patient> findByCellPhone1(String cellPhone1);
 	
-//	public List<Patient> findByCellPhone2(String cellPhone2);
-
-
 	public List<Patient> findByCnamNumber(String cnamNumber);
 
 	public List<Patient> findByIdCardNumber(String idCardNumber);
 
+	
 	@Query(value = "select max(cast(substring(p.patient_external_id,:prefixLength) as UNSIGNED)) from patient p", nativeQuery = true)
 	public String findLastExernalId(@Param("prefixLength") int prefixLength);
 
-	@Query(value = "select p from Patient p where (p.firstName like %:firstName%  and p.lastName like %:lastName%) and (p.cellPhone1 like %:cellPhone% or p.patientExternalId =:patientExternalId or p.cnamNumber like %:cnamNumber% or p.idCardNumber like %:idCardNumber% )")
-	public Page<Patient> findPatients(@Param("firstName") String firstName, @Param("lastName") String lastName,
-			@Param("patientExternalId") String patientExternalId, @Param("cellPhone") String cellPhone,
-			@Param("cnamNumber") String cnamNumber, @Param("idCardNumber") String idCardNumber, Pageable pageable);
-
-	public Page<Patient> findByFirstNameContainingIgnoreCaseAndLastNameContainingIgnoreCaseOrPatientExternalIdContainingIgnoreCaseOrCnamNumberContainingIgnoreCaseOrIdCardNumberContainingIgnoreCaseOrCellPhone1ContainingIgnoreCase(
-			String firstName, String lastName, String patientExternalId, String cellPhone, String cnamNumber,
-			String idCardNumber, Pageable pageable);
-	
-//	@Query(value =" Select p from Patient p where p.firsName like %:firstName%")
-	public Page<Patient> findByFirstNameContainingIgnoreCase(@Param("firstName") String firstName, Pageable pageable);
-
-	public Page<Patient> findByLastNameContainingIgnoreCase(@Param("lastName") String lastName, Pageable pageable);
-
-	@Query(value = "select p from Patient p where p.patientExternalId =:patientExternalId")
-	public Page<Patient> findByPatientExternalIdContainingIgnoreCase(@Param("patientExternalId") String patientExternalId, Pageable pageable);
-
-	@Query(value="select p from Patient p where p.cellPhone1 like %:cellPhone%")
-	public Page<Patient> findByCellPhone(@Param("cellPhone") String cellPhone, Pageable pageable);
-
-	public Page<Patient> findByCnamNumberContainingIgnoreCase(@Param("cnamNumber") String cnamNumber, Pageable pageable);
-
-	public Page<Patient> findByIdCardNumberContainingIgnoreCase(@Param("idCardNumber") String idCardNumber, Pageable pageable);
-
-	@Query(value="select p from Patient p where p.firstName like %:firstName% and ( p.lastName like %:lastName%)")
-	public Page<Patient> findByFullName(@Param("firstName") String firstName, @Param("lastName") String lastName, Pageable pageable);
+	@Query(value="select p from Patient p where p.firstName like %:firstName% and ( p.lastName like %:lastName%) and (p.cellPhone1 like %:cellPhone1%) and (p.correspondant like %:correspondant%) and (p.emergencyContact like %:emergencyContact%) and (p.patientExternalId like %:patientExternalId%) and (p.idCardNumber like %:idCardNumber%) and (p.cnamNumber like %:cnamNumber%)")
+	public Page<Patient> findByFullName(@Param("firstName") String firstName, @Param("lastName") String lastName,@Param("cellPhone1") String cellPhone1,@Param("correspondant") String correspondant, @Param("emergencyContact") String emergencyContact, @Param("patientExternalId") String patientExternalId,@Param("idCardNumber") String idCardNumber,@Param("cnamNumber") String cnamNumber, Pageable pageable);
 
 	@Query(value = "select * from  patient p order by p.created_at desc LIMIT 0,1", nativeQuery = true)
 	public Patient findLastPatient();
+	
 }

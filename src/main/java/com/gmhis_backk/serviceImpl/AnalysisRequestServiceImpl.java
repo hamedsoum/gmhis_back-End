@@ -65,6 +65,7 @@ public class AnalysisRequestServiceImpl implements AnalysisRequestService {
 		
 		AnalysisRequest analys = new AnalysisRequest();
 		System.out.print(getanalysisNumber());
+		analys.setExamenType(analysDto.getExamenTytpe());
 		analys.setAnalysisNumber(getanalysisNumber());
 		analys.setAdmission(admission);
 		analys.setCreatedAt(new Date());
@@ -95,8 +96,9 @@ public class AnalysisRequestServiceImpl implements AnalysisRequestService {
 	}
 
 	@Override
-	public Page<AnalysisRequest> findAnalysisRequestsByPatient(Long patient, Pageable pageable) {
-		return analysisRequestRepository.findAnalysisRequestByPatient(patient, pageable);
+	public Page<AnalysisRequest> findAnalysisRequestsByPatient(Long patient,Long admissionID, Pageable pageable) {
+		System.out.println(patient);
+		return analysisRequestRepository.findAnalysisRequestByPatient(patient,admissionID, pageable);
 	}
 
 	@Override
@@ -105,10 +107,14 @@ public class AnalysisRequestServiceImpl implements AnalysisRequestService {
 	}
 
 	@Override
-	public Page<AnalysisRequest> findAllAnalysisRequests(String patientExternalId, String cnamNumber,
-			String idCardNumber, String state, Pageable pageable) {
-		return analysisRequestRepository.findAllAnalysisRequests(patientExternalId, cnamNumber, idCardNumber, state, pageable);
+	public Page<AnalysisRequest> findAllAnalysisRequests(Boolean examenType, Pageable pageable) {
+		System.out.println(getCurrentUserId().getFacilityId());
+		System.out.println(examenType);
+		if (examenType == true) return analysisRequestRepository.findAllAnalysisRequestsByFacility(examenType,UUID.fromString(getCurrentUserId().getFacilityId()), pageable);
+		
+		return analysisRequestRepository.findAllAnalysis(pageable);
 	}
+	
 
 	@Override
 	public Page<AnalysisRequest> findAnalysisRequestsByAdmissionNumber(String admissionNumber, Pageable pageable) {
@@ -116,8 +122,8 @@ public class AnalysisRequestServiceImpl implements AnalysisRequestService {
 	}
 
 	@Override
-	public Long findAnalyseNumber(Long patientId) {
-		return analysisRequestRepository.findAnalyseRequestNumber(patientId);
+	public Long findAnalyseNumber(Long admissionId) {
+		return analysisRequestRepository.findAnalyseRequestNumber(admissionId);
 	}
 
 	   public String getanalysisNumber() {

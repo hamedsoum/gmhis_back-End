@@ -129,15 +129,6 @@ public class Patient implements Serializable {
 	@Column(nullable = true)
 	private String email;
 
-//	@Column(name = "mother_last_name")
-//	private String motherLastName;
-
-//	@Column(name = "mother_first_name")
-//	private String motherFirstName;
-
-//	@Column(name = "mother_maiden_name", nullable = true)
-//	private String motherMaidenName;
-
 	@Column(name = "number_of_children")
 	private String numberOfChildren;
 	

@@ -100,19 +100,10 @@ public class Bill implements Serializable {
 	private List<Payment> payments;
 	
 	
-//	@JsonBackReference
-//	@ManyToMany
-//	@JoinTable(name = "admission_has_act", joinColumns = {
-//			@JoinColumn(name = "bill_id", referencedColumnName = "id") }, inverseJoinColumns = {
-//					@JoinColumn(name = "act_id", referencedColumnName = "id") })
-//	private List<Act> acts = new ArrayList<>();
 	
 	@JsonBackReference
 	@OneToMany(mappedBy="bill")
 	private List<AdmissionHasAct> acts;
-//	
-//	@JsonBackReference
-//	@ManyToMany (mappedBy = "bills")
-//	private List<Pratician> practicians;
+
 
 }

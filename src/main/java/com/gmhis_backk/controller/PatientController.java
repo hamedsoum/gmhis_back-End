@@ -68,6 +68,9 @@ public class PatientController {
 			@RequestParam(required = false, defaultValue = "") String cellPhone,
 			@RequestParam(required = false, defaultValue = "") String cnamNumber,
 			@RequestParam(required = false, defaultValue = "") String idCardNumber,
+			@RequestParam(required = false, defaultValue = "") String correspondant,
+			@RequestParam(required = false, defaultValue = "") String emergencyContact,
+
 			@RequestParam(defaultValue = "id,desc") String[] sort, @RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size) {
 
@@ -77,41 +80,16 @@ public class PatientController {
 		
 		Pageable paging = PageRequest.of(page, size, Sort.by(dir, sort[0]));
 
-//				Page<Patient> pPatients = patientService.findAll(firstName, lastName, patientExternalId, cellPhone,
-//						cnamNumber, idCardNumber, patientService);
 
-		Page<Patient> pPatients = null;
+
+		Page<Patient> pPatients = null;		
+
+		if (ObjectUtils.isNotEmpty(firstName) || ObjectUtils.isNotEmpty(lastName) || ObjectUtils.isNotEmpty(cellPhone) || ObjectUtils.isNotEmpty(correspondant) || ObjectUtils.isNotEmpty(emergencyContact) || ObjectUtils.isNotEmpty(patientExternalId) || ObjectUtils.isNotEmpty(idCardNumber) || ObjectUtils.isNotEmpty(cnamNumber) ) {
+			pPatients = patientService.findByFullName(firstName, lastName, cellPhone, correspondant, emergencyContact,patientExternalId,idCardNumber,cnamNumber, paging);
+		} 
 		
-//		pPatients = patientService.findAll(paging);
-
-		pPatients = patientService.findByPatientExternalId("@@@@@@@######@@@@", paging);
-
-		if (ObjectUtils.isNotEmpty(firstName) || ObjectUtils.isNotEmpty(lastName)) {
-			pPatients = patientService.findByFullName(firstName, lastName, paging);
-		}
-
-		if (ObjectUtils.isNotEmpty(patientExternalId)) {
-			pPatients = patientService.findByPatientExternalId(patientExternalId, paging);
-		}
-
-		if (ObjectUtils.isNotEmpty(cellPhone)) {
-			pPatients = patientService.findByCellPhone(cellPhone, paging);
-		}
-
-		if (ObjectUtils.isNotEmpty(cnamNumber)) {
-			pPatients = patientService.findByCnamNumber(cnamNumber, paging);
-		}
-
-		if (ObjectUtils.isNotEmpty(idCardNumber)) {
-			pPatients = patientService.findByIdCardNumber(idCardNumber, paging);
-		}
-
 		List<Patient> lPatients = pPatients.getContent();
 
-
-//		List<Map<String, Object>> patients = this.getMapFromPatientList(lPatients);
-	
-		
 		response.put("items", lPatients);
 		response.put("currentPage", pPatients.getNumber());
 		response.put("totalItems", pPatients.getTotalElements());

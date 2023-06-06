@@ -1,10 +1,14 @@
 package com.gmhis_backk.controller;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,7 +28,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.gmhis_backk.AppUtils;
 import com.gmhis_backk.domain.Admission;
 import com.gmhis_backk.domain.Examination;
-import com.gmhis_backk.domain.Facility;
 import com.gmhis_backk.domain.Pratician;
 import com.gmhis_backk.domain.User;
 import com.gmhis_backk.dto.ExaminationDTO;
@@ -61,6 +64,8 @@ public class ExaminationController {
 	
 	private Examination examination = null;
 
+	private Object dayNumberBetweenAdmissionFirstExaminationAndCurrentDate;
+
 	
 	@ApiOperation(value = "Ajouter une consultation d'un patient")
 	@PostMapping("/add")
@@ -78,9 +83,6 @@ public class ExaminationController {
 					throw new ResourceNotFoundByIdException("aucun practician trouvé pour l'utilisateur connecte " );
 				}
 				
-//				Facility facility = new Facility();
-				Facility facility = new Facility();
-//				facility.setId( (long) 1); 
 				examination = new Examination();
 				examination.setAdmission(admission);
 				examination.setConclusion(examinationDto.getConclusion());
@@ -89,24 +91,22 @@ public class ExaminationController {
 				examination.setExaminationType(examinationDto.getExaminationType());
 				examination.setConclusionExamResult(examinationDto.getConclusionExamResult());
 				examination.setFacilityId(this.getCurrentUserId().getFacilityId());
-//				examination.setFacility(facility); 
 				examination.setHistory(examinationDto.getHistory());
 				examination.setPratician(practician);
 	      		examination.setStartDate(new Date());
 				examination = examinationService.saveExamination(examination);
-//				facility.setId( (long) 1); 
 				
 				if(examinationDto.getPathologies() != null && examinationDto.getPathologies().size() != 0) {
 					examinationDto.getPathologies().forEach(pathology -> {
 						examinationService.addPathologyToExamination(pathology, examination);
 					});
 				}
-				
-				if(examinationDto.getSymptoms() != null && examinationDto.getSymptoms().size() != 0) {
-					examinationDto.getSymptoms().forEach(symptom -> {
-						examinationService.addSymptomToExamination(symptom, examination);
-					});
-				}
+//				
+//				if(examinationDto.getSymptoms() != null && examinationDto.getSymptoms().size() != 0) {
+//					examinationDto.getSymptoms().forEach(symptom -> {
+//						examinationService.addSymptomToExamination(symptom, examination);
+//					});
+//				}
 				return new ResponseEntity<Examination>(examination, HttpStatus.OK);
 
 	} 
@@ -119,18 +119,19 @@ public class ExaminationController {
 	@GetMapping("/p_list/by_patient")
 	public ResponseEntity<Map<String, Object>> patientPaginatedConsultations (
 			@RequestParam(required = false, defaultValue = "") Long patient,
+			@RequestParam(required = false, defaultValue = "") Long admissionID,
 			@RequestParam(defaultValue = "id,desc") String[] sort,
 			@RequestParam(defaultValue = "0") int page, 
 			@RequestParam(defaultValue = "10") int size ) {
 		
 		Map<String, Object> response = new HashMap<>();
 		Sort.Direction dir = sort[1].equalsIgnoreCase("asc") ? dir = Sort.Direction.ASC : Sort.Direction.DESC;
-
+        
 		Pageable pageable = PageRequest.of(page, size, Sort.by(dir, sort[0]));
         
 		Page<Examination> pExaminations = null;
-	
-		pExaminations = examinationService.findPatientExaminations(patient, pageable);
+	    
+		pExaminations = examinationService.findPatientExaminations(patient,admissionID, pageable);
 		
 
 		List<Examination> lExaminations = pExaminations.getContent();
@@ -156,6 +157,7 @@ public class ExaminationController {
 			
 			examsMap.put("id", examsDto.getId());
 			examsMap.put("admission", examsDto.getAdmission().getId());
+			examsMap.put("patientId", examsDto.getAdmission().getPatient().getId());
 			examsMap.put("date", examsDto.getStartDate());
 			examsMap.put("conclusion", examsDto.getConclusion());
 			examsMap.put("facility", examsDto.getFacility().getName());
@@ -167,10 +169,61 @@ public class ExaminationController {
 		return examsList;
 	}
 	
-	@GetMapping("/getPatientExaminationNumber/{patientId}")
+	@GetMapping("/getPatientExaminationNumber/{admissionID}")
 	@ApiOperation("nombre de consultation d'un patient ")
-	public  Long getDetail(@PathVariable Long patientId){
+	public  Long getDetail(@PathVariable Long admissionID){
 	
-	return examinationService.findPatientExaminationsNumber(patientId);
+	return examinationService.findPatientExaminationsNumberByAdmission(admissionID);
 	}
+	
+	@ApiOperation(value = "Lister la liste de toutes les consultations dans le système")
+	@GetMapping("/lastExaminatonOfAdmission")
+	public ResponseEntity<Map<String, Object>> findPatientFirstExaminationsOfAdmisions (
+			@RequestParam(required = false, defaultValue = "") Long patient,
+			@RequestParam(defaultValue = "id,desc") String[] sort,
+			@RequestParam(defaultValue = "0") int page, 
+			@RequestParam(defaultValue = "10") int size ) {
+		
+		Map<String, Object> response = new HashMap<>();
+		Sort.Direction dir = sort[1].equalsIgnoreCase("asc") ? dir = Sort.Direction.ASC : Sort.Direction.DESC;
+
+		Pageable pageable = PageRequest.of(page, size, Sort.by(dir, sort[0]));
+        
+		Page<Examination> pExaminations = null;
+	
+		pExaminations = examinationService.findPatientFirstExaminationsOfAdmisions(patient, pageable);
+		
+
+		List<Examination> lExaminations = pExaminations.getContent();
+
+
+		List<Map<String, Object>> examinations = this.getMapFromExaminationList(lExaminations);
+		response.put("items", examinations);
+		response.put("totalItems", pExaminations.getTotalElements());
+		response.put("totalPages", pExaminations.getTotalPages());
+		response.put("size", pExaminations.getSize());
+		response.put("currentPage", pExaminations.getNumber());
+		response.put("first", pExaminations.isFirst());
+		response.put("last", pExaminations.isLast());
+		response.put("empty", pExaminations.isEmpty());
+
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+	
+	
+	@GetMapping("/findPatientExaminationsOfLastAdmission/{patientID}")
+	@ApiOperation("consultations de la derniere admission d'un patient")
+	public Boolean AdmissionNoHaveExamination(@PathVariable Long patientID) throws ParseException{
+	List<Examination> examination = examinationService.findPatientExaminationsOfLastAdmision(patientID);
+		if (examination.size() != 0 ) return false;
+	return true;
+	}
+	
+	
+	@GetMapping("/firstExaminationDayNumber/{admissionID}")
+	@ApiOperation("Nombre de jour entre la premiere consultation d'une admission et la date courante")
+	protected long RetrieveDayNumberBetweenAdmissionFirstExaminationAndCurrentDate(@PathVariable Long admissionID) throws Exception {
+		return examinationService.dayNumberBetweenAdmissionFirstExaminationAndCurrentDate(admissionID);
+	}
+	
 }

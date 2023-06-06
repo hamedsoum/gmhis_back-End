@@ -1,6 +1,8 @@
 package com.gmhis_backk.repository;
 
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.data.domain.Page;
@@ -22,12 +24,25 @@ import com.gmhis_backk.domain.Examination;
 @Repository
 public interface ExaminationRepository extends JpaRepository<Examination, Long> {
 	
-
-	@Query(value = "select a from Examination a where a.admission.patient.id = :patient")
-	public Page<Examination> findPatientExaminations(@Param("patient") Long patient, Pageable pageable);
+	@Query(value = "SELECT * FROM `examination` WHERE admission_id = (SELECT id FROM admission a WHERE a.patient_id =:patientID ORDER BY ID DESC LIMIT 1)", nativeQuery = true)
+	public List<Examination> findPatientExaminationsOfLastAdmision(@Param("patientID") Long patientID);
 	
-	@Query(value = "select Count(e) from Examination e where e.admission.patient.id = :patientId")
-	public Long findPatientExaminationsNumber(@Param("patientId") Long patientId);
+	@Query(value = "SELECT * FROM `examination` WHERE admission_id = (SELECT id FROM admission a WHERE a.id =:admissionID ORDER BY ID DESC LIMIT 1) ORDER BY id ASC LIMIT 1", nativeQuery = true)
+	public Examination findAdmissionFirstExamination(@Param("admissionID") Long admissionID);
+
+	@Query(value = "SELECT * FROM examination e WHERE e.admission_id IN (SELECT id FROM admission a WHERE a.patient_id = :patientID) GROUP BY e.admission_id", nativeQuery = true)
+	public Page<Examination> findPatientFirstExaminationsOfAdmisions(@Param("patientID") Long patientID, Pageable pageable);
+	
+	
+	@Query(value = "SELECT * FROM examination e WHERE e.start_date IN (SELECT MIN(start_date) FROM examination e, admission a WHERE a.patient_id = :patientID GROUP BY admission_id)", nativeQuery = true)
+	public Page<Examination> findPatientExaminationsOfAdmisions(@Param("patientID") Long patientID, Pageable pageable);
+	
+	
+	@Query(value = "select e from Examination e where e.admission.patient.id = :patient AND e.admission.id =:admissionID  ")
+	public Page<Examination> findPatientExaminations(@Param("patient") Long patient, @Param("admissionID") Long admissionID, Pageable pageable);
+	
+	@Query(value = "select Count(e) from Examination e where e.admission.id = :admissionID")
+	public Long findPatientExaminationsNumber(@Param("admissionID") Long admissionID);
 	
 	@Modifying
 	@Transactional

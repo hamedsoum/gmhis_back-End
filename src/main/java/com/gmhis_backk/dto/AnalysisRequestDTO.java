@@ -18,9 +18,7 @@ public class AnalysisRequestDTO {
 
 	private Long id;
 	private Long admission;
-//	private Long practicien;
-//	private String analysis; 
-//	private String otherAnalysis;
+	private Boolean examenTytpe;
 	private String observation;
 	private String diagnostic;
 	private List<Long> acts;

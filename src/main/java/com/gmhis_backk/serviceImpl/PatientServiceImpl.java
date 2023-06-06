@@ -79,12 +79,7 @@ public class PatientServiceImpl implements PatientService {
 	@Transactional(rollbackFor = Exception.class)
 
 	public Patient save(PatientDTO patientdto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException,EmailExistException {
-//		if(ObjectUtils.isEmpty(patientdto.getEmail()) || patientdto.getEmail() == null) {
-//			throw new ResourceNotFoundByIdException("l'adresse email est requise");
-//		}else {
-//		 Boolean isEmailUsed =	patientRepository.findByEmail(patientdto.getEmail()).isEmpty();
-//		 if(!isEmailUsed) throw new ResourceNotFoundByIdException("Email deja utilise");
-//		}
+
 		
 		Boolean isEmailUsed =	patientRepository.findByEmail(patientdto.getEmail()).isEmpty();
 		 if(!isEmailUsed) throw new ResourceNotFoundByIdException("Email deja utilise");
@@ -140,8 +135,7 @@ public class PatientServiceImpl implements PatientService {
 						;
 
 					if (insurance == null || iSubscriber == null) {
-//						throw new ResourceNotFoundByIdException(
-//								"L'assurance et/ou le souscripteur n'existe(nt) pas en base !");
+//					
 						
 						throw new ResourceNotFoundByIdException(
 								"L'assurance et/ou le courtier n'existe(nt) pas en base !");
@@ -157,11 +151,7 @@ public class PatientServiceImpl implements PatientService {
 					insured.setCreatedBy(this.getCurrentUserId().getId());
 					insured.setInsurance(insurance);
 					insured.setInsuranceSuscriber(iSubscriber);
-//					insured.setIsPrincipalInsured(insuredDTO.getIsPrincipalInsured());
-					insured.setPatient(newPatient);
-//					insured.setPrincipalInsuredAffiliation(insuredDTO.getPrincipalInsuredAffiliation());
-//					insured.setPrincipalInsuredContact(insuredDTO.getPrincipalInsuredContact());
-//					insured.setPrincipalInsuredName(insuredDTO.getPrincipalInsuredName());
+					insured.setPatient(newPatient);			
 					insured.setSociety(insuredDTO.getSociety());
 					insuredRepository.save(insured);
 				}
@@ -176,41 +166,6 @@ public class PatientServiceImpl implements PatientService {
 	}
 
 	@Override
-	public List<Patient> findByFirstName(String s) {
-		return patientRepository.findByFirstName(s);
-	}
-
-	@Override
-	public List<Patient> findByLastName(String s) {
-		return patientRepository.findByLastName(s);
-	}
-
-	@Override
-	public List<Patient> findByPatientExternalId(String s) {
-		return patientRepository.findByPatientExternalId(s);
-	}
-
-	@Override
-	public List<Patient> findByCellPhone(String s) {
-		return patientRepository.findByCellPhone1(s);
-	}
-
-	@Override
-	public List<Patient> findByEmail(String s) {
-		return patientRepository.findByEmail(s);
-	}
-
-	@Override
-	public List<Patient> findByCnamNumber(String s) {
-		return patientRepository.findByCnamNumber(s);
-	}
-
-	@Override
-	public List<Patient> findByIdCardNumber(String s) {
-		return patientRepository.findByIdCardNumber(s);
-	}
-
-	@Override
 	public List<Patient> findAll() {
 		return patientRepository.findAll();
 	}
@@ -218,13 +173,6 @@ public class PatientServiceImpl implements PatientService {
 	@Override
 	public Page<Patient> findAll(Pageable pageable) {
 		return patientRepository.findAll(pageable);
-	}
-
-	@Override
-	public Page<Patient> findAllContaining(String firstName, String lastName, String patientExternalId,
-			String cellPhone, String cnamNumber, String idCardNumber, Pageable pageable) {
-		// TODO Auto-generated method stub
-		return patientRepository.findPatients(firstName, lastName, patientExternalId, cellPhone, cnamNumber, idCardNumber, pageable);
 	}
 
 	@Override
@@ -238,58 +186,13 @@ public class PatientServiceImpl implements PatientService {
 	
 
 	@Override
-	public Page<Patient> findByFullName(String firstName, String lastName, Pageable pageable) {
-		return patientRepository.findByFullName(firstName,lastName, pageable);
-	}
-
-	@Override
-	public Page<Patient> findByFirstName(String firstName, Pageable pageable) {
-		return patientRepository.findByFirstNameContainingIgnoreCase(firstName, pageable);
-	}
-
-	@Override
-	public Page<Patient> findByLastName(String lastName, Pageable pageable) {
-		return patientRepository.findByLastNameContainingIgnoreCase(lastName, pageable);
-	}
-
-	@Override
-	public Page<Patient> findByPatientExternalId(String patientExternalId, Pageable pageable) {
-		return patientRepository.findByPatientExternalIdContainingIgnoreCase(patientExternalId, pageable);
-	}
-
-	@Override
-	public Page<Patient> findByCellPhone(String cellPhone, Pageable pageable) {
-		return patientRepository.findByCellPhone(cellPhone, pageable);
-	}
-
-	@Override
-	public Page<Patient> findByCnamNumber(String cnamNumber, Pageable pageable) {
-		return patientRepository.findByCnamNumberContainingIgnoreCase(cnamNumber, pageable);
-	}
-
-	@Override
-	public Page<Patient> findByIdCardNumber(String idCardNumber, Pageable pageable) {
-		return patientRepository.findByIdCardNumberContainingIgnoreCase(idCardNumber, pageable);
+	public Page<Patient> findByFullName(String firstName, String lastName,String cellPhone1,String correspondant,String emergencyContact,String patientExternalId,String idCardNumber,String cnamNumber, Pageable pageable) {
+		return patientRepository.findByFullName(firstName,lastName,cellPhone1,correspondant,emergencyContact,patientExternalId,idCardNumber,idCardNumber, pageable);
 	}
 
 	@Override
 	public Patient update(Long id,PatientDTO patientdto)
 			throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException {
-//		if(ObjectUtils.isEmpty(patientdto.getEmail()) || patientdto.getEmail() == null) {
-//			throw new ResourceNotFoundByIdException("l'adresse email est requise");
-//		}else {
-//		 Boolean isEmailUsed =	patientRepository.findByEmail(patientdto.getEmail()).isEmpty();
-//		 if(!isEmailUsed) throw new ResourceNotFoundByIdException("Email deja utilise");
-//		}
-//		
-//		 Boolean isPhone1Used =	patientRepository.findByCellPhone1OrCellPhone2(patientdto.getCellPhone1(), patientdto.getCellPhone1()).isEmpty();
-//		 if(!isPhone1Used) throw new ResourceNotFoundByIdException("Premier numero de telephone est deja utilisé");
-//		 
-//		 Boolean isPhone2Used =	patientRepository.findByCellPhone1OrCellPhone2(patientdto.getCellPhone2(), patientdto.getCellPhone2()).isEmpty();
-//		 if(!isPhone2Used) throw new ResourceNotFoundByIdException("Deuxieme numero de telephone est deja utilisé");
-//		
-//		 Boolean isPatientExternalId2Used =	patientRepository.findByPatientExternalId(patientdto.getPatientExternalId()).isEmpty();
-//		 if(!isPatientExternalId2Used) throw new ResourceNotFoundByIdException("Numero patient deja utilisé");
 		 
 			Patient updatePatient = patientRepository.findById(id).orElse(null);
 			System.out.print(updatePatient.getFirstName());
@@ -348,11 +251,7 @@ public class PatientServiceImpl implements PatientService {
 							insured.setCreatedBy(this.getCurrentUserId().getId());
 							insured.setInsurance(insurance);
 							insured.setInsuranceSuscriber(iSubscriber);
-//							insured.setIsPrincipalInsured(insuredDTO.getIsPrincipalInsured());
 							insured.setPatient(patient);
-//							insured.setPrincipalInsuredAffiliation(insuredDTO.getPrincipalInsuredAffiliation());
-//							insured.setPrincipalInsuredContact(insuredDTO.getPrincipalInsuredContact());
-//							insured.setPrincipalInsuredName(insuredDTO.getPrincipalInsuredName());
 							insured.setSociety(insuredDTO.getSociety());
 							insured.setDeleted("N");
 							insured.setUpdatedAt(new Date());
@@ -394,10 +293,9 @@ public class PatientServiceImpl implements PatientService {
 			number = number +1;
 		}
 		
-		return "PT" + year + month +String.format("%04d", number);
-//			
-//		return null;
+		return "PT" + year + month +String.format("%04d", number);		
 	}
+
 
 	
 }

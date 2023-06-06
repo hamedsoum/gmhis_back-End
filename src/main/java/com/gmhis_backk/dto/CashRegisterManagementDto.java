@@ -16,5 +16,8 @@ public class CashRegisterManagementDto {
 	private Boolean state;
 	private double openingBalance;
 	private Date openingDate;
-
+	private double closingBalance;
+	private Date closingDate;
+	private double cashRegisterBalance;
+	   private double realClosingBalance;
 }

@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,12 +19,16 @@ import com.gmhis_backk.domain.Examination;
 @Service
 @Transactional
 public interface ExaminationService {
+	
+	public Long dayNumberBetweenAdmissionFirstExaminationAndCurrentDate (Long admissionID) throws Exception;
+	
+	public List<Examination> findPatientExaminationsOfLastAdmision(Long patientID);
 
 	public Examination saveExamination(Examination e);
 	
 	public Optional<Examination> findExaminationById(Long id);
 	
-	public Page<Examination> findPatientExaminations(Long patient, Pageable pageable);
+	public Page<Examination> findPatientExaminations(Long patient,Long admissionID, Pageable pageable);
 	
 	public void addPathologyToExamination(Long pathology, Examination examination);
 	
@@ -33,6 +36,9 @@ public interface ExaminationService {
 	
 	public void removeExaminationAllPathologies(Long id);
 	
-	public Long findPatientExaminationsNumber(Long patientId);
+	public Long findPatientExaminationsNumberByAdmission(Long admissionID);
+	
+	public Page<Examination> findPatientFirstExaminationsOfAdmisions(Long patientID, Pageable pageable);
+
 
 }

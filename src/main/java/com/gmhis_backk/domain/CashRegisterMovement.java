@@ -4,6 +4,7 @@
 package com.gmhis_backk.domain;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.UUID;
 
 import javax.persistence.Column;
@@ -14,6 +15,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
@@ -50,7 +53,6 @@ public class CashRegisterMovement implements Serializable {
 	
 	private double debit;
 	
-	
 	private double credit;
 	
 	// numero de la prestation
@@ -63,4 +65,11 @@ public class CashRegisterMovement implements Serializable {
 		@JoinColumn(name="cash_register")
 	   private CashRegister cashRegister;
 		
+    //date du mouvement
+	@Temporal(TemporalType.TIMESTAMP)
+    private Date date;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="user")
+	private User user;
 }

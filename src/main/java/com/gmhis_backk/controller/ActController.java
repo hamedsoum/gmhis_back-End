@@ -236,6 +236,7 @@ public class ActController {
 			Map<String, Object> actMap = new HashMap<>();
 			actMap.put("id", actDto.getId());
 			actMap.put("name", actDto.getName());
+			actMap.put("amount", actDto.getActCode().getValue() * actDto.getCoefficient());
 			actMap.put("category", actDto.getActCategory().getName());
 			actMap.put("group", actDto.getActGroup().getName());
 			actMap.put("medicalAnalysisId", actDto.getMedicalAnalysisSpeciality().getId());

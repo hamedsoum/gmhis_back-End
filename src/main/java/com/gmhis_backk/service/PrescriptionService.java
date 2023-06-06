@@ -30,9 +30,9 @@ public interface PrescriptionService {
 
 	public Page<Prescription> findAll(Pageable pageable);
 	
-	public Page <Prescription> findAllPatientPrescriptions(Long Patient, Pageable pageable);
+	public Page <Prescription> findAllPatientPrescriptions(Long Patient,Long admissionID, Pageable pageable);
 	
-	public Long findPrescriptionsNumber(Long patientId);
+	public Long findPrescriptionsNumber(Long admissionID);
 
 	public Optional<Prescription> findPrescriptionById(UUID id);
 	

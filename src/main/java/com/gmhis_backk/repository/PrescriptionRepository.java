@@ -12,14 +12,14 @@ import com.gmhis_backk.domain.Prescription;
 
 public interface PrescriptionRepository extends JpaRepository<Prescription, UUID> {
 
-	@Query(value="select p from Prescription p where p.examination.admission.patient.id = :patient ORDER BY p.prescriptionDate DESC")
-	public Page<Prescription> findAllPatientPrescriptions(@Param("patient") Long patient, Pageable pageable);
+	@Query(value="select p from Prescription p where p.examination.admission.patient.id = :patient and p.examination.admission.id =:admissionID ORDER BY p.prescriptionDate DESC")
+	public Page<Prescription> findAllPatientPrescriptions(@Param("patient") Long patient,@Param("admissionID") Long admissionID, Pageable pageable);
 	
 	@Query(value = "select * from prescription p order by p.prescription_date desc LIMIT 0,1", nativeQuery = true)
 	public  Prescription findLastPrescription();
 	
-	@Query(value = "select Count(p) from Prescription p where p.examination.admission.patient.id = :patientId")
-	public Long findPrescriptionNumber(@Param("patientId") Long patientId);
+	@Query(value = "select Count(p) from Prescription p where p.examination.admission.id = :admissionID")
+	public Long findPrescriptionNumber(@Param("admissionID") Long admissionID);
 	
 	@Query(value = "SELECT p FROM Prescription p WHERE p.prescriptionNumber =:prescriptionNumber")
 	public Prescription findPrescriptionByPrescriptionNumber(@Param("prescriptionNumber") String prescriptionNumber);
