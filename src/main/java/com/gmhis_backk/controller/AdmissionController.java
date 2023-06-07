@@ -172,6 +172,7 @@ public class AdmissionController {
 			admissionsMap.put("patientLastName", admissionDto.getPatient().getLastName());
 //			admissionsMap.put("patientMaidenName", admissionDto.getPatient().getMaidenName());
 			admissionsMap.put("patientType", admissionDto.getPatient().getIsAssured());
+			admissionsMap.put("caution",admissionDto.getCaution());
 			admissionsMap.put("admissionDate", admissionDto.getCreatedAt());
 			admissionsMap.put("act", admissionDto.getAct().getName());
 			admissionsMap.put("actId", admissionDto.getAct().getId());
@@ -200,6 +201,7 @@ public class AdmissionController {
 
 		Admission admission= admissionService.findAdmissionById(id).orElse(null);
 		response.put("id", admission.getId());
+		response.put("caution", admission.getCaution());
 		response.put("patientId", admission.getPatient().getId());
 		response.put("patientExternalId", admission.getPatient().getPatientExternalId());
 		response.put("admissionDate", admission.getAdmissionStartDate());
