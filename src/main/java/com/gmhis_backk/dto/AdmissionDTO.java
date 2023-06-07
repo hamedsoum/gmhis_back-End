@@ -22,5 +22,6 @@ public class AdmissionDTO {
 	private Long service;
 	private Long act;
 	private Long practician;
-	private int caution;
+	private Double caution;
+
 }

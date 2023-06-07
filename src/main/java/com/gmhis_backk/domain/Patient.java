@@ -165,5 +165,8 @@ public class Patient implements Serializable {
 	
 	@Column
 	private Double weight;
+	
+	@Column(nullable=true, name="account_balance")
+	private Double solde;
 
 }

@@ -48,5 +48,6 @@ public class PatientDTO {
 	private double height;
 	private double weight;
 	private List<InsuredDTO> insurances;
+	private Double solde; 
 
 }

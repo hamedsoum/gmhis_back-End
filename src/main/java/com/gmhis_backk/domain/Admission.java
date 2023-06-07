@@ -65,7 +65,8 @@ public class Admission implements Serializable {
 	@Column(name = "updated_by")
 	private Long updatedBy;
 	
-	private int caution;
+	@Column(name = "bail", nullable=true)
+	private Double caution;
 
 	@JsonBackReference
 	@ManyToOne
@@ -127,5 +128,6 @@ public class Admission implements Serializable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "facility_id", insertable = false, updatable = false)
 	private Facility facility;
+	
 
 }

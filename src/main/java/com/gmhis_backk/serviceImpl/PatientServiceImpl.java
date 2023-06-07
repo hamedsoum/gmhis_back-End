@@ -79,24 +79,35 @@ public class PatientServiceImpl implements PatientService {
 	@Transactional(rollbackFor = Exception.class)
 
 	public Patient save(PatientDTO patientdto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException,EmailExistException {
-
+		//if(ObjectUtils.isEmpty(patientdto.getEmail()) || patientdto.getEmail() == null) {
+//			throw new ResourceNotFoundByIdException("l'adresse email est requise");
+//		}else {
+//		 Boolean isEmailUsed =	patientRepository.findByEmail(patientdto.getEmail()).isEmpty();
+//		 if(!isEmailUsed) throw new ResourceNotFoundByIdException("Email deja utilise");
+//		}
+		
+		
 		
 		Boolean isEmailUsed =	patientRepository.findByEmail(patientdto.getEmail()).isEmpty();
+		//System.out.println(isEmailUsed);	
 		 if(!isEmailUsed) throw new ResourceNotFoundByIdException("Email deja utilise");
 		
 		
 		if(ObjectUtils.isEmpty(patientdto.getCellPhone1()) || patientdto.getCellPhone1() == null) {
-			throw new ResourceNotFoundByIdException("le numero de telephone est requis");
+			//throw new ResourceNotFoundByIdException("le numero de telephone est requis");
 		}else {
 			 Boolean isPhone1Used =	patientRepository.findByCellPhone1(patientdto.getCellPhone1()).isEmpty();
+			 System.out.print("Le resultat de la recherche est : "+isPhone1Used);
 			 if(!isPhone1Used) throw new ResourceNotFoundByIdException("le numero de telephone est deja utilisé");	
 		}
 		
 		if(ObjectUtils.isEmpty(patientdto.getIdCardNumber()) || patientdto.getIdCardNumber() == null) {
-			throw new ResourceNotFoundByIdException("le numero de la piece d'identé est requis");
+			if(patientdto.getAge() > 16) {
+				throw new ResourceNotFoundByIdException("le numero de la piece d'identé est requis");
+			}
 		}else {
 			 Boolean isIdCardNumberUsed =	patientRepository.findByIdCardNumber(patientdto.getIdCardNumber()).isEmpty();
-			 if(!isIdCardNumberUsed) throw new ResourceNotFoundByIdException("le numero de la piece d'identé est deja utilisé");	
+			 if(!isIdCardNumberUsed) throw new ResourceNotFoundByIdException("le numero de la piece d'identité est deja utilisé");	
 		}
 			 
 		 Patient patient = new Patient();
@@ -105,7 +116,7 @@ public class PatientServiceImpl implements PatientService {
 			BeanUtils.copyProperties(patientdto, patient, "id");
 			if (patientdto.getInsurances().size() != 0) patient.setIsAssured(true);
 		    String patientNumber = this.getPatientNumber();
-		    System.out.print(patientNumber);
+		    //System.out.print(patientNumber);
 		    patient.setPatientExternalId(patientNumber);
 		    
 
@@ -119,11 +130,20 @@ public class PatientServiceImpl implements PatientService {
 			}
 		
 			
+			if(patientdto.getSolde() != null) {
+				if(patientdto.getSolde() > 0) {
+					patient.setSolde(patientdto.getSolde());
+				}						
+			}
+				
+			
+			
 			patient.setCreatedAt(new Date());
 			patient.setCreatedBy(this.getCurrentUserId().getId());
+				
 			
 			Patient newPatient = patientRepository.save(patient);
-			System.out.print(patientdto.getInsurances().size());
+			//System.out.print(patientdto.getInsurances().size());
 			if (patientdto.getInsurances().size() != 0) {
 				for (InsuredDTO insuredDTO : patientdto.getInsurances()) {
 					Insured insured = new Insured();
@@ -135,7 +155,8 @@ public class PatientServiceImpl implements PatientService {
 						;
 
 					if (insurance == null || iSubscriber == null) {
-//					
+//						throw new ResourceNotFoundByIdException(
+//								"L'assurance et/ou le souscripteur n'existe(nt) pas en base !");
 						
 						throw new ResourceNotFoundByIdException(
 								"L'assurance et/ou le courtier n'existe(nt) pas en base !");
@@ -151,7 +172,11 @@ public class PatientServiceImpl implements PatientService {
 					insured.setCreatedBy(this.getCurrentUserId().getId());
 					insured.setInsurance(insurance);
 					insured.setInsuranceSuscriber(iSubscriber);
-					insured.setPatient(newPatient);			
+//					insured.setIsPrincipalInsured(insuredDTO.getIsPrincipalInsured());
+					insured.setPatient(newPatient);
+//					insured.setPrincipalInsuredAffiliation(insuredDTO.getPrincipalInsuredAffiliation());
+//					insured.setPrincipalInsuredContact(insuredDTO.getPrincipalInsuredContact());
+//					insured.setPrincipalInsuredName(insuredDTO.getPrincipalInsuredName());
 					insured.setSociety(insuredDTO.getSociety());
 					insuredRepository.save(insured);
 				}
