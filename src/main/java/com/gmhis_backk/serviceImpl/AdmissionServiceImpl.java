@@ -25,7 +25,6 @@ import com.gmhis_backk.dto.AdmissionDTO;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
 import com.gmhis_backk.repository.AdmissionRepository;
-import com.gmhis_backk.repository.PracticianRepository;
 import com.gmhis_backk.repository.UserRepository;
 import com.gmhis_backk.service.ActService;
 import com.gmhis_backk.service.AdmissionService;

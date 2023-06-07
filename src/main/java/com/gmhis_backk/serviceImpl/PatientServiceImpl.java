@@ -186,8 +186,8 @@ public class PatientServiceImpl implements PatientService {
 	
 
 	@Override
-	public Page<Patient> findByFullName(String firstName, String lastName,String cellPhone1,String correspondant,String emergencyContact,String patientExternalId,String idCardNumber,String cnamNumber, Pageable pageable) {
-		return patientRepository.findByFullName(firstName,lastName,cellPhone1,correspondant,emergencyContact,patientExternalId,idCardNumber,idCardNumber, pageable);
+	public Page<Patient> findByFullName(String firstName, String lastName,String cellPhone1,String correspondant,String emergencyContact,String patientExternalId,String idCardNumber, Pageable pageable) {
+		return patientRepository.findByFullName(firstName,lastName,cellPhone1,correspondant,emergencyContact,patientExternalId,idCardNumber,pageable);
 	}
 
 	@Override

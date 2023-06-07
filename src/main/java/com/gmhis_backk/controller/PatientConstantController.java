@@ -25,12 +25,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gmhis_backk.AppUtils;
-import com.gmhis_backk.domain.Act;
-import com.gmhis_backk.domain.Admission;
-import com.gmhis_backk.domain.Patient;
 import com.gmhis_backk.domain.PatientConstant;
 import com.gmhis_backk.domain.PatientConstantType;
-import com.gmhis_backk.domain.Pratician;
 import com.gmhis_backk.domain.User;
 import com.gmhis_backk.dto.PatientConstantDTO;
 import com.gmhis_backk.repository.UserRepository;
@@ -60,7 +56,6 @@ public class PatientConstantController  {
 	@Autowired
 	PatientConstantTypeService patientConstantTypeService;
 	
-	private Patient patient= null;
 
 	@ApiOperation(value = "Ajouter une constante ")
 	@PostMapping("/add")

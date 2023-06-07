@@ -39,7 +39,7 @@ public interface PatientService {
 
 	public String getLastExternalId(int prefixLength);
 	
-	public Page<Patient> findByFullName(String firstName, String lastName,String cellPhone1,String correspondant,String emergencyContact,String patientExternalId,String idCardNumber,String cnamNumber, Pageable pageable);
+	public Page<Patient> findByFullName(String firstName, String lastName,String cellPhone1,String correspondant,String emergencyContact,String patientExternalId,String idCardNumber, Pageable pageable);
 
 
 	

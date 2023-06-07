@@ -66,13 +66,12 @@ public class PatientController {
 			@RequestParam(required = false, defaultValue = "") String lastName,
 			@RequestParam(required = false, defaultValue = "") String patientExternalId,
 			@RequestParam(required = false, defaultValue = "") String cellPhone,
-			@RequestParam(required = false, defaultValue = "") String cnamNumber,
 			@RequestParam(required = false, defaultValue = "") String idCardNumber,
 			@RequestParam(required = false, defaultValue = "") String correspondant,
 			@RequestParam(required = false, defaultValue = "") String emergencyContact,
 
 			@RequestParam(defaultValue = "id,desc") String[] sort, @RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "10") int size) {
+			@RequestParam(defaultValue = "10") int size) throws Exception {
 
 		Map<String, Object> response = new HashMap<>();
 
@@ -84,9 +83,11 @@ public class PatientController {
 
 		Page<Patient> pPatients = null;		
 
-		if (ObjectUtils.isNotEmpty(firstName) || ObjectUtils.isNotEmpty(lastName) || ObjectUtils.isNotEmpty(cellPhone) || ObjectUtils.isNotEmpty(correspondant) || ObjectUtils.isNotEmpty(emergencyContact) || ObjectUtils.isNotEmpty(patientExternalId) || ObjectUtils.isNotEmpty(idCardNumber) || ObjectUtils.isNotEmpty(cnamNumber) ) {
-			pPatients = patientService.findByFullName(firstName, lastName, cellPhone, correspondant, emergencyContact,patientExternalId,idCardNumber,cnamNumber, paging);
-		} 
+		if (ObjectUtils.isNotEmpty(firstName) || ObjectUtils.isNotEmpty(lastName) || ObjectUtils.isNotEmpty(cellPhone) || ObjectUtils.isNotEmpty(correspondant) || ObjectUtils.isNotEmpty(emergencyContact) || ObjectUtils.isNotEmpty(patientExternalId) || ObjectUtils.isNotEmpty(idCardNumber)  ) {
+			pPatients = patientService.findByFullName(firstName, lastName, cellPhone, correspondant, emergencyContact,patientExternalId,idCardNumber, paging);
+		} else {
+			throw new ResourceNotFoundByIdException("Aucun Resultat");
+}
 		
 		List<Patient> lPatients = pPatients.getContent();
 
