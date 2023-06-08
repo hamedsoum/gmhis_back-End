@@ -22,6 +22,6 @@ public interface WaitingRoomRepository extends JpaRepository<WaitingRoom, Long> 
 	public Page<WaitingRoom> findByActive(@Param("name") String name,
 			@Param("active") Boolean active, Pageable p);
 
-	@Query(value="select r.id from pratician p, service s, waiting_room r where p.service_id = s.id and s.waiting_room_id = r.id and p.user_id = :practician_id", nativeQuery = true)
+	@Query(value="select r.id from pratician p, service s, waiting_room r where p.speciality_id = s.id and s.waiting_room_id = r.id and p.user_id = :practician_id", nativeQuery = true)
 	public Long findWaitingRoomByPractician(@Param("practician_id") Long practician_id);
 }

@@ -1,8 +1,11 @@
 package com.gmhis_backk.serviceImpl;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,8 +13,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gmhis_backk.domain.Pratician;
+import com.gmhis_backk.domain.Speciality;
+import com.gmhis_backk.dto.PraticianDto;
 import com.gmhis_backk.repository.PracticianRepository;
+import com.gmhis_backk.repository.SpecialityRepository;
 import com.gmhis_backk.service.PracticianService;
+import com.gmhis_backk.service.SpecialityService;
 
 
 /**
@@ -25,15 +32,25 @@ public class PracticianServiceImpl implements PracticianService{
 
 	@Autowired
 	private PracticianRepository repo;
-
+	
+	private SpecialityService specialityService;
 	
 	public Pratician findPracticianByUser (Long user) {
 		return repo.findByUser(user);
 	}
 
 	@Override
-	public Pratician savePractician(Pratician p) {
-		return repo.save(p);
+	public Pratician savePractician(PraticianDto praticianDto) {
+		Pratician pratician = new Pratician();
+		BeanUtils.copyProperties(praticianDto, pratician,"id");
+		pratician.setNom(praticianDto.getNom());
+		pratician.setPrenoms(praticianDto.getPrenoms());
+		pratician.setSignature(praticianDto.getSignature());
+		Speciality speciality = specialityService.findById(praticianDto.getSpeciliaty_id());
+		//if(speciality.)
+		pratician.setSpeciality(speciality);
+		pratician.setCreatedAt(new Date());
+		return null; 
 	}
 
 

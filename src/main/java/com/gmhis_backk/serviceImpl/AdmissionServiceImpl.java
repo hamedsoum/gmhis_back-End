@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
@@ -17,6 +18,7 @@ import com.gmhis_backk.AppUtils;
 import com.gmhis_backk.domain.Act;
 import com.gmhis_backk.domain.Admission;
 import com.gmhis_backk.domain.Bill;
+import com.gmhis_backk.domain.Examination;
 import com.gmhis_backk.domain.Patient;
 import com.gmhis_backk.domain.Pratician;
 import com.gmhis_backk.domain.User;
@@ -132,6 +134,11 @@ public class AdmissionServiceImpl implements AdmissionService{
 	@Override
 	public Admission findLastAdmission() {
 		return repo.findLastAdmission();
+	}
+	
+	@Override
+	public Examination findLastExamination(Long id) {
+		return repo.findLastExamination(id);
 	}
 	
 	@Override

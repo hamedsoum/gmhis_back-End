@@ -31,9 +31,8 @@ public class Pratician implements Serializable {
 	@Column
 	private Boolean active;
 
-//	@JoinColumn(name = "signature", nullable = true)
-//	@OneToOne
-//	private GmhisFiles signature;
+	@JoinColumn(name = "signature", nullable = true)
+	private String signature;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "last_updated_at", nullable = true)
@@ -67,10 +66,17 @@ public class Pratician implements Serializable {
 	@JoinColumn(name = "speciality_id")
 	private Speciality speciality;
 
-	@JsonBackReference
-	@ManyToOne
-	@JoinColumn(name = "service_id")
-	private Service service;
+//	@JsonBackReference
+//	@ManyToOne
+//	@JoinColumn(name = "service_id")
+//	private Service service;
+	
+	@Column(name="nom")
+	private String nom;
+	@Column(name="prenoms")
+	private String prenoms;
+	@Column(name="telephone")
+	private String telephone;
 	
 //	@JsonBackReference
 //	@ManyToMany

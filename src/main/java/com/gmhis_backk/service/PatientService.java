@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gmhis_backk.domain.Examination;
 import com.gmhis_backk.domain.Patient;
 import com.gmhis_backk.dto.PatientDTO;
 import com.gmhis_backk.exception.domain.EmailExistException;
@@ -41,6 +42,6 @@ public interface PatientService {
 	
 	public Page<Patient> findByFullName(String firstName, String lastName,String cellPhone1,String correspondant,String emergencyContact,String patientExternalId,String idCardNumber, Pageable pageable);
 
-
+	public Examination findLastAdmission(Long id);
 	
 }

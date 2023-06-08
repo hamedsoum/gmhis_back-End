@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gmhis_backk.AppUtils;
 import com.gmhis_backk.domain.City;
+import com.gmhis_backk.domain.Examination;
 import com.gmhis_backk.domain.Insurance;
 import com.gmhis_backk.domain.InsuranceSuscriber;
 import com.gmhis_backk.domain.Insured;
@@ -26,6 +27,7 @@ import com.gmhis_backk.dto.PatientDTO;
 import com.gmhis_backk.exception.domain.EmailExistException;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
+import com.gmhis_backk.repository.AdmissionRepository;
 import com.gmhis_backk.repository.CityRepository;
 import com.gmhis_backk.repository.CountryRepository;
 import com.gmhis_backk.repository.InsuranceSubscriberRepository;
@@ -70,6 +72,8 @@ public class PatientServiceImpl implements PatientService {
 	@Autowired
 	UserRepository userRepository;
 
+	@Autowired
+	AdmissionRepository admissionRepository;
 	
 	protected User getCurrentUserId() {
 		return this.userRepository.findUserByUsername(AppUtils.getUsername());
@@ -87,10 +91,12 @@ public class PatientServiceImpl implements PatientService {
 //		}
 		
 		
+		if(patientdto.getEmail() != null) {
+			Boolean isEmailUsed =	patientRepository.findByEmail(patientdto.getEmail()).isEmpty();
+			//System.out.println(isEmailUsed);	
+			if(!isEmailUsed) throw new ResourceNotFoundByIdException("Email deja utilise");
+		}
 		
-		Boolean isEmailUsed =	patientRepository.findByEmail(patientdto.getEmail()).isEmpty();
-		//System.out.println(isEmailUsed);	
-		 if(!isEmailUsed) throw new ResourceNotFoundByIdException("Email deja utilise");
 		
 		
 		if(ObjectUtils.isEmpty(patientdto.getCellPhone1()) || patientdto.getCellPhone1() == null) {
@@ -321,6 +327,10 @@ public class PatientServiceImpl implements PatientService {
 		return "PT" + year + month +String.format("%04d", number);		
 	}
 
-
+	@Override
+	public Examination findLastAdmission(Long id) {
+		Examination lastExam = admissionRepository.findLastExamination(id);
+		return lastExam;
+	}
 	
 }

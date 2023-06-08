@@ -33,6 +33,13 @@ public class SpecialityServiceImpl implements SpecialityService {
 	public Page<Speciality> findAllSpeciality(Pageable pageable) {
 		return specialityRepository.findAll(pageable);
 	}
+	
+	@Override
+	public Speciality findById(Long id) {
+		
+		return null;
+		
+	}
 
 	@Override
 	public Page<Speciality> findAllSpecialityByActiveAndName(String name, Boolean active, Pageable pageable) {
