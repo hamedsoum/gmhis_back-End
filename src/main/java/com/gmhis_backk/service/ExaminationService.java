@@ -39,6 +39,8 @@ public interface ExaminationService {
 	public Long findPatientExaminationsNumberByAdmission(Long admissionID);
 	
 	public Page<Examination> findPatientFirstExaminationsOfAdmisions(Long patientID, Pageable pageable);
+	
+	public Examination findAdmissionLastExamination(Long id);
 
 
 }

@@ -168,5 +168,11 @@ public class Patient implements Serializable {
 	
 	@Column(nullable=true, name="account_balance")
 	private Double solde;
+	
+	@Column(nullable = true, name="mother_name")
+	private String motherName;
+	
+	@Column(nullable = true, name="mother_locality")
+	private String motherLocality;
 
 }

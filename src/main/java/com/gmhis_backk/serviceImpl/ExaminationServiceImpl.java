@@ -139,4 +139,10 @@ public class ExaminationServiceImpl implements ExaminationService{
 		    long diff = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
 		return diff;
 	}
+
+	@Override
+	public Examination findAdmissionLastExamination(Long id) {
+		// TODO Auto-generated method stub
+		return repo.findLastExamination(id);
+	}
 }

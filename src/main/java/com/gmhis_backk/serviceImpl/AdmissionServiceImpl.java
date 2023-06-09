@@ -30,6 +30,7 @@ import com.gmhis_backk.repository.AdmissionRepository;
 import com.gmhis_backk.repository.UserRepository;
 import com.gmhis_backk.service.ActService;
 import com.gmhis_backk.service.AdmissionService;
+import com.gmhis_backk.service.ExaminationService;
 import com.gmhis_backk.service.PatientService;
 import com.gmhis_backk.service.PracticianService;
 import com.gmhis_backk.service.ServiceService;
@@ -51,6 +52,9 @@ public class AdmissionServiceImpl implements AdmissionService{
 
 	@Autowired
 	private ServiceService serviceService;
+	
+	@Autowired
+	private ExaminationService examinationService;
 	
 	@Autowired
 	private PatientService patientService;
@@ -138,7 +142,7 @@ public class AdmissionServiceImpl implements AdmissionService{
 	
 	@Override
 	public Examination findLastExamination(Long id) {
-		return repo.findLastExamination(id);
+		return examinationService.findAdmissionLastExamination(id);
 	}
 	
 	@Override
