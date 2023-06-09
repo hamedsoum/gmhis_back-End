@@ -19,7 +19,7 @@ public interface ActCategoryService {
 
 	  Page<ActCategory> findAllActCategory(Pageable pageable);
 	  
-		List<ActCategory> findAllActive();
+	  List<ActCategory> findAllActive();
 	    
 	  Page<ActCategory> findAllActCategoryByActiveAndName(String name,Boolean active, Pageable pageable);
 	    

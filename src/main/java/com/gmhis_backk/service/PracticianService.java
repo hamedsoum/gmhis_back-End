@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gmhis_backk.domain.Pratician;
+import com.gmhis_backk.dto.PraticianDto;
 
 
 /**
@@ -20,7 +21,7 @@ import com.gmhis_backk.domain.Pratician;
 @Transactional
 public interface PracticianService {
 
-	public Pratician savePractician(Pratician p);
+	public Pratician savePractician(PraticianDto p);
 
 	public Optional<Pratician> findPracticianById(Long id);
 

@@ -19,6 +19,8 @@ public interface SpecialityService {
 	  Page<Speciality> findAllSpecialityByName(String name, Pageable pageable);
 	  
 	  List<Speciality> findAllSpecialitys();
+	  
+	  Speciality findById(Long id); 
 
 	  void deleteSpeciality(Integer id);
 		

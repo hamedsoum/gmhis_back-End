@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gmhis_backk.domain.Examination;
 import com.gmhis_backk.domain.Patient;
 import com.gmhis_backk.dto.PatientDTO;
 import com.gmhis_backk.exception.domain.EmailExistException;
@@ -142,4 +143,13 @@ public class PatientController {
 		return "PT" + year + month +String.format("%04d", number);
 		
 	}
+	
+	@ApiOperation(value="La dernière consultation du patient")
+	@GetMapping("/last_consultation/{id}")
+	public ResponseEntity<Examination> lastConsultation(@PathVariable Long id) {
+		Examination examination = patientService.findLastAdmission(id);
+		return ResponseEntity.ok(examination);
+	}
+	
+	
 }

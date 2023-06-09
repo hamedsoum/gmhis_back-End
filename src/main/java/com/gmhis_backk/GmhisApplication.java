@@ -62,4 +62,5 @@ public class GmhisApplication extends SpringBootServletInitializer {
 		return new BCryptPasswordEncoder();
 	}
 
+
 }
