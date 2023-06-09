@@ -97,9 +97,6 @@ public interface AdmissionService {
 	public Page<Admission>findAdmissiondByDate(String date,String facilityId, Pageable pageable) throws ParseException ;
 
 	public Page<Admission>findAdmissionsByFacility(String facilityId ,String admissionStatus, Pageable pageable);
-
-	public Examination findLastExamination(Long id);
 	
-
-
+	public Examination findLastExamination(Long id);
 }

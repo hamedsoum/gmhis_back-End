@@ -132,6 +132,4 @@ public interface AdmissionRepository extends JpaRepository<Admission, Long> {
 	@Query(value = "SELECT * FROM admission a, bill b, payment p, pratician pr, service s  WHERE a.id=b.admission_id and b.id = p.bill_id and a.service_id = pr.specility_id and s.waiting_room_id = :waiting_room and a.admission_status = 'B' and b.bill_status = 'C' and a.created_at between :fromDate and :toDate and admission_end_date is null GROUP by a.id ", nativeQuery = true)
 	public Page<Admission> findAdmissionInQueueByDate(@Param("fromDate") Date fromDate, @Param("toDate") Date toDate, Long waiting_room, Pageable pageable);
 	
-	@Query(value = "select * from  examination e where e.admission_id = :id  order by e.id desc LIMIT 0,1", nativeQuery = true)
-	public Examination findLastExamination(Long id);
 }

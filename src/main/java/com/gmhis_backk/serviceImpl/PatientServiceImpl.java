@@ -35,6 +35,7 @@ import com.gmhis_backk.repository.InsuredRepository;
 import com.gmhis_backk.repository.InsurranceRepository;
 import com.gmhis_backk.repository.PatientRepository;
 import com.gmhis_backk.repository.UserRepository;
+import com.gmhis_backk.service.AdmissionService;
 import com.gmhis_backk.service.PatientService;
 
 
@@ -73,7 +74,7 @@ public class PatientServiceImpl implements PatientService {
 	UserRepository userRepository;
 
 	@Autowired
-	AdmissionRepository admissionRepository;
+	AdmissionService admissionService;
 	
 	protected User getCurrentUserId() {
 		return this.userRepository.findUserByUsername(AppUtils.getUsername());
@@ -93,7 +94,6 @@ public class PatientServiceImpl implements PatientService {
 		
 		if(patientdto.getEmail() != null) {
 			Boolean isEmailUsed =	patientRepository.findByEmail(patientdto.getEmail()).isEmpty();
-			//System.out.println(isEmailUsed);	
 			if(!isEmailUsed) throw new ResourceNotFoundByIdException("Email deja utilise");
 		}
 		
@@ -329,7 +329,7 @@ public class PatientServiceImpl implements PatientService {
 
 	@Override
 	public Examination findLastAdmission(Long id) {
-		Examination lastExam = admissionRepository.findLastExamination(id);
+		Examination lastExam = admissionService.findLastExamination(id);
 		return lastExam;
 	}
 	

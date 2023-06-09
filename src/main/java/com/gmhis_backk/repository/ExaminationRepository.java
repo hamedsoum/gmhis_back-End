@@ -48,4 +48,7 @@ public interface ExaminationRepository extends JpaRepository<Examination, Long> 
 	@Transactional
 	@Query(value="delete from examination_has_pathology where examination_id = :id", nativeQuery = true)
 	public void removeExaminationAllPathologies (Long id);
+	
+	@Query(value = "select * from  examination e where e.admission_id = :id  order by e.id desc LIMIT 0,1", nativeQuery = true)
+	public Examination findLastExamination(Long id);
 }

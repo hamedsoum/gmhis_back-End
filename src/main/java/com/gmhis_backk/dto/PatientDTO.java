@@ -49,5 +49,7 @@ public class PatientDTO {
 	private double weight;
 	private List<InsuredDTO> insurances;
 	private Double solde; 
+	private String motherName;
+	private String motherLocality;
 
 }
