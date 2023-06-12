@@ -28,6 +28,8 @@ import com.gmhis_backk.repository.SymptomRepository;
 import com.gmhis_backk.repository.UserRepository;
 import com.gmhis_backk.service.ExaminationService;
 
+import javassist.NotFoundException;
+
 
 /**
  * 
@@ -144,5 +146,20 @@ public class ExaminationServiceImpl implements ExaminationService{
 	public Examination findAdmissionLastExamination(Long id) {
 		// TODO Auto-generated method stub
 		return repo.findLastExamination(id);
+	}
+
+	@SuppressWarnings("null")
+	@Override
+	public Examination insertDiagnostic(Long id, String diagnostic) throws NotFoundException {
+		System.out.print("getted id" + id);
+		Examination examination = repo.findExaminationById(id).orElse(null);
+		/*if(examination != null) {
+			throw new NotFoundException("Consultation non trouvée");
+		}
+		System.out.print("result getted" + examination.getId());
+		//examination.setConclusion(diagnostic);
+		//repo.save(examination);
+		return examination;*/
+		return null;
 	}
 }

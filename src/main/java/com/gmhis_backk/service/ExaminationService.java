@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gmhis_backk.domain.Examination;
 
+import javassist.NotFoundException;
+
 
 /**
  * 
@@ -41,6 +43,8 @@ public interface ExaminationService {
 	public Page<Examination> findPatientFirstExaminationsOfAdmisions(Long patientID, Pageable pageable);
 	
 	public Examination findAdmissionLastExamination(Long id);
+	
+	public Examination insertDiagnostic(Long id, String diagnostic) throws NotFoundException;
 
 
 }

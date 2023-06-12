@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,6 +40,7 @@ import com.gmhis_backk.service.ExaminationService;
 import com.gmhis_backk.service.PracticianService;
 
 import io.swagger.annotations.ApiOperation;
+import javassist.NotFoundException;
 
 /**
  * 
@@ -176,7 +178,7 @@ public class ExaminationController {
 	return examinationService.findPatientExaminationsNumberByAdmission(admissionID);
 	}
 	
-	@ApiOperation(value = "Lister la liste de toutes les consultations dans le système")
+	@ApiOperation(value = "Recupérer la derniere consultation du patient pour une admission")
 	@GetMapping("/lastExaminatonOfAdmission")
 	public ResponseEntity<Map<String, Object>> findPatientFirstExaminationsOfAdmisions (
 			@RequestParam(required = false, defaultValue = "") Long patient,
@@ -224,6 +226,13 @@ public class ExaminationController {
 	@ApiOperation("Nombre de jour entre la premiere consultation d'une admission et la date courante")
 	protected long RetrieveDayNumberBetweenAdmissionFirstExaminationAndCurrentDate(@PathVariable Long admissionID) throws Exception {
 		return examinationService.dayNumberBetweenAdmissionFirstExaminationAndCurrentDate(admissionID);
+	}
+	
+	@PutMapping("/update-diagnostic/{examinationId}")
+	@ApiOperation(value="Inserer le diagnostic d'une consultation")
+	public ResponseEntity<Examination> updateExamination(@PathVariable Long examinationId,@RequestBody() String diagnostic) throws NotFoundException{
+		Examination examination = examinationService.insertDiagnostic(examinationId,diagnostic);
+		return ResponseEntity.accepted().body(examination);
 	}
 	
 }

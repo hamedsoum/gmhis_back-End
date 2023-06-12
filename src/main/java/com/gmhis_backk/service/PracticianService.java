@@ -53,7 +53,6 @@ public interface PracticianService {
     public Page<Pratician> findPracticiansByAllFilters (String firstName, String lastName, String phoneContact, String practicianNumber, Long speciality, 
     		Long service , String active, Pageable pageable);
     
-    
     public List<Pratician> findActivePracticiansByService(Long service);
     
     

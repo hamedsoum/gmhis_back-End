@@ -329,6 +329,4 @@ public class AdmissionServiceImpl implements AdmissionService{
 		return repo.findAdmissionsByFacility( admissionStatus, facilityId, pageable);
 	}
 
-
-
 }

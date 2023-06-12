@@ -2,6 +2,7 @@ package com.gmhis_backk.repository;
 
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -51,4 +52,7 @@ public interface ExaminationRepository extends JpaRepository<Examination, Long> 
 	
 	@Query(value = "select * from  examination e where e.admission_id = :id  order by e.id desc LIMIT 0,1", nativeQuery = true)
 	public Examination findLastExamination(Long id);
+	
+	@Query(value="select * from Examination e where e.id = :id LIMIT 0,1",nativeQuery=true)
+	public Optional<Examination> findExaminationById(Long id);
 }
