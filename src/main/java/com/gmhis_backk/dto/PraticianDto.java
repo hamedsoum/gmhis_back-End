@@ -7,16 +7,21 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 import javax.validation.constraints.*;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class PraticianDto {
-	private String signature;
+	private Integer signature;
 	
 	@NotNull(message = "Le champ specialité est requis")
-	private Long speciliaty_id;
+	private Long speciliaty;
+	
+	@NotNull(message = "Le champ établissement est requis")
+	private UUID facility;
 	
 	@NotNull(message = "Le champ nom est requis")
 	@Size(min=2,message="Le champ nom doit disposer de 2 caractères")
@@ -27,7 +32,6 @@ public class PraticianDto {
 	private String prenoms;
 	
 	@NotNull(message="Le champ téléphone est requis")
-	
 	private String telephone;
 	private String email;
 }

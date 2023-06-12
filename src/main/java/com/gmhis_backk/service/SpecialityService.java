@@ -20,7 +20,7 @@ public interface SpecialityService {
 	  
 	  List<Speciality> findAllSpecialitys();
 	  
-	  Speciality findById(Long id); 
+	  Optional<Speciality> findById(Long id); 
 
 	  void deleteSpeciality(Integer id);
 		

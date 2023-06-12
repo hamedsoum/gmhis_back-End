@@ -1,6 +1,7 @@
 package com.gmhis_backk.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -77,4 +78,14 @@ public interface PracticianRepository extends JpaRepository<Pratician, Long>{
 
 	@Query(value = "select p from Pratician p where active = 1 and speciality_id= :service")
 	public List<Pratician> findActivePracticiansByService(@Param("service") Long service);
+	
+	@Query(value="select p from Pratician p where email = :email")
+	public Optional<Pratician> findByEmail(String email); 
+	
+	@Query(value="select p from Pratician p where p.praticianNumber = :praticienNumber")
+	public Optional<Pratician> findByPraticianNumber(String praticienNumber);
+	
+	@Query(value="select p from Pratician p where p.telephone = :telephone")
+	public Optional<Pratician> findByTelephone(String telephone);
+	
 }

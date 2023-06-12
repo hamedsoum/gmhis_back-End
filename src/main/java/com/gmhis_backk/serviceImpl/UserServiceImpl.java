@@ -105,7 +105,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		validateNewUsernameAndEmail(StringUtils.EMPTY, username, email, null);
 		User user = new User();
 		user.setUserId(generateUserId());
-		String password = generatePassword();
+		String password = generatePassword(null);
 		user.setFirstName(StringUtils.capitalize(firstName));
 		user.setLastName(StringUtils.capitalize(lastName));
 		user.setUsername(username);
@@ -134,7 +134,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 //	    System.out.println(userDto.getFacilityId());
 		User user = new User();
 		BeanUtils.copyProperties(userDto, user,"id");
-		String password = generatePassword();
+		String password = generatePassword(userDto.getPassword());
 
 		user.setUserId(generateUserId());
 		String username = generateUsername(user);
@@ -287,8 +287,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		return passwordEncoder.encode(password);
 	}
 
-	private String generatePassword() {
-		return RandomStringUtils.randomNumeric(3) + '-' + RandomStringUtils.randomNumeric(3) + "#";
+	private String generatePassword(String pwd) {
+		if(pwd != null) {
+			return pwd;
+		}else {
+			return RandomStringUtils.randomNumeric(3) + '-' + RandomStringUtils.randomNumeric(3) + "#";
+		}
 	}
 
 	private String generateUsername(User user) {
@@ -425,7 +429,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		if (user == null) {
 			throw new UsernameNotFoundException(NO_USER_FOUND_BY_USERNAME );
 		} else {
-			String password = generatePassword();
+			String password = generatePassword(null);
 			user.setPassword(encodePassword(password));
 //			user.setPasswordMustBeChange(true);
 			user = userRepository.save(user);

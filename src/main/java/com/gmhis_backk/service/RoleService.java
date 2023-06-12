@@ -34,6 +34,8 @@ public interface RoleService {
 	
 	Page<Role> findByName(String name, Pageable pageable);
 	
+	Role findByRoleName(String name);
+	
 	List<Role> findAllActive();
 	
     List<String> findRolesByUserId(Long userId);

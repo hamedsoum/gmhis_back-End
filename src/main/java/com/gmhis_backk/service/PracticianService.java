@@ -10,6 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gmhis_backk.domain.Pratician;
 import com.gmhis_backk.dto.PraticianDto;
+import com.gmhis_backk.exception.domain.EmailExistException;
+import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
+import com.gmhis_backk.exception.domain.TelephoneExistException;
 
 
 /**
@@ -21,7 +24,7 @@ import com.gmhis_backk.dto.PraticianDto;
 @Transactional
 public interface PracticianService {
 
-	public Pratician savePractician(PraticianDto p);
+	public Pratician savePractician(PraticianDto p) throws ResourceNotFoundByIdException, EmailExistException, TelephoneExistException;
 
 	public Optional<Pratician> findPracticianById(Long id);
 
@@ -50,6 +53,9 @@ public interface PracticianService {
     public Page<Pratician> findPracticiansByAllFilters (String firstName, String lastName, String phoneContact, String practicianNumber, Long speciality, 
     		Long service , String active, Pageable pageable);
     
+    
     public List<Pratician> findActivePracticiansByService(Long service);
+    
+    
 	
 }

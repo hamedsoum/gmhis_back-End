@@ -3,6 +3,7 @@ package com.gmhis_backk.domain;
 import java.io.Serializable;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
@@ -11,6 +12,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.Optional;
 
 /**
  * @author Pascal
@@ -30,9 +32,9 @@ public class Pratician implements Serializable {
 
 	@Column
 	private Boolean active;
-
-	@JoinColumn(name = "signature", nullable = true)
-	private String signature;
+	
+	@JoinColumn(unique=true,name = "signature", nullable = true)
+	private Integer signature;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "last_updated_at", nullable = true)
@@ -65,6 +67,11 @@ public class Pratician implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "speciality_id")
 	private Speciality speciality;
+	
+	@JsonBackReference
+	@ManyToOne
+	@JoinColumn(name = "facility_id")
+	private Facility facility;
 
 //	@JsonBackReference
 //	@ManyToOne
@@ -72,11 +79,17 @@ public class Pratician implements Serializable {
 //	private Service service;
 	
 	@Column(name="nom")
+	@NotNull(message="Le champ nom est requis")
 	private String nom;
 	@Column(name="prenoms")
+	@NotNull(message="Le champ prénoms est requis")
 	private String prenoms;
-	@Column(name="telephone")
+	@NotNull(message="Le champ telephone est requis")
+	@Column(name="telephone",unique=true)
 	private String telephone;
+	
+	@Column(name="email",unique=true)
+	private String email;
 	
 //	@JsonBackReference
 //	@ManyToMany

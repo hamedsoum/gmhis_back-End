@@ -5,14 +5,14 @@ package com.gmhis_backk.exception.domain;
  * @author adjara
  *
  */
-public class EmailExistException extends Exception {
+public class TelephoneExistException extends Exception {
 	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public EmailExistException(String message) {
+	public TelephoneExistException(String message) {
 		super(message);
 	}
 }
