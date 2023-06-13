@@ -1,5 +1,6 @@
 package com.gmhis_backk.dto;
 import java.util.List;
+import java.util.UUID;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,6 +28,9 @@ public class UserDto {
     private String tel;
     
     List<Integer> roles;  
+    private String role;
+    
+    private String username;
     
     private boolean active;
     
@@ -34,6 +38,8 @@ public class UserDto {
     
     private boolean passwordMustBeChange;
     
-    private String facilityId;
+    private UUID facilityId;
+    
+    private String password;
 
 }

@@ -31,6 +31,7 @@ public interface FacilityService {
 ;
 	public Facility findFacilityByName(String facility);
 	
+	
 	public Optional<Facility> findFacilityById(UUID id);
 
 	public List<Facility> findFacilities();

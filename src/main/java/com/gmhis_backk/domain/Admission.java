@@ -121,7 +121,7 @@ public class Admission implements Serializable {
 	
 	
 	 
-	 @Column(name = "facility_id", nullable = true)
+	@Column(name = "facility_id", nullable = true)
 	private String facilityId;
 	    
 	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})

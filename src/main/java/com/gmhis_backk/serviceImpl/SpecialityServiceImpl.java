@@ -35,10 +35,8 @@ public class SpecialityServiceImpl implements SpecialityService {
 	}
 	
 	@Override
-	public Speciality findById(Long id) {
-		
-		return null;
-		
+	public Optional<Speciality> findById(Long id) {
+		return specialityRepository.findById(id);
 	}
 
 	@Override
