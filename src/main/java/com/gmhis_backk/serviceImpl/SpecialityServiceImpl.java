@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 
 import com.gmhis_backk.AppUtils;
 import com.gmhis_backk.domain.Speciality;
-import com.gmhis_backk.dto.DefaultNameAndActiveDto;
+import com.gmhis_backk.dto.SpecialityDto;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
 import com.gmhis_backk.repository.SpecialityRepository;
@@ -70,35 +70,35 @@ public class SpecialityServiceImpl implements SpecialityService {
 	}
 
 	@Override @Transactional 
-	public Speciality addSpeciality(DefaultNameAndActiveDto defaultNameAndActiveDto)
+	public Speciality addSpeciality(SpecialityDto specialityDto)
 			throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException {
-		Speciality SpecialityByName = specialityRepository.findByName(defaultNameAndActiveDto.getName());
+		Speciality SpecialityByName = specialityRepository.findByName(specialityDto.getName());
 		if(SpecialityByName!=null) {
-			throw new ResourceNameAlreadyExistException("La convention de la famille existe déjà ");  
+			throw new ResourceNameAlreadyExistException("La spécialité de la famille existe déjà ");  
 		} 
-		Speciality convention = new Speciality();		
-		BeanUtils.copyProperties(defaultNameAndActiveDto,convention,"id");
-		convention.setCreatedAt(new Date());
-		convention.setCreatedBy(getCurrentUserId().getId());
-		return specialityRepository.save(convention);
+		Speciality speciality = new Speciality();		
+		BeanUtils.copyProperties(specialityDto,speciality,"id");
+		speciality.setCreatedAt(new Date());
+		speciality.setCreatedBy(getCurrentUserId().getId());
+		return specialityRepository.save(speciality);
 	}
 
 	@Override @Transactional 
-	public Speciality updateSpeciality(Long id, DefaultNameAndActiveDto defaultNameAndActiveDto)
+	public Speciality updateSpeciality(Long id, SpecialityDto specialityDto)
 			throws ResourceNotFoundByIdException, ResourceNameAlreadyExistException {
 		   Speciality updateSpeciality = specialityRepository.findById(id).orElse(null);
 			
 			if (updateSpeciality == null) {
-				 throw new ResourceNotFoundByIdException("Aucune convention trouvé pour l'identifiant");
+				 throw new ResourceNotFoundByIdException("Aucune spécialité trouvée pour l'identifiant");
 			} else {
-				Speciality conventionByName = specialityRepository.findByName(defaultNameAndActiveDto.getName());
+				Speciality conventionByName = specialityRepository.findByName(specialityDto.getName());
 				if(conventionByName != null) {
 					if(conventionByName.getId() != updateSpeciality.getId()) {
-						throw new ResourceNameAlreadyExistException("Le nom de la convention existe déjà");
+						throw new ResourceNameAlreadyExistException("Le nom de la spécialité existe déjà");
 					}
 				}
 			}
-			BeanUtils.copyProperties(defaultNameAndActiveDto, updateSpeciality,"id");
+			BeanUtils.copyProperties(specialityDto, updateSpeciality,"id");
 			updateSpeciality.setUpdatedAt(new Date());
 			updateSpeciality.setUpdatedBy(getCurrentUserId().getId());
 			return specialityRepository.save(updateSpeciality);

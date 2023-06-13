@@ -151,7 +151,6 @@ public class ExaminationServiceImpl implements ExaminationService{
 	@SuppressWarnings("null")
 	@Override
 	public Examination insertDiagnostic(Long id, String diagnostic) throws NotFoundException {
-		System.out.print("getted id" + id);
 		Examination examination = repo.findExaminationById(id).orElse(null);
 		/*if(examination != null) {
 			throw new NotFoundException("Consultation non trouvée");
@@ -160,6 +159,6 @@ public class ExaminationServiceImpl implements ExaminationService{
 		//examination.setConclusion(diagnostic);
 		//repo.save(examination);
 		return examination;*/
-		return null;
+		return examination;
 	}
 }

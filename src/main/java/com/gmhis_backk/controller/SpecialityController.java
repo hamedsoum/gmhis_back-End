@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.gmhis_backk.domain.Speciality;
 import com.gmhis_backk.domain.User;
-import com.gmhis_backk.dto.DefaultNameAndActiveDto;
+import com.gmhis_backk.dto.SpecialityDto;
 import com.gmhis_backk.exception.domain.ApplicationErrorException;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
@@ -50,7 +52,6 @@ public class SpecialityController {
 	@GetMapping("/list")
 	@ApiOperation("liste paginee de toutes les specilialites  dans le systeme")
 	public ResponseEntity<Map<String, Object>>getAllSpeciality(
-			
 			@RequestParam(required = false, defaultValue = "") String name,
 			@RequestParam(required = false, defaultValue = "") String active,
 			@RequestParam(defaultValue = "0") int page,
@@ -119,17 +120,17 @@ public class SpecialityController {
 	
 	@PostMapping("/add")
 	@ApiOperation("Ajouter une specialite")
-	public ResponseEntity<Speciality> addConvnetion(@RequestBody DefaultNameAndActiveDto defaultNameAndActiveDto) throws ResourceNameAlreadyExistException,
+	public ResponseEntity<Speciality> addConvnetion(@Valid @RequestBody SpecialityDto specialityDto) throws ResourceNameAlreadyExistException,
 	ResourceNotFoundByIdException {
-		Speciality convention = conventionService.addSpeciality(defaultNameAndActiveDto);
+		Speciality convention = conventionService.addSpeciality(specialityDto);
 		
 		return new ResponseEntity<Speciality>(convention,HttpStatus.OK);
 	}
 	
 	@PutMapping("/update/{id}")
 	@ApiOperation("Modifier une specialite dans le systeme")
-	public ResponseEntity<Speciality>updateSpeciality(@PathVariable("id") Long id,@RequestBody DefaultNameAndActiveDto defaultNameAndActiveDto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException{
-		Speciality updateSpeciality = conventionService.updateSpeciality(id, defaultNameAndActiveDto);
+	public ResponseEntity<Speciality>updateSpeciality(@PathVariable("id") Long id,@RequestBody SpecialityDto specilityDto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException{
+		Speciality updateSpeciality = conventionService.updateSpeciality(id, specilityDto);
 		return new ResponseEntity<>(updateSpeciality,HttpStatus.OK);
 	}
 	

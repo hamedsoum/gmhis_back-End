@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.gmhis_backk.domain.Speciality;
-import com.gmhis_backk.dto.DefaultNameAndActiveDto;
+import com.gmhis_backk.dto.SpecialityDto;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
 
@@ -26,9 +26,9 @@ public interface SpecialityService {
 		
 	  Optional<Speciality> getSpecialityDetails(Long id); 
 	  
-	  Speciality addSpeciality(DefaultNameAndActiveDto defaultNameAndActiveDto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException;
+	  Speciality addSpeciality(SpecialityDto specialityDto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException;
 		
-	  Speciality updateSpeciality(Long id,DefaultNameAndActiveDto defaultNameAndActiveDto) throws ResourceNotFoundByIdException, ResourceNameAlreadyExistException;
+	  Speciality updateSpeciality(Long id,SpecialityDto specialityDto) throws ResourceNotFoundByIdException, ResourceNameAlreadyExistException;
 }
 
 
