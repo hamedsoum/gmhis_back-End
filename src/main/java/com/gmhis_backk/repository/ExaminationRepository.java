@@ -53,6 +53,6 @@ public interface ExaminationRepository extends JpaRepository<Examination, Long> 
 	@Query(value = "select * from  examination e where e.admission_id = :id  order by e.id desc LIMIT 0,1", nativeQuery = true)
 	public Examination findLastExamination(Long id);
 	
-	@Query(value="select * from Examination e where e.id = :id LIMIT 0,1",nativeQuery=true)
-	public Optional<Examination> findExaminationById(Long id);
+	@Query(value="select e from Examination e where e.id = :id")
+	public Optional<Examination> findExaminationById(@Param("id") Long id);
 }

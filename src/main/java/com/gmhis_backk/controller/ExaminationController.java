@@ -1,15 +1,12 @@
 package com.gmhis_backk.controller;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
+import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -66,7 +63,7 @@ public class ExaminationController {
 	
 	private Examination examination = null;
 
-	private Object dayNumberBetweenAdmissionFirstExaminationAndCurrentDate;
+	//private Object dayNumberBetweenAdmissionFirstExaminationAndCurrentDate;
 
 	
 	@ApiOperation(value = "Ajouter une consultation d'un patient")
@@ -92,7 +89,7 @@ public class ExaminationController {
 				examination.setExaminationReasons(examinationDto.getExaminationReasons());
 				examination.setExaminationType(examinationDto.getExaminationType());
 				examination.setConclusionExamResult(examinationDto.getConclusionExamResult());
-				examination.setFacilityId(this.getCurrentUserId().getFacilityId());
+				examination.setFacilityId(UUID.fromString(this.getCurrentUserId().getFacilityId()));
 				examination.setHistory(examinationDto.getHistory());
 				examination.setPratician(practician);
 	      		examination.setStartDate(new Date());
@@ -229,7 +226,7 @@ public class ExaminationController {
 	}
 	
 	@PutMapping("/update-diagnostic/{examinationId}")
-	@ApiOperation(value="Inserer le diagnostic d'une consultation")
+	@ApiOperation("Inserer le diagnostic d'une consultation")
 	public ResponseEntity<Examination> updateExamination(@PathVariable Long examinationId,@RequestBody() String diagnostic) throws NotFoundException{
 		Examination examination = examinationService.insertDiagnostic(examinationId,diagnostic);
 		return ResponseEntity.accepted().body(examination);

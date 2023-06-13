@@ -4,7 +4,6 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
@@ -14,6 +13,7 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @author pascal
@@ -41,8 +41,8 @@ public class Examination implements Serializable {
 	@Column(name = "examination_type")
 	private String examinationType;
 
-	 @Column(name = "facility_id", nullable = true)
-		private String facilityId;
+	@Column(name = "facility_id", nullable = false)
+	private UUID facilityId;
 		    
 	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 	@ManyToOne(fetch = FetchType.LAZY)

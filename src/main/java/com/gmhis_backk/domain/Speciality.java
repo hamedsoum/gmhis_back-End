@@ -2,6 +2,7 @@ package com.gmhis_backk.domain;
 
 import java.io.Serializable;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
@@ -48,7 +49,10 @@ public class Speciality implements Serializable {
 	@Column(name="deleted_by")
 	private Long deletedBy;
 
+	@NotNull(message = "Le champ nom est requis")
 	private String name;
+	
+	private String description;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "updated_at")
