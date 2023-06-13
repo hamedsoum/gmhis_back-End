@@ -31,8 +31,7 @@ public class Examination implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Lob
-	@Column
+	@Column(nullable=true)
 	private String conclusion;
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -95,5 +94,6 @@ public class Examination implements Serializable {
 	@JsonBackReference(value = "examination-prescription")
 	@OneToMany(mappedBy = "examination")
 	private List<Prescription> prescriptions;
+	
 
 }
