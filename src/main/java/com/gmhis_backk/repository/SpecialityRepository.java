@@ -21,4 +21,8 @@ public interface SpecialityRepository extends JpaRepository<Speciality, Long> {
 	@Query(value = "select s from Speciality s where s.name like %:name% and s.active = :active")
 	public Page<Speciality> findByActive(@Param("name") String name,
 			@Param("active") String active, Pageable p);
+	
+	
+	@Query(value="select s from Speciality s where s.id = :id")
+	public Speciality findByPraticianId(@Param("id") Long id);
 }

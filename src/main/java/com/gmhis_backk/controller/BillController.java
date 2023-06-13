@@ -724,7 +724,7 @@ public class BillController {
 		billMap.put("accountNumber", bill.getAccountNumber());
 		billMap.put("admissionNumber", bill.getAdmission().getAdmissionNumber());
 		billMap.put("facilityName", bill.getAdmission().getFacility().getName());
-		billMap.put("facilityLogo", this.facilityLogoInBase64(bill.getAdmission().getFacility().getId()));
+		billMap.put("facilityLogo", this.facilityLogoInBase64(UUID.fromString( bill.getAdmission().getFacility().getId())));
 		billMap.put("admissionId", bill.getAdmission().getId());
 		billMap.put("admissionStartDate", bill.getAdmission().getAdmissionStartDate());
 		billMap.put("admissionEndDate", bill.getAdmission().getAdmissionEndDate());

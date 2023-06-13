@@ -2,8 +2,6 @@ package com.gmhis_backk.service;
 
 import java.util.UUID;
 
-import javax.mail.Multipart;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;

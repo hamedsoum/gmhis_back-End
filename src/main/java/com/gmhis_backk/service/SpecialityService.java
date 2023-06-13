@@ -29,6 +29,8 @@ public interface SpecialityService {
 	  Speciality addSpeciality(SpecialityDto specialityDto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException;
 		
 	  Speciality updateSpeciality(Long id,SpecialityDto specialityDto) throws ResourceNotFoundByIdException, ResourceNameAlreadyExistException;
+	  
+	  Speciality getSpecialityByPraticianId(Long praticianServiceId);
 }
 
 

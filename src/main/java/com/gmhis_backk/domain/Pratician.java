@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.Date;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * @author Pascal
@@ -34,8 +35,9 @@ public class Pratician implements Serializable {
 	private Boolean active;
 	
 	@JoinColumn(unique=true,name = "signature", nullable = true)
-	private Integer signature;
-
+	private String signature;
+	
+	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "last_updated_at", nullable = true)
 	private Date lastUpdatedAt;
@@ -64,12 +66,11 @@ public class Pratician implements Serializable {
 	private Long createdBy;
 
 	@JsonBackReference
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "speciality_id")
 	private Speciality speciality;
 	
-	@JsonBackReference
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "facility_id")
 	private Facility facility;
 
@@ -81,9 +82,11 @@ public class Pratician implements Serializable {
 	@Column(name="nom")
 	@NotNull(message="Le champ nom est requis")
 	private String nom;
+	
 	@Column(name="prenoms")
 	@NotNull(message="Le champ prénoms est requis")
 	private String prenoms;
+	
 	@NotNull(message="Le champ telephone est requis")
 	@Column(name="telephone",unique=true)
 	private String telephone;

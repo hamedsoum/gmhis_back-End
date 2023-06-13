@@ -98,5 +98,11 @@ public class PracticianController {
 		
 		return new ResponseEntity<>(response,HttpStatus.OK);
 	}
-		
+	
+	@ApiOperation("Recupérer la liste des praticien d'une spécialité donnée")
+	@GetMapping("/getbyspeciality/{specialityId}")
+	public ResponseEntity<List<Pratician>> praticianBySpecility(@PathVariable Long specialityId){
+		List<Pratician> praticians = practicianService.findActivePracticiansByService(specialityId);
+		return new ResponseEntity<>(praticians, HttpStatus.OK);
+	}
 }

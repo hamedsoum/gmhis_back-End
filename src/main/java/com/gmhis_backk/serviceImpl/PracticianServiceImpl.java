@@ -9,10 +9,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import javax.mail.MessagingException;
-import javax.management.openmbean.KeyAlreadyExistsException;
-
 import org.apache.commons.lang3.RandomStringUtils;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -34,8 +31,6 @@ import com.gmhis_backk.exception.domain.TelephoneExistException;
 import com.gmhis_backk.exception.domain.UserNotFoundException;
 import com.gmhis_backk.exception.domain.UsernameExistException;
 import com.gmhis_backk.repository.PracticianRepository;
-import com.gmhis_backk.repository.RoleRepository;
-import com.gmhis_backk.repository.SpecialityRepository;
 import com.gmhis_backk.service.FacilityService;
 import com.gmhis_backk.service.PracticianService;
 import com.gmhis_backk.service.RoleService;
@@ -117,7 +112,7 @@ public class PracticianServiceImpl implements PracticianService{
 			roles.add(role.getId());
 			userDto.setLastName(pratician.getPrenoms());
 			userDto.setFirstName(pratician.getNom());
-			userDto.setFacilityId(pratician.getFacility().getId());
+			userDto.setFacilityId(UUID.fromString(pratician.getFacility().getId()));
 			userDto.setEmail(pratician.getEmail());
 			userDto.setPassword(pratician.getNom());
 			userDto.setUsername(pratician.getNom());
@@ -159,7 +154,7 @@ public class PracticianServiceImpl implements PracticianService{
 
 	@Override
 	public Page<Pratician> findAllP(Pageable pageable) {
-		Page<Pratician> practicians= repo.findAll(pageable);
+		Page<Pratician> practicians = repo.findAll(pageable);
 		//practicians0
 		return practicians;
 	}
@@ -228,6 +223,11 @@ public class PracticianServiceImpl implements PracticianService{
 			
 		});
 		return practiciansList;
+	}
+	
+	public List<Pratician> findPracticiansBySpeciality(Long specialityId){
+		List<Pratician> praticians  = repo.findPracticiansBySpeciality(specialityId);
+		return praticians;
 	}
 	
 }

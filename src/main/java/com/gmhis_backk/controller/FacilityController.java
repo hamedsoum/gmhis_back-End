@@ -87,7 +87,7 @@ public class FacilityController {
 		facilityDto.setEmail(email);
 		facilityDto.setShortName(shortName);
 		Facility facility = facilityService.saveFacility(facilityDto);
-		fileLocationService.save(logo, logo.getBytes(), logo.getOriginalFilename(), logo.getContentType(),facility.getId());
+		fileLocationService.save(logo, logo.getBytes(), logo.getOriginalFilename(), logo.getContentType(),UUID.fromString(facility.getId()));
 		return new ResponseEntity<Facility>(facility, HttpStatus.OK);
 	} 
 	
@@ -237,21 +237,21 @@ public class FacilityController {
 //		response.put("logo", basse64);
 //
 //	}
-	response.put("id", falicity.getId());
-	response.put("name", falicity.getName());
-	response.put("active", falicity.getActive());
-	response.put("dhisCode", falicity.getDhisCode());
-	response.put("latitude", falicity.getLatitude());
-	response.put("localCode", falicity.getLocalCode());
-	response.put("longitude", falicity.getLongitude());
-	response.put("shortName", falicity.getShortName());
-	response.put("contact", falicity.getContact());
-	response.put("address", falicity.getAddress());
-	response.put("facilityTypeName", falicity.getFacilityType().getName());
-	response.put("facilityCategoryName", falicity.getFacilityCategory().getName());
-	response.put("facilityTypeId", falicity.getFacilityType().getId());
-	response.put("facilityCategoryId", falicity.getFacilityCategory().getId());
-	return new ResponseEntity<>(response,HttpStatus.OK);
+		response.put("id", falicity.getId());
+		response.put("name", falicity.getName());
+		response.put("active", falicity.getActive());
+		response.put("dhisCode", falicity.getDhisCode());
+		response.put("latitude", falicity.getLatitude());
+		response.put("localCode", falicity.getLocalCode());
+		response.put("longitude", falicity.getLongitude());
+		response.put("shortName", falicity.getShortName());
+		response.put("contact", falicity.getContact());
+		response.put("address", falicity.getAddress());
+		response.put("facilityTypeName", falicity.getFacilityType().getName());
+		response.put("facilityCategoryName", falicity.getFacilityCategory().getName());
+		response.put("facilityTypeId", falicity.getFacilityType().getId());
+		response.put("facilityCategoryId", falicity.getFacilityCategory().getId());
+		return new ResponseEntity<>(response,HttpStatus.OK);
 		
 	}
 	
