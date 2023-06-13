@@ -13,6 +13,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * @author Hamed soumahoro
@@ -31,7 +32,7 @@ public class Facility implements Serializable {
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(name = "id", updatable = false, nullable = false, columnDefinition = "VARCHAR(36)")
     @Type(type = "uuid-char")
-	private String id;
+	private UUID id;
 
 	@Column
 	private Boolean active;

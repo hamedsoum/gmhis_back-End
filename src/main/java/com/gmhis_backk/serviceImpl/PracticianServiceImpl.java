@@ -112,7 +112,7 @@ public class PracticianServiceImpl implements PracticianService{
 			roles.add(role.getId());
 			userDto.setLastName(pratician.getPrenoms());
 			userDto.setFirstName(pratician.getNom());
-			userDto.setFacilityId(UUID.fromString(pratician.getFacility().getId()));
+			userDto.setFacilityId(pratician.getFacility().getId());
 			userDto.setEmail(pratician.getEmail());
 			userDto.setPassword(pratician.getNom());
 			userDto.setUsername(pratician.getNom());

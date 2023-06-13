@@ -83,9 +83,10 @@ public class PatientController {
 
 
 		Page<Patient> pPatients = null;		
-
 		if (ObjectUtils.isNotEmpty(firstName) || ObjectUtils.isNotEmpty(lastName) || ObjectUtils.isNotEmpty(cellPhone) || ObjectUtils.isNotEmpty(correspondant) || ObjectUtils.isNotEmpty(emergencyContact) || ObjectUtils.isNotEmpty(patientExternalId) || ObjectUtils.isNotEmpty(idCardNumber)  ) {
 			pPatients = patientService.findByFullName(firstName, lastName, cellPhone, correspondant, emergencyContact,patientExternalId,idCardNumber, paging);
+			System.out.println(pPatients);
+			
 		} else {
 			throw new ResourceNotFoundByIdException("Aucun Resultat");
 }
