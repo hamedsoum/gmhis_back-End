@@ -103,5 +103,9 @@ public class SpecialityServiceImpl implements SpecialityService {
 			updateSpeciality.setUpdatedBy(getCurrentUserId().getId());
 			return specialityRepository.save(updateSpeciality);
 	}
+	
+	public Speciality getSpecialityByPraticianId(Long id) {
+		return specialityRepository.findByPraticianId(id);
+	}
 
 }

@@ -55,6 +55,7 @@ public interface PracticianService {
     
     public List<Pratician> findActivePracticiansByService(Long service);
     
+    public List<Pratician> findPracticiansBySpeciality(Long service);
     
 	
 }

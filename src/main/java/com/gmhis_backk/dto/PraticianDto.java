@@ -15,7 +15,7 @@ import javax.validation.constraints.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PraticianDto {
-	private Integer signature;
+	private String signature;
 	
 	@NotNull(message = "Le champ specialité est requis")
 	private Long speciliaty;

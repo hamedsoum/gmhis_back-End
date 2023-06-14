@@ -140,5 +140,11 @@ public class SpecialityController {
 		Optional<Speciality> convention = conventionService.getSpecialityDetails(id);
 		return new ResponseEntity<>(convention,HttpStatus.OK);
 	}
-
+	
+	@GetMapping("/speciality-by-pratician/{praticianServiceId}")
+	@ApiOperation("recuperation de la sp")
+	public ResponseEntity<Speciality> getSpecialityByPraticianId(@PathVariable Long praticianServiceId){
+		Speciality speciality = conventionService.getSpecialityByPraticianId(praticianServiceId);
+		return new ResponseEntity<>(speciality,HttpStatus.OK);
+	}
 }

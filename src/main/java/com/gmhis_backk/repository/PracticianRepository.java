@@ -88,4 +88,7 @@ public interface PracticianRepository extends JpaRepository<Pratician, Long>{
 	@Query(value="select p from Pratician p where p.telephone = :telephone")
 	public Optional<Pratician> findByTelephone(String telephone);
 	
+	@Query(value="select p from Pratician p where p.speciality.id = :speciality")
+	public List<Pratician> findPracticiansBySpeciality(@Param("speciality") Long speciality);
+	
 }
