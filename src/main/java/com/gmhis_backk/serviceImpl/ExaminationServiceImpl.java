@@ -152,13 +152,11 @@ public class ExaminationServiceImpl implements ExaminationService{
 	@Override
 	public Examination insertDiagnostic(Long id, String diagnostic) throws NotFoundException {
 		Examination examination = repo.findExaminationById(id).orElse(null);
-		/*if(examination != null) {
+		if(examination != null) {
 			throw new NotFoundException("Consultation non trouvée");
 		}
-		System.out.print("result getted" + examination.getId());
-		//examination.setConclusion(diagnostic);
-		//repo.save(examination);
-		return examination;*/
+		examination.setConclusion(diagnostic);
+		repo.save(examination);
 		return examination;
 	}
 }
