@@ -80,16 +80,25 @@ public class PatientController {
 		
 		Pageable paging = PageRequest.of(page, size, Sort.by(dir, sort[0]));
 
-
-
 		Page<Patient> pPatients = null;		
-		if (ObjectUtils.isNotEmpty(firstName) || ObjectUtils.isNotEmpty(lastName) || ObjectUtils.isNotEmpty(cellPhone) || ObjectUtils.isNotEmpty(correspondant) || ObjectUtils.isNotEmpty(emergencyContact) || ObjectUtils.isNotEmpty(patientExternalId) || ObjectUtils.isNotEmpty(idCardNumber)  ) {
-			pPatients = patientService.findByFullName(firstName, lastName, cellPhone, correspondant, emergencyContact,patientExternalId,idCardNumber, paging);
-			System.out.println(pPatients);
+		if (ObjectUtils.isNotEmpty(firstName) || ObjectUtils.isNotEmpty(lastName) || ObjectUtils.isNotEmpty(cellPhone) || ObjectUtils.isNotEmpty(correspondant) || ObjectUtils.isNotEmpty(emergencyContact)) {
+			pPatients = patientService.findByFullName(firstName, lastName, cellPhone, correspondant, emergencyContact,patientExternalId, paging);
+			if (ObjectUtils.isNotEmpty(patientExternalId)) {
+				pPatients = patientService.findByIdPatientNumber(patientExternalId, paging);
+			}else if (ObjectUtils.isNotEmpty(idCardNumber)) {
+				pPatients = patientService.findByIdCardNumber(idCardNumber, paging);
+			}
 			
-		} else {
+		}else if (ObjectUtils.isNotEmpty(patientExternalId)) {
+			pPatients = patientService.findByIdPatientNumber(patientExternalId, paging);
+		}
+		else if (ObjectUtils.isNotEmpty(idCardNumber)) {
+			System.out.println(idCardNumber);
+			pPatients = patientService.findByIdCardNumber(idCardNumber, paging);
+		}
+		else {
 			throw new ResourceNotFoundByIdException("Aucun Resultat");
-}
+		}
 		
 		List<Patient> lPatients = pPatients.getContent();
 

@@ -20,6 +20,9 @@ public class PraticianDto {
 	@NotNull(message = "Le champ specialité est requis")
 	private Long speciliaty;
 	
+	@NotNull(message = "Le champ category est requis")
+	private Long actCategoryID;
+	
 	@NotNull(message = "Le champ établissement est requis")
 	private UUID facility;
 	

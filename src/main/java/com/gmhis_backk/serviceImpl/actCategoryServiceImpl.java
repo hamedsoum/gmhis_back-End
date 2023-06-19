@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import com.gmhis_backk.AppUtils;
 import com.gmhis_backk.domain.ActCategory;
+import com.gmhis_backk.domain.Speciality;
 import com.gmhis_backk.dto.ActCategoryDto;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
@@ -34,7 +35,11 @@ public class actCategoryServiceImpl implements ActCategoryService {
 	@Autowired
 	UserRepository userRepository;
 
-
+	@Override
+	public Optional<ActCategory> findById(Long id) {
+		return actCategoryRepo.findById(id);
+	}
+	
 	@Override
 	public Page<ActCategory> findAllActCategory(Pageable pageable) {
 		return actCategoryRepo.findAll(pageable);
@@ -115,5 +120,7 @@ ActCategory updateActCategory = actCategoryRepo.findById(id).orElse(null);
 	public List<ActCategory> findAllActive() {
 		return actCategoryRepo.findAllActive();
 	}
+
+
 
 }

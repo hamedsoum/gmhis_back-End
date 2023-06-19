@@ -3,6 +3,8 @@ package com.gmhis_backk.domain;
 import java.io.Serializable;
 import javax.persistence.*;
 
+import org.hibernate.annotations.Type;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -42,6 +44,7 @@ public class Examination implements Serializable {
 	private String examinationType;
 
 	@Column(name = "facility_id", nullable = false)
+	  @Type(type = "uuid-char")
 	private UUID facilityId;
 		    
 	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})

@@ -81,7 +81,7 @@ public class ExaminationController {
 				if (practician == null) {
 					throw new ResourceNotFoundByIdException("aucun practician trouvé pour l'utilisateur connecte " );
 				}
-				
+				System.out.println(this.getCurrentUserId().getFacilityId());
 				examination = new Examination();
 				examination.setAdmission(admission);
 				examination.setConclusion(examinationDto.getConclusion());

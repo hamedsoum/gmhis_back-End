@@ -131,7 +131,7 @@ public class ExaminationServiceImpl implements ExaminationService{
 	public Long dayNumberBetweenAdmissionFirstExaminationAndCurrentDate(Long admissionID) throws Exception {
 		Examination admissionFirstExamination = repo.findAdmissionFirstExamination(admissionID);
 		if (admissionFirstExamination == null) {
-			throw new Exception("Aucune consultation pour cette admission");
+			return null;
 		}
 		  SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
 		  Date examDate = new Date(admissionFirstExamination.getStartDate().getTime());
@@ -144,15 +144,14 @@ public class ExaminationServiceImpl implements ExaminationService{
 
 	@Override
 	public Examination findAdmissionLastExamination(Long id) {
-		// TODO Auto-generated method stub
 		return repo.findLastExamination(id);
 	}
 
-	@SuppressWarnings("null")
 	@Override
 	public Examination insertDiagnostic(Long id, String diagnostic) throws NotFoundException {
+		System.out.println(id);
 		Examination examination = repo.findExaminationById(id).orElse(null);
-		if(examination != null) {
+		if(examination == null) {
 			throw new NotFoundException("Consultation non trouvée");
 		}
 		examination.setConclusion(diagnostic);

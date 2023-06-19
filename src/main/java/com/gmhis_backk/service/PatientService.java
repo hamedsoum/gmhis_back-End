@@ -23,24 +23,23 @@ import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
 @Service
 @Transactional
 public interface PatientService {
+	public Page<Patient> findByIdPatientNumber(String patientNumber, Pageable pageable);
+
+	public Page<Patient> findByIdCardNumber(String idCardNumber, Pageable pageable);
 
 	public Patient save(PatientDTO patientDto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException, EmailExistException;
 	
 	public Patient update(Long id,PatientDTO patientDto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException;
 
-
 	public Patient findById(Long id);
-
-	
 
 	public List<Patient> findAll();
 
 	public Page<Patient> findAll(Pageable pageable);
 
-
 	public String getLastExternalId(int prefixLength);
 	
-	public Page<Patient> findByFullName(String firstName, String lastName,String cellPhone1,String correspondant,String emergencyContact,String patientExternalId,String idCardNumber, Pageable pageable);
+	public Page<Patient> findByFullName(String firstName, String lastName,String cellPhone1,String correspondant,String emergencyContact,String patientExternalId, Pageable pageable);
 
 	public Examination findLastAdmission(Long id);
 	

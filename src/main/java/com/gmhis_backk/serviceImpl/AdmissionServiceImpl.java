@@ -83,7 +83,7 @@ public class AdmissionServiceImpl implements AdmissionService{
 //		
 		com.gmhis_backk.domain.Service service = serviceService.findServiceById(admissionDto.getService());
 		if (service == null) {
-			throw new ResourceNotFoundByIdException("aucune service trouvé pour l'identifiant " );
+			throw new ResourceNotFoundByIdException("aucun service trouvé pour l'identifiant " );
 		}
 //		
 	    Act act = actService.findActById(admissionDto.getAct()).orElse(null);
@@ -95,7 +95,7 @@ public class AdmissionServiceImpl implements AdmissionService{
 		Pratician praticien = practicianService.findPracticianById(admissionDto.getPractician()).orElse(null);
 			
 			if (praticien == null) {
-				throw new ResourceNotFoundByIdException("le practicien n'existe pas en base " );
+				throw new ResourceNotFoundByIdException("le practicien n'existe pas en base" );
 			}
 			
 			
@@ -120,8 +120,6 @@ public class AdmissionServiceImpl implements AdmissionService{
 	
 	@Override
 	public Admission updateAdmission(Long id, AdmissionDTO a)throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException{
-
-		
 		return null;
 	}
 
@@ -159,7 +157,6 @@ public class AdmissionServiceImpl implements AdmissionService{
 	
 	@Override
 	public void removeAdmissionAct(Admission admission) {
-		
 		repo.removeAdmissionAct(admission.getId(), admission.getAct().getId());
 	}
 	

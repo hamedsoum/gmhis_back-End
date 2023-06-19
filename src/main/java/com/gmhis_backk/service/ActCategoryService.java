@@ -28,6 +28,8 @@ public interface ActCategoryService {
 	  List<ActCategory> findAllActCategories();
 
 	  void deleteActCategory(Integer id);
+	  
+	  Optional<ActCategory> findById(Long id); 
 		
 	  Optional<ActCategory> getActCategoryDetails(Long id); 
 	  

@@ -71,7 +71,6 @@ public interface AdmissionRepository extends JpaRepository<Admission, Long> {
 	public Page<Admission> findAdmissionsByIdCardNumber(@Param("idCardNumber") String idCardNumber,
 			@Param("admissionStatus") String admissionStatus,@Param("facilityId") String facilityId, Pageable pageable);
 
-	@Query(value = "SELECT a FROM Admission a WHERE a.practician.id = :practician and a.admissionStatus= :admissionStatus AND a.facilityId =:facilityId")
 	public Page<Admission> findAdmissionsByPractician(@Param("practician") Long practician,
 			@Param("admissionStatus") String admissionStatus,@Param("facilityId") String facilityId, Pageable pageable);
 
@@ -109,28 +108,28 @@ public interface AdmissionRepository extends JpaRepository<Admission, Long> {
 	@Query(value = "SELECT * FROM admission a, bill b, payment p, pratician pr, service s  WHERE a.id=b.admission_id and b.id = p.bill_id and a.service_id = pr.speciality_id and s.waiting_room_id = :waiting_room and a.admission_status = 'B' and b.bill_status = 'C' and a.admission_number like %:admissionNumber% and admission_end_date is null GROUP by a.id ", nativeQuery = true)
 	public Page<Admission> findAdmissionsInQueueByAdmissionNumber(String admissionNumber, Long waiting_room,Pageable pageable);
 
-	@Query(value = "SELECT * FROM admission a, bill b, payment p, patient pa, pratician pr, service s  WHERE a.id=b.admission_id and b.id = p.bill_id and a.patient_id = pa.id  and a.service_id = pr.specility_id and s.waiting_room_id = :waiting_room  and a.admission_status = 'B' and b.bill_status = 'C' and pa.patient_external_id like %:patientExternalId% and admission_end_date is null  GROUP by a.id ", nativeQuery = true)
+	@Query(value = "SELECT * FROM admission a, bill b, payment p, patient pa, pratician pr, service s  WHERE a.id=b.admission_id and b.id = p.bill_id and a.patient_id = pa.id  and a.service_id = pr.speciality_id and s.waiting_room_id = :waiting_room  and a.admission_status = 'B' and b.bill_status = 'C' and pa.patient_external_id like %:patientExternalId% and admission_end_date is null  GROUP by a.id ", nativeQuery = true)
 	public Page<Admission> findAdmissionsInQueueByPatientExternalId(String patientExternalId, Long waiting_room, Pageable pageable);
 
-	@Query(value = "SELECT * FROM admission a, bill b, payment p, patient pa, pratician pr, service s  WHERE a.id=b.admission_id and b.id = p.bill_id and a.patient_id = pa.id  and a.service_id = pr.specility_id and s.waiting_room_id = :waiting_room  and a.admission_status = 'B' and b.bill_status = 'C' and (pa.cell_phone_1 like %:cellPhone% and pa.cell_phone_2 like %:cellPhone%) and admission_end_date is null  GROUP by a.id ", nativeQuery = true)
+	@Query(value = "SELECT * FROM admission a, bill b, payment p, patient pa, pratician pr, service s  WHERE a.id=b.admission_id and b.id = p.bill_id and a.patient_id = pa.id  and a.service_id = pr.speciality_id and s.waiting_room_id = :waiting_room  and a.admission_status = 'B' and b.bill_status = 'C' and (pa.cell_phone_1 like %:cellPhone% and pa.cell_phone_2 like %:cellPhone%) and admission_end_date is null  GROUP by a.id ", nativeQuery = true)
 	public Page<Admission> findAdmissionsInQueueByCellPhone(String cellPhone,Long waiting_room, Pageable pageable);
 
-	@Query(value = "SELECT * FROM admission a, bill b, payment p, patient pa, pratician pr, service s  WHERE a.id=b.admission_id and b.id = p.bill_id and a.patient_id = pa.id  and a.service_id = pr.specility_id and s.waiting_room_id = :waiting_room  and a.admission_status = 'B' and b.bill_status = 'C' and pa.cnam_number like %:cnamNumber% and admission_end_date is null  GROUP by a.id ", nativeQuery = true)
+	@Query(value = "SELECT * FROM admission a, bill b, payment p, patient pa, pratician pr, service s  WHERE a.id=b.admission_id and b.id = p.bill_id and a.patient_id = pa.id  and a.service_id = pr.speciality_id and s.waiting_room_id = :waiting_room  and a.admission_status = 'B' and b.bill_status = 'C' and pa.cnam_number like %:cnamNumber% and admission_end_date is null  GROUP by a.id ", nativeQuery = true)
 	public Page<Admission> findAdmissionsInQueueByCnamNumber(String cnamNumber, Long waiting_room, Pageable pageable);
 
-	@Query(value = "SELECT * FROM admission a, bill b, payment p, patient pa, pratician pr, service s  WHERE a.id=b.admission_id and b.id = p.bill_id and a.patient_id = pa.id  and a.service_id = pr.specility_id and s.waiting_room_id = :waiting_room  and a.admission_status = 'B' and b.bill_status = 'C' and pa.idcard_number like %:idCardNumber% and admission_end_date is null  GROUP by a.id ", nativeQuery = true)
+	@Query(value = "SELECT * FROM admission a, bill b, payment p, patient pa, pratician pr, service s  WHERE a.id=b.admission_id and b.id = p.bill_id and a.patient_id = pa.id  and a.service_id = pr.speciality_id and s.waiting_room_id = :waiting_room  and a.admission_status = 'B' and b.bill_status = 'C' and pa.idcard_number like %:idCardNumber% and admission_end_date is null  GROUP by a.id ", nativeQuery = true)
 	public Page<Admission> findAdmissionsInQueueByIdCardNumber(String idCardNumber, Long waiting_room, Pageable pageable);
 	
-	@Query(value = "SELECT * FROM admission a, bill b, payment p, user u, pratician pr, service s WHERE a.id=b.admission_id and b.id = p.bill_id and a.user_id = u.id and a.service_id = pr.specility_id and s.waiting_room_id = :waiting_room  and a.admission_status = 'B' and b.bill_status = 'C' and u.id = :practician and admission_end_date is null  GROUP by a.id ", nativeQuery = true)
+	@Query(value = "SELECT * FROM admission a, bill b, payment p, user u, pratician pr, service s WHERE a.id=b.admission_id and b.id = p.bill_id and a.user_id = u.id and a.service_id = pr.speciality_id and s.waiting_room_id = :waiting_room  and a.admission_status = 'B' and b.bill_status = 'C' and u.id = :practician and admission_end_date is null  GROUP by a.id ", nativeQuery = true)
 	public Page<Admission> findAdmissionsInQueueByPractician(Long practician, Long waiting_room, Pageable pageable);
 
-	@Query(value = "SELECT * FROM admission a, bill b, payment p, act ac, pratician pr, service s WHERE a.id=b.admission_id and b.id = p.bill_id and a.act_id = ac.id and a.service_id = pr.specility_id and s.waiting_room_id = :waiting_room and a.admission_status = 'B' and b.bill_status = 'C' and ac.id = :act and admission_end_date is null  GROUP by a.id ", nativeQuery = true)
+	@Query(value = "SELECT * FROM admission a, bill b, payment p, act ac, pratician pr, service s WHERE a.id=b.admission_id and b.id = p.bill_id and a.act_id = ac.id and a.service_id = pr.speciality_id and s.waiting_room_id = :waiting_room and a.admission_status = 'B' and b.bill_status = 'C' and ac.id = :act and admission_end_date is null  GROUP by a.id ", nativeQuery = true)
 	public Page<Admission> findAdmissionsInQueueByAct(Long act, Long waiting_room, Pageable pageable);
 
-	@Query(value = "SELECT * FROM admission a, bill b, payment p, pratician pr, service s WHERE a.id=b.admission_id and b.id = p.bill_id and a.service_id = s.id and a.service_id = pr.specility_id and s.waiting_room_id = :waiting_room and a.admission_status = 'B' and b.bill_status = 'C' and s.id = :service and admission_end_date is null  GROUP by a.id ", nativeQuery = true)
+	@Query(value = "SELECT * FROM admission a, bill b, payment p, pratician pr, service s WHERE a.id=b.admission_id and b.id = p.bill_id and a.service_id = s.id and a.service_id = pr.speciality_id and s.waiting_room_id = :waiting_room and a.admission_status = 'B' and b.bill_status = 'C' and s.id = :service and admission_end_date is null  GROUP by a.id ", nativeQuery = true)
 	public Page<Admission> findAdmissionsInQueueByService(Long service, Long waiting_room, Pageable pageable);
 	
-	@Query(value = "SELECT * FROM admission a, bill b, payment p, pratician pr, service s  WHERE a.id=b.admission_id and b.id = p.bill_id and a.service_id = pr.specility_id and s.waiting_room_id = :waiting_room and a.admission_status = 'B' and b.bill_status = 'C' and a.created_at between :fromDate and :toDate and admission_end_date is null GROUP by a.id ", nativeQuery = true)
+	@Query(value = "SELECT * FROM admission a, bill b, payment p, pratician pr, service s  WHERE a.id=b.admission_id and b.id = p.bill_id and a.service_id = pr.speciality_id and s.waiting_room_id = :waiting_room and a.admission_status = 'B' and b.bill_status = 'C' and a.created_at between :fromDate and :toDate and admission_end_date is null GROUP by a.id ", nativeQuery = true)
 	public Page<Admission> findAdmissionInQueueByDate(@Param("fromDate") Date fromDate, @Param("toDate") Date toDate, Long waiting_room, Pageable pageable);
 	
 }

@@ -48,9 +48,11 @@ public class PracticianController {
 
 		practicianService.findActivePracticians().stream().forEach(practicianDto -> {
 			Map<String, Object> practicianMap = new HashMap<>();
-			practicianMap.put("userId", practicianDto.getId());
+			practicianMap.put("id", practicianDto.getId());
 			practicianMap.put("userFirstName", practicianDto.getUser().getFirstName());
 			practicianMap.put("userLastName", practicianDto.getUser().getLastName());
+			practicianMap.put("actCategoryId", practicianDto.getActCategory().getId());
+			practicianMap.put("actCategoryName", practicianDto.getActCategory().getName());
 			practicianList.add(practicianMap);
 		});
 
@@ -84,7 +86,6 @@ public class PracticianController {
 		practicianPage = practicianService.findAllP(paging);
 		
 		if( ObjectUtils.isNotEmpty(nom) ||  ObjectUtils.isNotEmpty(prenoms) ) {
-			//practicianPage = practicianService.findByNomAndPrenoms(nom,prenoms);
 		}
 	
 		response.put("items", practicianPage.getContent());

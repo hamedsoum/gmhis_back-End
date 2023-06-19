@@ -73,7 +73,6 @@ public class ActCategoryController {
 			@RequestParam(defaultValue = "id,desc") String[] sort) throws ApplicationErrorException {
 		System.out.println(name);
 		System.out.println(active);
-//        List<ActCategory> actcategoryList = new ArrayList<ActCategory>();
 		Map<String, Object> response = new HashMap<>();
 
 		Sort.Direction dir = sort[1].equalsIgnoreCase("asc") ? dir = Sort.Direction.ASC : Sort.Direction.DESC;

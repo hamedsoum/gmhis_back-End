@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gmhis_backk.domain.ActCategory;
 import com.gmhis_backk.domain.Facility;
 import com.gmhis_backk.domain.Pratician;
 import com.gmhis_backk.domain.Role;
@@ -31,6 +32,7 @@ import com.gmhis_backk.exception.domain.TelephoneExistException;
 import com.gmhis_backk.exception.domain.UserNotFoundException;
 import com.gmhis_backk.exception.domain.UsernameExistException;
 import com.gmhis_backk.repository.PracticianRepository;
+import com.gmhis_backk.service.ActCategoryService;
 import com.gmhis_backk.service.FacilityService;
 import com.gmhis_backk.service.PracticianService;
 import com.gmhis_backk.service.RoleService;
@@ -46,7 +48,9 @@ import com.gmhis_backk.service.UserService;
 @Service
 @Transactional
 public class PracticianServiceImpl implements PracticianService{
-
+	
+	@Autowired
+	private ActCategoryService actCategoryService;
 	@Autowired
 	private PracticianRepository repo;
 	@Autowired
@@ -79,22 +83,17 @@ public class PracticianServiceImpl implements PracticianService{
 		
 		BeanUtils.copyProperties(praticianDto, pratician,"id");
 		
+		
 		Speciality speciality = specialityService.findById(praticianDto.getSpeciliaty()).orElse(null);
-		
-		if(speciality == null) {
-			throw new ResourceNotFoundByIdException("Spécialité inexistante");
-		}
-		
-		
+		if(speciality == null) {throw new ResourceNotFoundByIdException("Spécialité inexistante");}
 		pratician.setSpeciality(speciality);
 		
+		ActCategory actCategory = actCategoryService.findById(praticianDto.getActCategoryID()).orElse(null);
+		if(actCategory == null) {throw new ResourceNotFoundByIdException("category d'act inexistant");}
+		pratician.setActCategory(actCategory);
+		
 		Facility facility = facilityService.findFacilityById(praticianDto.getFacility()).orElse(null);
-		
-		if(facility == null) {
-			throw new ResourceNotFoundByIdException("Centre inexistant");
-		}
-		
-		
+		if(facility == null) {throw new ResourceNotFoundByIdException("Centre de sante inexistant");}
 		pratician.setFacility(facility);
 		pratician.setCreatedAt(new Date());
 		pratician.setPraticianNumber(this.generateSerialNumber());

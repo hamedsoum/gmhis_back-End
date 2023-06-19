@@ -27,7 +27,6 @@ import com.gmhis_backk.dto.PatientDTO;
 import com.gmhis_backk.exception.domain.EmailExistException;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
-import com.gmhis_backk.repository.AdmissionRepository;
 import com.gmhis_backk.repository.CityRepository;
 import com.gmhis_backk.repository.CountryRepository;
 import com.gmhis_backk.repository.InsuranceSubscriberRepository;
@@ -81,26 +80,26 @@ public class PatientServiceImpl implements PatientService {
 	}
 	
 	@Override
+	public Page<Patient> findByIdPatientNumber(String patientNumber, Pageable pageable) {
+		return patientRepository.findByIPatientNumber(patientNumber, pageable);
+	}
+	
+	@Override
+	public Page<Patient> findByIdCardNumber(String idCardNumber, Pageable pageable) {
+		return patientRepository.findByIdCardNumber(idCardNumber, pageable);
+	}
+	
+	@Override
 	@Transactional(rollbackFor = Exception.class)
 
 	public Patient save(PatientDTO patientdto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException,EmailExistException {
-		//if(ObjectUtils.isEmpty(patientdto.getEmail()) || patientdto.getEmail() == null) {
-//			throw new ResourceNotFoundByIdException("l'adresse email est requise");
-//		}else {
-//		 Boolean isEmailUsed =	patientRepository.findByEmail(patientdto.getEmail()).isEmpty();
-//		 if(!isEmailUsed) throw new ResourceNotFoundByIdException("Email deja utilise");
-//		}
-		
-		
+
 		if(patientdto.getEmail() != null) {
 			Boolean isEmailUsed =	patientRepository.findByEmail(patientdto.getEmail()).isEmpty();
 			if(!isEmailUsed) throw new ResourceNotFoundByIdException("Email deja utilise");
 		}
 		
-		
-		
 		if(ObjectUtils.isEmpty(patientdto.getCellPhone1()) || patientdto.getCellPhone1() == null) {
-			//throw new ResourceNotFoundByIdException("le numero de telephone est requis");
 		}else {
 			 Boolean isPhone1Used =	patientRepository.findByCellPhone1(patientdto.getCellPhone1()).isEmpty();
 			 System.out.print("Le resultat de la recherche est : "+isPhone1Used);
@@ -122,7 +121,6 @@ public class PatientServiceImpl implements PatientService {
 			BeanUtils.copyProperties(patientdto, patient, "id");
 			if (patientdto.getInsurances().size() != 0) patient.setIsAssured(true);
 		    String patientNumber = this.getPatientNumber();
-		    //System.out.print(patientNumber);
 		    patient.setPatientExternalId(patientNumber);
 		    
 
@@ -135,7 +133,6 @@ public class PatientServiceImpl implements PatientService {
 				patient.setCity(city);
 			}
 		
-			
 			if(patientdto.getSolde() != null) {
 				if(patientdto.getSolde() > 0) {
 					patient.setSolde(patientdto.getSolde());
@@ -217,8 +214,8 @@ public class PatientServiceImpl implements PatientService {
 	
 
 	@Override
-	public Page<Patient> findByFullName(String firstName, String lastName,String cellPhone1,String correspondant,String emergencyContact,String patientExternalId,String idCardNumber, Pageable pageable) {
-		return patientRepository.findByFullName(firstName,lastName,cellPhone1,correspondant,emergencyContact,patientExternalId,idCardNumber,pageable);
+	public Page<Patient> findByFullName(String firstName, String lastName,String cellPhone1,String correspondant,String emergencyContact,String patientExternalId, Pageable pageable) {
+		return patientRepository.findByFullName(firstName,lastName,cellPhone1,correspondant,emergencyContact,patientExternalId,pageable);
 	}
 
 	@Override
@@ -332,5 +329,5 @@ public class PatientServiceImpl implements PatientService {
 		Examination lastExam = admissionService.findLastExamination(id);
 		return lastExam;
 	}
-	
+
 }

@@ -6,6 +6,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -70,15 +71,16 @@ public class Pratician implements Serializable {
 	@JoinColumn(name = "speciality_id")
 	private Speciality speciality;
 	
+	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "facility_id")
 	private Facility facility;
-
-//	@JsonBackReference
-//	@ManyToOne
-//	@JoinColumn(name = "service_id")
-//	private Service service;
 	
+	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "act_category_id")
+	private ActCategory actCategory;
+
 	@Column(name="nom")
 	@NotNull(message="Le champ nom est requis")
 	private String nom;
@@ -94,12 +96,4 @@ public class Pratician implements Serializable {
 	@Column(name="email",unique=true)
 	private String email;
 	
-//	@JsonBackReference
-//	@ManyToMany
-//	@JoinTable(name = "admission_has_act", joinColumns = {
-//				@JoinColumn(name = "pratician_id", referencedColumnName = "id") }, inverseJoinColumns = {
-//						@JoinColumn(name = "admission_id", referencedColumnName = "id") })
-//		private List<Admission> admissions = new ArrayList<>();
-	
-
 }
