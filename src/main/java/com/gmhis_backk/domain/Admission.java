@@ -80,7 +80,7 @@ public class Admission implements Serializable {
 //	
 	@JsonBackReference
 	@ManyToOne
-	@JoinColumn(name = "user_id")
+	@JoinColumn(name = "pratician_id")
 	private Pratician practician;
 //
 	@JsonBackReference

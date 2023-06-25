@@ -30,7 +30,6 @@ public class BillHasInsuredServiceImp implements BillHasInsuredService {
 	@Override
 	public Page<BillHasInsured> findBillsHasInsuredByDate(String date, Pageable pageable) throws ParseException {
 		String[] dates = date.split(","); 
-		System.out.print(dates[0]);
 		return billHasInsuredRepository.findByDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dates[0]+" 00:00:00"),
 				new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dates[1]+" 23:59:59"), pageable);
 	}

@@ -203,14 +203,6 @@ public class BillController {
 			Pratician pratician = practicianService.findPracticianById(admissionHasAct.getPratician()).orElse(null);
 			int actCost = 0;
 			actCost = this.getOneActCostWhithoutConvention(admissionHasAct.getAct());
-
-//			if( admission != null && act != null && pratician != null) {
-//				if (ObjectUtils.isEmpty(this.convention)) {
-//					actCost = this.getOneActCostWhithoutConvention(admissionHasAct.getAct());
-//				} else {
-//					actCost = this.getOneActWithConvention(admissionHasAct.getAct(), convention);
-//				}
-//			};
 			admissionService.addActToAdmission(admissionHasAct, actCost, bill);
 		});
 		admissionService.setAdmissionStatusToBilled(admission.getId());
@@ -308,12 +300,7 @@ public class BillController {
 		return this.actCosts;
 	}
 	
-	/**
-	 * get the cost of one act if no convention
-	 * 
-	 * @param act
-	 * @return
-	 */
+
 	public int getOneActCostWhithoutConvention(Long id) {
 
 		int cost = 0;
@@ -327,13 +314,7 @@ public class BillController {
 		return cost;
 	}
 
-	/**
-	 * get the cost of acts if convention
-	 * 
-	 * @param admissionActs
-	 * @param convention
-	 * @return
-	 */
+	
 	public int getActWithConvention(List<AdmisionHasActDTO> admissionActs, Convention convention) {
 
 		this.actCosts = 0;
@@ -363,12 +344,7 @@ public class BillController {
 		return this.actCosts;
 	}
 
-	/**
-	 * 
-	 * @param admissionActs
-	 * @param convention
-	 * @return
-	 */
+	
 	public int getOneActWithConvention(Long id, Convention convention) {
 		int cost = 0;
 		Act act = null;
@@ -395,13 +371,7 @@ public class BillController {
 		return cost;
 	}
 
-	/**
-	 * get the patient part of the bill
-	 * 
-	 * @param actCosts
-	 * @param insured
-	 * @return partTakenCareOf int
-	 */
+
 	public int getPartTakenCareOf(int actCosts, Insured insured) {
 
 		int partTakenCareOf = (actCosts * insured.getCoverage()) / 100;
@@ -409,13 +379,7 @@ public class BillController {
 		return partTakenCareOf;
 	}
 
-	/**
-	 * get the part of the bill taken of care par the insurance
-	 * 
-	 * @param actCosts
-	 * @param insured
-	 * @return patientPart int
-	 */
+	
 	public int getPatientPart(int actCosts, Insured insured) {
 
 		int patientPart = (actCosts * (100 - insured.getCoverage())) / 100;
@@ -423,9 +387,7 @@ public class BillController {
 		return patientPart;
 	}
 
-	/*
-	 * generate a bill number
-	 */
+	
 	public String getBillNumber() {
 
 		Bill lBill = billService.findLastBill();
@@ -470,7 +432,7 @@ public class BillController {
 		return cost;
 	}
 
-	@ApiOperation(value = "Lister la liste paginee de toutes les admission dans le système par status (R: register, C: collected)")
+	@ApiOperation(value = "Lister la liste paginee de toutes les admission par status (R: register, C: collected)")
 	@GetMapping("/p_list")
 	public ResponseEntity<Map<String, Object>> paginatedList(
 			@RequestParam(required = false, defaultValue = "") String billNumber,
@@ -494,9 +456,6 @@ public class BillController {
 		Pageable pageable = PageRequest.of(page, size, Sort.by(dir, sort[0]));
 		Page<Bill> pBills = null;
 		
-
-
-
 		pBills = billService.findBills(billStatus,this.getCurrentUserId().getFacilityId(), pageable);
 
 		if (ObjectUtils.isNotEmpty(billNumber)) {
@@ -559,6 +518,68 @@ public class BillController {
 	}
 	
 	
+	@ApiOperation(value = "liste paginee de toutes les facture du centre de sante vis a vis les practicians ")
+	@GetMapping("/facilityInvoicesPractician")
+	public ResponseEntity<Map<String,Object>>facilityInvoicesPractician(
+			@RequestParam(required = false, defaultValue = "") Long userID,
+			@RequestParam(required = false, defaultValue = "") String date,
+			@RequestParam(required = true, defaultValue = "") String billStatus,
+			@RequestParam(defaultValue = "id,desc") String[] sort, @RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "25") int size
+			) throws ParseException{
+		Map<String, Object> response = new HashMap<>();
+		Sort.Direction dir = sort[1].equalsIgnoreCase("asc") ? dir = Sort.Direction.ASC : Sort.Direction.DESC;
+	    Pageable pageable = PageRequest.of(page, size, Sort.by(dir, sort[0]));
+		Page<Bill> pBills = null;
+
+		pBills = billService.findBills(billStatus,this.getCurrentUserId().getFacilityId(), pageable);
+		
+		if (ObjectUtils.isNotEmpty(userID)) {
+			System.out.println(userID);
+			pBills = billService.facilityInvoicesByPractician( billStatus,this.getCurrentUserId().getFacilityId(),userID, pageable);
+		}
+		
+		if (ObjectUtils.isNotEmpty(date)) {
+			pBills = billService.facilityInvoicesByDate( billStatus,this.getCurrentUserId().getFacilityId(),date, pageable);
+		}
+		
+		if (ObjectUtils.isNotEmpty(userID) && ObjectUtils.isNotEmpty(date)) {
+			pBills = billService.facilityInvoicesByPracticianAndDate( billStatus,this.getCurrentUserId().getFacilityId(),userID,date, pageable);
+		}
+		
+		List<Bill> lBills = pBills.getContent();
+		List<Map<String, Object>> bill = this.getMapFromFacilityInvoicesPracticianList(lBills);
+		response.put("items", bill);
+		response.put("totalElements", pBills.getTotalElements());
+		response.put("totalPages", pBills.getTotalPages());
+		response.put("size", pBills.getSize());
+		response.put("pageNumber", pBills.getNumber());
+		response.put("numberOfElements", pBills.getNumberOfElements());
+		response.put("first", pBills.isFirst());
+		response.put("last", pBills.isLast());
+		response.put("empty", pBills.isEmpty());
+
+		return new ResponseEntity<>(response, HttpStatus.OK);
+
+	}
+	
+
+	protected List<Map<String, Object>> getMapFromFacilityInvoicesPracticianList(List<Bill> bills) {
+		List<Map<String, Object>> billList = new ArrayList<>();
+		bills.stream().forEach(billDto -> {
+			Map<String, Object> billsMap = new HashMap<>();
+			billsMap.put("billNumber", billDto.getBillNumber());
+			billsMap.put("billStatus", billDto.getBillStatus());
+			billsMap.put("patientNumber", billDto.getAdmission().getPatient().getPatientExternalId());
+			billsMap.put("patientName", billDto.getAdmission().getPatient().getFirstName() + " " + billDto.getAdmission().getPatient().getLastName());
+			billsMap.put("billDate", billDto.getCreatedAt());
+			billsMap.put("accountNumber", billDto.getAccountNumber());
+			billsMap.put("practicianName", billDto.getAdmission().getPractician().getUser().getFirstName() + " "+ billDto.getAdmission().getPractician().getUser().getLastName());
+			billsMap.put("totalAmount", billDto.getTotalAmount());
+			billList.add(billsMap);
+		});
+		return billList;
+	}
 
 	@ApiOperation(value = "liste paginee de toutes les factures des assurances dans le système par Id de lassurance")
 	@GetMapping("/BillHasInsure_p_list")
@@ -615,7 +636,6 @@ public class BillController {
 			billsMap.put("id", billHasInsuredDto.getId());
 			billsMap.put("billNumber", billHasInsuredDto.getBill().getBillNumber());
 			billsMap.put("billDate", billHasInsuredDto.getBill().getCreatedAt());
-			billsMap.put("InsuranceName", billHasInsuredDto.getInsurance().getName());
 			billsMap.put("InsurancePart", billHasInsuredDto.getInsuredPart());
 			billsMap.put("InsuranceCoverage", billHasInsuredDto.getInsuredCoverage());
 			billsMap.put("BillTotalAmount", billHasInsuredDto.getBill().getTotalAmount());
@@ -645,6 +665,7 @@ public class BillController {
 			billsMap.put("billDate", billDto.getCreatedAt());
 			billsMap.put("accountNumber", billDto.getAccountNumber());
 			billsMap.put("admission", billDto.getAdmission());
+			billsMap.put("practicianFirstName", billDto.getAdmission().getPractician().getUser().getFirstName());
 			billsMap.put("admissionAct", billDto.getAdmission().getAct());
 			
 			if(ObjectUtils.isNotEmpty(billDto.getActs())) {
@@ -655,8 +676,6 @@ public class BillController {
 					Map<String, Object> actsMap = new HashMap<>();
 					actsMap.put("id", act.getAct().getId());
 					actsMap.put("act", act.getAct().getName());
-//					actsMap.put("practicianFirstName", act.getPractician().getUser().getFirstName());
-//					actsMap.put("practicianLastName", act.getPractician().getUser().getLastName());
 					actsMap.put("actCost", act.getActCost());
 					actsMap.put("actGroup", act.getAct());	
 					actList.add(actsMap);
@@ -668,7 +687,6 @@ public class BillController {
 				billsMap.put("billActs", null);
 			}
 			
-			billsMap.put("billStatus", billDto.getBillStatus());
 			billsMap.put("billType", billDto.getBillType());
 			billsMap.put("discountInCfa", billDto.getDiscountInCfa());
 			billsMap.put("discountInPercentage", billDto.getDiscountInPercentage());
@@ -794,7 +812,7 @@ public class BillController {
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
-	@ApiOperation(value = "Modifie une facture dans le systeme")
+	@ApiOperation(value = "Modifie une facture")
 	@PutMapping("/update/{id}")
 	public Bill updateBill(@RequestBody BillDTO billDto, @PathVariable Long id) throws ResourceNotFoundByIdException {
 
@@ -1034,8 +1052,6 @@ public class BillController {
 					bill.getActs().stream().forEach(act -> {
 						Map<String, Object> actsMap = new HashMap<>();
 						actsMap.put("name", act.getAct().getName());
-//						actsMap.put("practicianFirstName", act.getPractician().getUser().getFirstName());
-//						actsMap.put("practicianLastName", act.getPractician().getUser().getLastName());
 						actsMap.put("actCost", act.getActCost());	
 						actList.add(actsMap);
 					});

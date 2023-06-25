@@ -14,6 +14,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.gmhis_backk.domain.Bill;
+import com.gmhis_backk.domain.BillHasInsured;
 
 
 /**
@@ -70,6 +71,15 @@ public interface BillRepository extends JpaRepository<Bill, Long>{
 	@Query(value = "SELECT b FROM Bill b WHERE b.billStatus= :billStatus AND b.admission.facilityId =:facilityId ")
 	public Page<Bill> findBills(@Param("billStatus") String billStatus,@Param("facilityId") String facilityId, Pageable pageable);
 	
+	
+	@Query(value = "SELECT b FROM Bill b WHERE b.billStatus= :billStatus AND b.admission.facilityId =:facilityId AND b.admission.practician.user.id =:userID")
+	public Page<Bill> findFacilityInvoicesByPractician(@Param("billStatus") String billStatus,@Param("facilityId") String facilityId,@Param("userID") Long userID, Pageable pageable);
+	
+	@Query(value = "SELECT b FROM Bill b WHERE b.billStatus= :billStatus AND b.admission.facilityId =:facilityId and b.createdAt BETWEEN :start AND :end")
+	Page<Bill> findFacilityInvoicesByDate(@Param("billStatus") String billStatus,@Param("facilityId") String facilityId,Date start, Date end, Pageable pageable);
+	
+	@Query(value = "SELECT b FROM Bill b WHERE b.billStatus= :billStatus AND b.admission.facilityId =:facilityId AND b.admission.practician.user.id =:userID AND b.createdAt BETWEEN :start AND :end")
+	Page<Bill> findByBillhaInsuredInsuranceiDAndDate(@Param("billStatus") String billStatus,@Param("facilityId") String facilityId,@Param("userID") Long userID, Date start, Date end, Pageable pageable);
 	
 	@Modifying
 	@Transactional

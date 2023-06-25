@@ -120,10 +120,6 @@ public class AdmissionController {
 		if( ObjectUtils.isNotEmpty(idCardNumber)  ) {
 			pAdmissions = admissionService.findAdmissionsByIdCardNumber(idCardNumber, admissionStatus,this.getCurrentUserId().getFacilityId(), paging);
 		} 
-//		
-//		if( ObjectUtils.isNotEmpty(practician) ) {
-//			pAdmissions = admissionService.findAdmissionsByPractician(practician, admissionStatus, paging);
-//		} 
 		
 		if( ObjectUtils.isNotEmpty(act) ) {
 			pAdmissions = admissionService.findAdmissionsByAct(act, admissionStatus,this.getCurrentUserId().getFacilityId(), paging);
@@ -171,7 +167,7 @@ public class AdmissionController {
 			admissionsMap.put("patientExternalId", admissionDto.getPatient().getPatientExternalId());
 			admissionsMap.put("patientFirstName", admissionDto.getPatient().getFirstName());
 			admissionsMap.put("patientLastName", admissionDto.getPatient().getLastName());
-//			admissionsMap.put("patientMaidenName", admissionDto.getPatient().getMaidenName());
+
 			admissionsMap.put("patientType", admissionDto.getPatient().getIsAssured());
 			admissionsMap.put("caution",admissionDto.getCaution());
 			admissionsMap.put("admissionDate", admissionDto.getCreatedAt());
@@ -194,6 +190,7 @@ public class AdmissionController {
 		});
 		return admissionList;
 	}
+	
 	
 	@GetMapping("/get-detail/{id}")
 	@ApiOperation("detail d'une admission ")
@@ -235,12 +232,10 @@ public class AdmissionController {
 	@ApiOperation(value = "Lister la liste paginee de toutes les admissions en salle d'attente")
 	@GetMapping("/queue/p_list")
 	public ResponseEntity<Map<String, Object>> queuepaginatedList(
-			@RequestParam(required = false, defaultValue = "") String admissionNumber,
 			@RequestParam(required = false, defaultValue = "") String firstName,
 			@RequestParam(required = false, defaultValue = "") String lastName,
 			@RequestParam(required = false, defaultValue = "") String patientExternalId,
 			@RequestParam(required = false, defaultValue = "") String cellPhone,
-			@RequestParam(required = false, defaultValue = "") String cnamNumber,
 			@RequestParam(required = false, defaultValue = "") String idCardNumber,
 			@RequestParam(required = false) Long practician,
 			@RequestParam(required = false) Long service,
@@ -291,9 +286,7 @@ public class AdmissionController {
 			queue = admissionService.findAdmissionsInQueueByPatientName(firstName, lastName, waitingRoom, pageable);
 		}
 		
-		if( ObjectUtils.isNotEmpty(admissionNumber) ) {
-			queue = admissionService.findAdmissionsInQueueByAdmissionNumber(admissionNumber, waitingRoom, pageable);
-		}
+	
 		
 		if( ObjectUtils.isNotEmpty(patientExternalId)  ) {
 			queue = admissionService.findAdmissionsInQueueByPatientExternalId(patientExternalId, waitingRoom, pageable);
@@ -301,10 +294,6 @@ public class AdmissionController {
 		
 		if( ObjectUtils.isNotEmpty(cellPhone)  ) {
 			queue = admissionService.findAdmissionsInQueueByCellPhone(cellPhone, waitingRoom, pageable);
-		} 
-		
-		if( ObjectUtils.isNotEmpty(cnamNumber)  ) {
-			queue = admissionService.findAdmissionsInQueueByCnamNumber(cnamNumber, waitingRoom, pageable);
 		} 
 		
 		if( ObjectUtils.isNotEmpty(idCardNumber)  ) {

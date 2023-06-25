@@ -1,5 +1,6 @@
 package com.gmhis_backk.service;
 
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gmhis_backk.domain.Bill;
+import com.gmhis_backk.domain.BillHasInsured;
 import com.gmhis_backk.domain.Payment;
 
 
@@ -65,5 +67,15 @@ public interface BillService {
 	public Payment savePayment(Payment p);
 	
 	public List<Bill> findNomCollectedBillByAdmission(Long admission_id);
+	
+	public Page<Bill> facilityInvoicesByPractician(String billStatus,String facilityId,Long PracticianID, Pageable pageable);
+	
+	public Page<Bill>facilityInvoicesByDate(String billStatus,String facilityId,String date, Pageable pageable) throws ParseException ;
+	
+	public Page<Bill> facilityInvoicesByPracticianAndDate(String billStatus,String facilityId,Long PracticianID,String date, Pageable pageable) throws ParseException;
+
+
+
+
 	
 }

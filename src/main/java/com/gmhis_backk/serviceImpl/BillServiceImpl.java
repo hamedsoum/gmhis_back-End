@@ -1,5 +1,7 @@
 package com.gmhis_backk.serviceImpl;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gmhis_backk.domain.Bill;
+import com.gmhis_backk.domain.BillHasInsured;
 import com.gmhis_backk.domain.Payment;
 import com.gmhis_backk.repository.BillRepository;
 import com.gmhis_backk.repository.PaymentRepository;
@@ -144,5 +147,26 @@ public class BillServiceImpl implements BillService{
 	@Override
 	public List<Bill> findNomCollectedBillByAdmission(Long admission_id){
 		return repo.findNomCollectedBillByAdmission(admission_id);
+	}
+
+	@Override
+	public Page<Bill> facilityInvoicesByPractician(String billStatus, String facilityId, Long PracticianID,Pageable pageable) {
+		return repo.findFacilityInvoicesByPractician(billStatus, facilityId, PracticianID, pageable);
+	}
+
+	@Override
+	public Page<Bill> facilityInvoicesByDate(String billStatus,String facilityId, String date, Pageable pageable)
+			throws ParseException {
+		String[] dates = date.split(","); 
+		return repo.findFacilityInvoicesByDate(billStatus,facilityId,new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dates[0]+" 00:00:00"),
+				new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dates[1]+" 23:59:59"), pageable);
+	}
+
+	@Override
+	public Page<Bill> facilityInvoicesByPracticianAndDate(String billStatus, String facilityId, Long PracticianID,
+			String date, Pageable pageable) throws ParseException {
+		String[] dates = date.split(","); 
+		return repo.findByBillhaInsuredInsuranceiDAndDate(billStatus,facilityId,PracticianID,new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dates[0]+" 00:00:00"),
+				new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dates[1]+" 23:59:59"), pageable);
 	}
 }

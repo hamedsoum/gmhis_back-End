@@ -98,7 +98,7 @@ public interface AdmissionRepository extends JpaRepository<Admission, Long> {
 	// admissions queues
 	/*******************************************************************************/
 
-	@Query(value = "SELECT * FROM admission a, bill b, payment p, pratician pr, service s WHERE (a.id=b.admission_id and a.facility_id =:facilityId and b.id = p.bill_id and a.service_id = pr.service_id and s.waiting_room_id = :waiting_room and a.admission_status = 'B' and b.bill_status = 'C' and admission_end_date is null) or a.bail >=1000000 GROUP by a.id ", nativeQuery = true)
+	@Query(value = "SELECT * FROM admission a, bill b, payment p, pratician pr, service s WHERE (a.pratician_id = pr.id and a.id=b.admission_id and a.facility_id =:facilityId and b.id = p.bill_id and a.service_id = pr.service_id and s.waiting_room_id = :waiting_room and a.admission_status = 'B' and b.bill_status = 'C' and admission_end_date is null) or a.bail >=1000000 GROUP by a.id ", nativeQuery = true)
 
 	public Page<Admission> findAdmissionsInQueue(Long waiting_room,@Param("facilityId") String facilityId, Pageable pageable);
 
