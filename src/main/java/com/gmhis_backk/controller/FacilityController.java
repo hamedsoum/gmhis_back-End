@@ -191,10 +191,7 @@ public class FacilityController {
 			facilitiesMap.put("createdAt", facilityDto.getCreatedAt());
 			facilitiesMap.put("updatedAt", facilityDto.getUpdatedAt());
 			facilitiesMap.put("faciityType", facilityDto.getFacilityType().getName());
-//	if (ObjectUtils.isNotEmpty(facilityList.getFacilityCategory().getId())) {
-//		facilitiesMap.put("faciityCategory", facilityDto.getFacilityCategory().getName());
-//		}	
-	facilitiesMap.put("createdByLogin", ObjectUtils.isEmpty(createdBy) ? "--" : createdBy.getLogin());
+			facilitiesMap.put("createdByLogin", ObjectUtils.isEmpty(createdBy) ? "--" : createdBy.getLogin());
 			facilitiesMap.put("createdByFirstName", ObjectUtils.isEmpty(createdBy) ? "--" : createdBy.getFirstName());
 			facilitiesMap.put("createdByLastName", ObjectUtils.isEmpty(createdBy) ? "--" : createdBy.getLastName());
 			facilitiesMap.put("UpdatedByLogin", ObjectUtils.isEmpty(updatedBy) ? "--" : updatedBy.getLogin());
@@ -228,15 +225,6 @@ public class FacilityController {
 		Map<String, Object> response = new HashMap<>();
 	
 		Facility falicity = facilityService.findFacilityById(UUID.fromString(id)).orElse(null);
-//	if (ObjectUtils.isNotEmpty(falicity.getLogoId())) {
-//		Files file = fileRepository.findById(UUID.fromString(falicity.getLogoId())).orElse(null);
-//		var imgFile = new FileSystemResource(Paths.get(file.getLocation()));
-//	    byte[] bytes = StreamUtils.copyToByteArray(imgFile.getInputStream());
-//	    String encodedString = Base64.getEncoder().encodeToString(bytes);
-//	    String basse64 = "data:"+file.getType()+";base64," + encodedString ;	
-//		response.put("logo", basse64);
-//
-//	}
 		response.put("id", falicity.getId());
 		response.put("name", falicity.getName());
 		response.put("active", falicity.getActive());

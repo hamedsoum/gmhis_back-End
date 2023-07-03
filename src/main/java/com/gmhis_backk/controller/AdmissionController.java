@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.gmhis_backk.AppUtils;
 import com.gmhis_backk.domain.Admission;
+import com.gmhis_backk.domain.Pratician;
 import com.gmhis_backk.domain.User;
 import com.gmhis_backk.dto.AdmissionDTO;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
@@ -154,10 +155,8 @@ public class AdmissionController {
 		List<Map<String, Object>> admissionList = new ArrayList<>();
 		admissions.stream().forEach(admissionDto -> {
 			Map<String, Object> admissionsMap = new HashMap<>();
-			User createdBy = ObjectUtils.isEmpty(admissionDto.getCreatedBy()) ? new User()
-					: userRepository.findById(admissionDto.getCreatedBy()).orElse(null);
-			User updatedBy = ObjectUtils.isEmpty(admissionDto.getUpdatedBy()) ? new User()
-					: userRepository.findById(admissionDto.getUpdatedBy()).orElse(null);
+			User createdBy = ObjectUtils.isEmpty(admissionDto.getCreatedBy()) ? new User() : userRepository.findById(admissionDto.getCreatedBy()).orElse(null);
+			User updatedBy = ObjectUtils.isEmpty(admissionDto.getUpdatedBy()) ? new User() : userRepository.findById(admissionDto.getUpdatedBy()).orElse(null);
 			admissionsMap.put("id", admissionDto.getId());
 			admissionsMap.put("admissionNumber", admissionDto.getAdmissionNumber());
 			admissionsMap.put("facilityName", admissionDto.getFacility().getName());
@@ -174,10 +173,11 @@ public class AdmissionController {
 			admissionsMap.put("act", admissionDto.getAct().getName());
 			admissionsMap.put("actId", admissionDto.getAct().getId());
 			admissionsMap.put("actCost", (admissionDto.getAct().getCoefficient() * admissionDto.getAct().getActCode().getValue()));
-			admissionsMap.put("service", admissionDto.getService().getName());
-			admissionsMap.put("practicianFirstName", admissionDto.getPractician().getUser().getFirstName());
-			admissionsMap.put("practicianLastName", admissionDto.getPractician().getUser().getLastName());
-			admissionsMap.put("practicianId", admissionDto.getPractician().getId());
+			admissionsMap.put("service", admissionDto.getSpeciality().getName());
+			if (admissionDto.getPractician() != null) {
+				admissionsMap.put("practician", admissionDto.getPractician().getUser().getLastName() + " " + admissionDto.getPractician().getUser().getFirstName());
+				admissionsMap.put("practicianId", admissionDto.getPractician().getId());
+			}
 			admissionsMap.put("createdAt", admissionDto.getCreatedAt());
 			admissionsMap.put("updatedAt", admissionDto.getUpdatedAt());
 			admissionsMap.put("createdByLogin", ObjectUtils.isEmpty(createdBy) ? "--" : createdBy.getLogin());
@@ -203,7 +203,7 @@ public class AdmissionController {
 		response.put("patientId", admission.getPatient().getId());
 		response.put("patientExternalId", admission.getPatient().getPatientExternalId());
 		response.put("admissionDate", admission.getAdmissionStartDate());
-		response.put("service", admission.getService().getId());
+		response.put("service", admission.getSpeciality().getName());
 		response.put("admissionNumber", admission.getAdmissionNumber());
 		response.put("facilityName", admission.getFacility().getName());
 		response.put("facilityType", admission.getFacility().getFacilityType().getName());
@@ -215,9 +215,10 @@ public class AdmissionController {
 		response.put("act", admission.getAct().getName());
 		response.put("actId", admission.getAct().getId());
 		response.put("actCost", (admission.getAct().getCoefficient() * admission.getAct().getActCode().getValue()));
-		response.put("practicianFirstName", admission.getPractician().getUser().getFirstName());
-		response.put("practicianLastName", admission.getPractician().getUser().getLastName());
-		response.put("practicianId", admission.getPractician().getId());
+		if (admission.getPractician() != null) {
+			response.put("practician", admission.getPractician().getUser().getFirstName() + " " + admission.getPractician().getUser().getLastName());
+			response.put("practicianId", admission.getPractician().getId());
+		}
 		response.put("createdAt", admission.getCreatedAt());
 		response.put("updatedAt", admission.getUpdatedAt());
 
@@ -233,20 +234,15 @@ public class AdmissionController {
 	@GetMapping("/queue/p_list")
 	public ResponseEntity<Map<String, Object>> queuepaginatedList(
 			@RequestParam(required = false, defaultValue = "") String firstName,
-			@RequestParam(required = false, defaultValue = "") String lastName,
 			@RequestParam(required = false, defaultValue = "") String patientExternalId,
-			@RequestParam(required = false, defaultValue = "") String cellPhone,
-			@RequestParam(required = false, defaultValue = "") String idCardNumber,
 			@RequestParam(required = false) Long practician,
-			@RequestParam(required = false) Long service,
+			@RequestParam(required = false) Long specilaity,
 			@RequestParam(required = false) Long act,
-			@RequestParam(required = false) Long waitingRoom,
 		    @RequestParam(required = false, defaultValue = "") String fromDate,
 		    @RequestParam(required = false, defaultValue = "") String toDate,
 			@RequestParam(defaultValue = "id,desc") String[] sort, @RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size) {
 		   
-
 		Map<String, Object> response = new HashMap<>();
 		Sort.Direction dir = sort[1].equalsIgnoreCase("asc") ? dir = Sort.Direction.ASC : Sort.Direction.DESC;
 
@@ -257,7 +253,6 @@ public class AdmissionController {
 		Calendar cDate1 = Calendar.getInstance();
 		Calendar cDate2 = Calendar.getInstance();
 		
-				
 		if(ObjectUtils.isEmpty(fromDate)) { 
 			cDate1.set(1970, 0, 1);
 		}else {
@@ -273,52 +268,14 @@ public class AdmissionController {
 		Date date1 = cDate1.getTime();
 		Date date2 = cDate2.getTime();
 	
-		
-		if(ObjectUtils.isEmpty(waitingRoom)) {
-			waitingRoom = waitingRoomService.findWaitingRoomByPractician(this.getCurrentUserId().getId()) ;
-		}  
-		
-		
-		queue = admissionService.findAdmissionsInQueue(waitingRoom,this.getCurrentUserId().getFacilityId(), pageable); 
-		System.out.print("request response is here " +  queue.getSize());
+		queue = admissionService.findAdmissionsInQueue(this.getCurrentUserId().getFacilityId(), pageable); 
 
-		if( ObjectUtils.isNotEmpty(firstName) ||  ObjectUtils.isNotEmpty(lastName) ) {
-			queue = admissionService.findAdmissionsInQueueByPatientName(firstName, lastName, waitingRoom, pageable);
-		}
-		
-	
-		
-		if( ObjectUtils.isNotEmpty(patientExternalId)  ) {
-			queue = admissionService.findAdmissionsInQueueByPatientExternalId(patientExternalId, waitingRoom, pageable);
-		} 
-		
-		if( ObjectUtils.isNotEmpty(cellPhone)  ) {
-			queue = admissionService.findAdmissionsInQueueByCellPhone(cellPhone, waitingRoom, pageable);
-		} 
-		
-		if( ObjectUtils.isNotEmpty(idCardNumber)  ) {
-			queue = admissionService.findAdmissionsInQueueByIdCardNumber(idCardNumber, waitingRoom, pageable);
-		} 
-		
-		if( ObjectUtils.isNotEmpty(practician) ) {
-			queue = admissionService.findAdmissionsInQueueByPractician(practician, waitingRoom, pageable);
-		} 
-		
-		if( ObjectUtils.isNotEmpty(act) ) {
-			queue = admissionService.findAdmissionsInQueueByAct(act, waitingRoom, pageable);
-		} 
-		
-		if( ObjectUtils.isNotEmpty(service) ) {
-			queue = admissionService.findAdmissionsInQueueByService(service, waitingRoom, pageable);
-		} 
-		
 		if( ObjectUtils.isNotEmpty(fromDate) ||  ObjectUtils.isNotEmpty(toDate) ) {
-			queue = admissionService.findAdmissionsInQueueByDate(date1, date2, waitingRoom, pageable);
+			queue = admissionService.findAdmissionsInQueueByDate(date1, date2, pageable);
 		}
 	
 		List<Admission> lAdmissions = queue.getContent();
 
-		
 		List<Map<String, Object>> admission = this.getMapFromAdmissionList(lAdmissions);
 		response.put("items", admission);
 		response.put("currentPage", queue.getNumber());
@@ -328,8 +285,6 @@ public class AdmissionController {
 		response.put("first", queue.isFirst());
 		response.put("last", queue.isLast());
 		response.put("empty", queue.isEmpty());
-		response.put("waitingRoom", waitingRoom);
-		
 		
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}

@@ -439,10 +439,6 @@ public class BillController {
 			@RequestParam(required = false, defaultValue = "") String admissionNumber,
 			@RequestParam(required = false, defaultValue = "") String firstName,
 			@RequestParam(required = false, defaultValue = "") String lastName,
-			@RequestParam(required = false, defaultValue = "") String patientExternalId,
-			@RequestParam(required = false, defaultValue = "") String cellPhone,
-			@RequestParam(required = false, defaultValue = "") String cnamNumber,
-			@RequestParam(required = false, defaultValue = "") String idCardNumber,
 			@RequestParam(required = false) Long convention,
 			@RequestParam(required = false) Long insurance,
 			@RequestParam(required = false) Long subscriber,
@@ -459,31 +455,15 @@ public class BillController {
 		pBills = billService.findBills(billStatus,this.getCurrentUserId().getFacilityId(), pageable);
 
 		if (ObjectUtils.isNotEmpty(billNumber)) {
-			pBills = billService.findBillsByBillNumber(billNumber, billStatus, pageable);
+			pBills = billService.findBillsByBillNumber(billNumber.trim(), billStatus, pageable);
 		}
 
 		if (ObjectUtils.isNotEmpty(admissionNumber)) {
-			pBills = billService.findBillsByAdmissionNumber(admissionNumber, billStatus, pageable);
+			pBills = billService.findBillsByAdmissionNumber(admissionNumber.trim(), billStatus, pageable);
 		}
 
 		if (ObjectUtils.isNotEmpty(firstName) || ObjectUtils.isNotEmpty(lastName)) {
-			pBills = billService.findBillsByPatientName(firstName, lastName, billStatus,this.getCurrentUserId().getFacilityId(), pageable);
-		}
-
-		if (ObjectUtils.isNotEmpty(patientExternalId)) {
-			pBills = billService.findBillsByPatientExternalId(patientExternalId, billStatus, pageable);
-		}
-
-		if (ObjectUtils.isNotEmpty(cellPhone)) {
-			pBills = billService.findBillsByCellPhone(cellPhone, billStatus, pageable);
-		}
-
-		if (ObjectUtils.isNotEmpty(cnamNumber)) {
-			pBills = billService.findBillsByCnamNumber(cnamNumber, billStatus, pageable);
-		}
-
-		if (ObjectUtils.isNotEmpty(idCardNumber)) {
-			pBills = billService.findBillsByIdCardNumber(idCardNumber, billStatus, pageable);
+			pBills = billService.findBillsByPatientName(firstName.trim(), lastName.trim(), billStatus,this.getCurrentUserId().getFacilityId(), pageable);
 		}
 
 		if (ObjectUtils.isNotEmpty(insurance)) {
@@ -532,20 +512,19 @@ public class BillController {
 	    Pageable pageable = PageRequest.of(page, size, Sort.by(dir, sort[0]));
 		Page<Bill> pBills = null;
 
-		pBills = billService.findBills(billStatus,this.getCurrentUserId().getFacilityId(), pageable);
+		pBills = billService.findAdmissionWithExamination(billStatus,this.getCurrentUserId().getFacilityId(), pageable);
 		
-		if (ObjectUtils.isNotEmpty(userID)) {
-			System.out.println(userID);
-			pBills = billService.facilityInvoicesByPractician( billStatus,this.getCurrentUserId().getFacilityId(),userID, pageable);
-		}
-		
-		if (ObjectUtils.isNotEmpty(date)) {
-			pBills = billService.facilityInvoicesByDate( billStatus,this.getCurrentUserId().getFacilityId(),date, pageable);
-		}
-		
-		if (ObjectUtils.isNotEmpty(userID) && ObjectUtils.isNotEmpty(date)) {
-			pBills = billService.facilityInvoicesByPracticianAndDate( billStatus,this.getCurrentUserId().getFacilityId(),userID,date, pageable);
-		}
+//		if (ObjectUtils.isNotEmpty(userID)) {
+//			pBills = billService.facilityInvoicesByPractician( billStatus,this.getCurrentUserId().getFacilityId(),userID, pageable);
+//		}
+//		
+//		if (ObjectUtils.isNotEmpty(date)) {
+//			pBills = billService.facilityInvoicesByDate( billStatus,this.getCurrentUserId().getFacilityId(),date, pageable);
+//		}
+//		
+//		if (ObjectUtils.isNotEmpty(userID) && ObjectUtils.isNotEmpty(date)) {
+//			pBills = billService.facilityInvoicesByPracticianAndDate( billStatus,this.getCurrentUserId().getFacilityId(),userID,date, pageable);
+//		}
 		
 		List<Bill> lBills = pBills.getContent();
 		List<Map<String, Object>> bill = this.getMapFromFacilityInvoicesPracticianList(lBills);
@@ -566,22 +545,25 @@ public class BillController {
 
 	protected List<Map<String, Object>> getMapFromFacilityInvoicesPracticianList(List<Bill> bills) {
 		List<Map<String, Object>> billList = new ArrayList<>();
-		bills.stream().forEach(billDto -> {
-			Map<String, Object> billsMap = new HashMap<>();
-			billsMap.put("billNumber", billDto.getBillNumber());
-			billsMap.put("billStatus", billDto.getBillStatus());
-			billsMap.put("patientNumber", billDto.getAdmission().getPatient().getPatientExternalId());
-			billsMap.put("patientName", billDto.getAdmission().getPatient().getFirstName() + " " + billDto.getAdmission().getPatient().getLastName());
-			billsMap.put("billDate", billDto.getCreatedAt());
-			billsMap.put("accountNumber", billDto.getAccountNumber());
-			billsMap.put("practicianName", billDto.getAdmission().getPractician().getUser().getFirstName() + " "+ billDto.getAdmission().getPractician().getUser().getLastName());
-			billsMap.put("totalAmount", billDto.getTotalAmount());
-			billList.add(billsMap);
+		bills.stream().forEach(bill -> {
+			Map<String, Object> billMap = new HashMap<>();
+			billMap.put("date", bill.getCreatedAt());
+			billMap.put("invoiceNumber", bill.getBillNumber());
+			billMap.put("invoiceNumber", bill.getBillNumber());
+			//TODO : practician from examination, 
+			billMap.put("practicianName", bill.getAdmission().getPractician().getUser().getFirstName() + "" + bill.getAdmission().getPractician().getUser().getLastName());
+			billMap.put("patientNumber", bill.getAdmission().getPatient().getPatientExternalId() );
+			billMap.put("patientNumber", bill.getAdmission().getPatient().getPatientExternalId() );
+			billMap.put("patientAmount", bill.getPatientPart());
+			billMap.put("totalAmount", bill.getTotalAmount());
+			billMap.put("totalAmount", bill.getTotalAmount());
+			billMap.put("billStatus", bill.getBillStatus());
+			billList.add(billMap);
 		});
 		return billList;
 	}
 
-	@ApiOperation(value = "liste paginee de toutes les factures des assurances dans le système par Id de lassurance")
+	@ApiOperation(value = "liste paginee de toutes les factures des assurances dans le système par Id de l'assurance")
 	@GetMapping("/BillHasInsure_p_list")
 	public ResponseEntity<Map<String, Object>> BillHasInsuredpaginatedList(
 			@RequestParam(required = false, defaultValue = "") Long insuranceId,
@@ -636,9 +618,11 @@ public class BillController {
 			billsMap.put("id", billHasInsuredDto.getId());
 			billsMap.put("billNumber", billHasInsuredDto.getBill().getBillNumber());
 			billsMap.put("billDate", billHasInsuredDto.getBill().getCreatedAt());
-			billsMap.put("InsurancePart", billHasInsuredDto.getInsuredPart());
-			billsMap.put("InsuranceCoverage", billHasInsuredDto.getInsuredCoverage());
-			billsMap.put("BillTotalAmount", billHasInsuredDto.getBill().getTotalAmount());
+			billsMap.put("insurance", billHasInsuredDto.getInsurance().getName());
+			billsMap.put("insurancePart", billHasInsuredDto.getInsuredPart());
+			billsMap.put("patientPart", billHasInsuredDto.getBill().getPatientPart());
+			billsMap.put("insuranceCoverage", billHasInsuredDto.getInsuredCoverage());
+			billsMap.put("billTotalAmount", billHasInsuredDto.getBill().getTotalAmount());
 			billsMap.put("admissionNumber", billHasInsuredDto.getAdmission().getAdmissionNumber());
 			billsMap.put("patientNumber", billHasInsuredDto.getAdmission().getPatient().getPatientExternalId());
 			billsMap.put("createdByFirstName", ObjectUtils.isEmpty(createdBy) ? "--" : createdBy.getFirstName());
@@ -665,7 +649,6 @@ public class BillController {
 			billsMap.put("billDate", billDto.getCreatedAt());
 			billsMap.put("accountNumber", billDto.getAccountNumber());
 			billsMap.put("admission", billDto.getAdmission());
-			billsMap.put("practicianFirstName", billDto.getAdmission().getPractician().getUser().getFirstName());
 			billsMap.put("admissionAct", billDto.getAdmission().getAct());
 			
 			if(ObjectUtils.isNotEmpty(billDto.getActs())) {
@@ -746,8 +729,8 @@ public class BillController {
 		billMap.put("admissionId", bill.getAdmission().getId());
 		billMap.put("admissionStartDate", bill.getAdmission().getAdmissionStartDate());
 		billMap.put("admissionEndDate", bill.getAdmission().getAdmissionEndDate());
-		billMap.put("serviceId", bill.getAdmission().getService().getId());
-		billMap.put("serviceName", bill.getAdmission().getService().getName());
+		billMap.put("specialityId", bill.getAdmission().getSpeciality().getId());
+		billMap.put("specialityName", bill.getAdmission().getSpeciality().getId());
 		billMap.put("billStatus", bill.getBillStatus());
 		billMap.put("billType", bill.getBillType());
 		billMap.put("billId", bill.getId());
@@ -984,7 +967,7 @@ public class BillController {
 					cashRegisterForAmountReturnedMovementDto.setDebit(paymentDto.getAmountReturned());
 					cashRegisterForAmountReturnedMovementDto.setDate(payment.getCreatedAt());
 					cashRegisterForAmountReturnedMovementDto.setPrestationNumber(payment.getBill().getBillNumber());
-					cashRegisterForAmountReturnedMovementDto.setLibelle("Monnaie Réglement  " + payment.getBill().getAdmission().getAct().getName() +" - " + payment.getBill().getAdmission().getService().getName());
+					cashRegisterForAmountReturnedMovementDto.setLibelle("Monnaie Réglement  " + payment.getBill().getAdmission().getAct().getName() +" - " + payment.getBill().getAdmission().getSpeciality().getName());
 					cashRegisterForAmountReturnedMovementDto.setUserId(this.getCurrentUserId().getId());
 					cashRegisterMovementService.addNewMovement(cashRegisterForAmountReturnedMovementDto);
 				}
@@ -992,7 +975,7 @@ public class BillController {
 				cashRegisterMovementDto.setCredit(payment.getAmount());
 				cashRegisterMovementDto.setDate(payment.getCreatedAt());
 				cashRegisterMovementDto.setPrestationNumber(payment.getBill().getBillNumber());
-				cashRegisterMovementDto.setLibelle("Réglement  " + payment.getBill().getAdmission().getAct().getName() + " -" + payment.getBill().getAdmission().getService().getName());
+				cashRegisterMovementDto.setLibelle("Réglement  " + payment.getBill().getAdmission().getAct().getName() + " -" + payment.getBill().getAdmission().getSpeciality().getName());
 				cashRegisterMovementDto.setUserId(this.getCurrentUserId().getId());
 				cashRegisterMovementService.addNewMovement(cashRegisterMovementDto);
 				

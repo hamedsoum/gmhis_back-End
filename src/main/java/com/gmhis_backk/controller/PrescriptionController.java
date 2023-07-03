@@ -168,7 +168,7 @@ public class PrescriptionController {
 		response.put("practicienLastName", prescription.getExamination().getPratician().getUser().getLastName());
 		response.put("facilityName", prescription.getExamination().getFacility().getName());
 		response.put("facilityName", prescription.getExamination().getFacility().getName());
-		response.put("serviceName", prescription.getExamination().getAdmission().getService().getName());
+		response.put("speciality", prescription.getExamination().getAdmission().getSpeciality().getName());
 		response.put("facilityLocality", prescription.getExamination().getFacility().getLocality().getName());
 		response.put("facilityCountry", prescription.getExamination().getFacility().getLocality().getCity().getCountry().getName());
 		response.put("facilityCity", prescription.getExamination().getFacility().getLocality().getCity().getName());
@@ -197,7 +197,7 @@ public class PrescriptionController {
 		response.put("practicienFirstName", prescription.getExamination().getPratician().getUser().getFirstName());
 		response.put("practicienLastName", prescription.getExamination().getPratician().getUser().getLastName());
 		response.put("facilityName", prescription.getExamination().getFacility().getName());
-		response.put("serviceName", prescription.getExamination().getAdmission().getService().getName());
+		response.put("serviceName", prescription.getExamination().getAdmission().getSpeciality().getName());
 		response.put("facilityLocality", prescription.getExamination().getFacility().getLocality().getName());
 		response.put("facilityCountry", prescription.getExamination().getFacility().getLocality().getCity().getCountry().getName());
 		response.put("facilityCity", prescription.getExamination().getFacility().getLocality().getCity().getName());

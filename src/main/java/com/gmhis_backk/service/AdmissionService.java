@@ -72,27 +72,10 @@ public interface AdmissionService {
 	
 	public void setAdmissionStatusToBilled(Long id);
 	
-	public Page<Admission> findAdmissionsInQueue (Long waitingRoom,String facilityId, Pageable pageable) ;
-	
-    public Page<Admission> findAdmissionsInQueueByPatientName (String firstName, String lastName, Long waitingRoom, Pageable pageable);
-	
-	public Page<Admission> findAdmissionsInQueueByAdmissionNumber(String admissionNumber, Long waitingRoom, Pageable pageable);
-	
-	public Page<Admission> findAdmissionsInQueueByPatientExternalId(String patientExternalId, Long waitingRoom, Pageable pageable);
-	
-	public Page<Admission> findAdmissionsInQueueByCellPhone(String cellPhone, Long waitingRoom, Pageable pageable);
-	
-	public Page<Admission> findAdmissionsInQueueByCnamNumber(String cnamNumber, Long waitingRoom, Pageable pageable);
-	
-	public Page<Admission> findAdmissionsInQueueByIdCardNumber(String idCardNumber, Long waitingRoom, Pageable pageable);
-	
-	public Page<Admission> findAdmissionsInQueueByPractician(Long practician, Long waitingRoom, Pageable pageable);
+	public Page<Admission> findAdmissionsInQueue (String facilityId, Pageable pageable) ;
 		
-	public Page<Admission> findAdmissionsInQueueByAct(Long act, Long waitingRoom, Pageable pageable);
 	
-	public Page<Admission> findAdmissionsInQueueByService(Long service, Long waitingRoom, Pageable pageable);
-	
-	public Page<Admission> findAdmissionsInQueueByDate (Date fromDate, Date toDate, Long waitingRoom, Pageable pageable);
+	public Page<Admission> findAdmissionsInQueueByDate (Date fromDate, Date toDate, Pageable pageable);
 	
 	public Page<Admission>findAdmissiondByDate(String date,String facilityId, Pageable pageable) throws ParseException ;
 

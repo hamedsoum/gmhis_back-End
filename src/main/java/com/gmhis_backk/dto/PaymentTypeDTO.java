@@ -17,6 +17,4 @@ public class PaymentTypeDTO {
 	private Long id;
 	private String name;
 	private Boolean active;
-	private int value;
-
 }

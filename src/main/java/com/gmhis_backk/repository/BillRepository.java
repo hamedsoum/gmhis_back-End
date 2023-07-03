@@ -13,6 +13,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.gmhis_backk.domain.Admission;
 import com.gmhis_backk.domain.Bill;
 import com.gmhis_backk.domain.BillHasInsured;
 
@@ -62,15 +63,20 @@ public interface BillRepository extends JpaRepository<Bill, Long>{
 	public Page<Bill> findBillsByConvention(@Param("convention") Long convention, @Param("billStatus") String billStatus, Pageable pageable);
 
 	
+	@Query(value = "SELECT * FROM admission a WHERE a.id NOT IN ( SELECT e.admission_id FROM examination e) AND  a.facility_id =:facilityId", nativeQuery = true)
+	public Page<Admission> findFacilityInvoice(@Param("facilityId") String facilityId, Pageable pageable);
+	
 	@Query(value = "SELECT b FROM Bill b WHERE b.createdAt between :fromDate and :toDate and b.billStatus= :billStatus")
 	public Page<Bill> findBillByDate (@Param("fromDate") Date fromDate, @Param("toDate") Date toDate, @Param("billStatus") String billStatus, Pageable pageable);
 	
 	@Query(value = "SELECT b FROM Bill b WHERE b.billStatus='N'")
 	public Page<Bill> findByBillStatus(String status, Pageable pageable);
 	
-	@Query(value = "SELECT b FROM Bill b WHERE b.billStatus= :billStatus AND b.admission.facilityId =:facilityId ")
-	public Page<Bill> findBills(@Param("billStatus") String billStatus,@Param("facilityId") String facilityId, Pageable pageable);
+	@Query(value = "SELECT * FROM bill b WHERE b.admission_id IN ( SELECT DISTINCT e.admission_id FROM examination e WHERE e.facility_id =:facilityId )", nativeQuery = true)
+	public Page<Bill> findAdmissionWithExamination(@Param("facilityId") String facilityId,Pageable pageable);
 	
+	@Query(value = "SELECT b FROM Bill b WHERE b.billStatus= :billStatus AND b.admission.facilityId =:facilityId")
+	public Page<Bill> findBills(@Param("billStatus") String billStatus,@Param("facilityId") String facilityId, Pageable pageable);
 	
 	@Query(value = "SELECT b FROM Bill b WHERE b.billStatus= :billStatus AND b.admission.facilityId =:facilityId AND b.admission.practician.user.id =:userID")
 	public Page<Bill> findFacilityInvoicesByPractician(@Param("billStatus") String billStatus,@Param("facilityId") String facilityId,@Param("userID") Long userID, Pageable pageable);

@@ -4,7 +4,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
@@ -16,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gmhis_backk.AppUtils;
 import com.gmhis_backk.domain.Act;
+import com.gmhis_backk.domain.ActCategory;
 import com.gmhis_backk.domain.Admission;
 import com.gmhis_backk.domain.Bill;
 import com.gmhis_backk.domain.Examination;
@@ -28,14 +28,12 @@ import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
 import com.gmhis_backk.repository.AdmissionRepository;
 import com.gmhis_backk.repository.UserRepository;
+import com.gmhis_backk.service.ActCategoryService;
 import com.gmhis_backk.service.ActService;
 import com.gmhis_backk.service.AdmissionService;
 import com.gmhis_backk.service.ExaminationService;
 import com.gmhis_backk.service.PatientService;
 import com.gmhis_backk.service.PracticianService;
-import com.gmhis_backk.service.ServiceService;
-
-
 
 /**
  * 
@@ -45,13 +43,12 @@ import com.gmhis_backk.service.ServiceService;
 @Service
 @Transactional
 public class AdmissionServiceImpl implements AdmissionService{
-
-
+	
 	@Autowired
 	private ActService actService;
-
+	
 	@Autowired
-	private ServiceService serviceService;
+	private ActCategoryService specialityService;
 	
 	@Autowired
 	private ExaminationService examinationService;
@@ -72,41 +69,30 @@ public class AdmissionServiceImpl implements AdmissionService{
 		return this.userRepo.findUserByUsername(AppUtils.getUsername());
 	}
 
-	
 	@Override @Transactional
 	public Admission saveAdmission(AdmissionDTO admissionDto)throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException{
+		Pratician pratician = null;
+		
 		Patient patient = patientService.findById(admissionDto.getPatient());
+		if (patient == null) throw new ResourceNotFoundByIdException("Aucun patient trouvé pour l'identifiant. " );
+
+        ActCategory speciality = specialityService.findById(admissionDto.getSpeciality()).orElse(null);
+        if(speciality == null) throw new ResourceNotFoundByIdException("Aucun Specialite trouvée pour l'identifiant. " );
+        System.out.println(speciality.getId());
 		
-		if (patient == null) {
-			throw new ResourceNotFoundByIdException("aucun patient trouvé pour l'identifiant " );
-		}
-//		
-		com.gmhis_backk.domain.Service service = serviceService.findServiceById(admissionDto.getService());
-		if (service == null) {
-			throw new ResourceNotFoundByIdException("aucun service trouvé pour l'identifiant " );
-		}
-//		
 	    Act act = actService.findActById(admissionDto.getAct()).orElse(null);
-		
-		if (act == null) {
-			throw new ResourceNotFoundByIdException("aucun act trouvé pour l'identifiant " );
-		}
-//		
-		Pratician praticien = practicianService.findPracticianById(admissionDto.getPractician()).orElse(null);
-			
-			if (praticien == null) {
-				throw new ResourceNotFoundByIdException("le practicien n'existe pas en base" );
-			}
-			
+		if (act == null) throw new ResourceNotFoundByIdException("Aucun act trouvé pour l'identifiant. " );
+	
+		if (admissionDto.getPractician() != null) pratician = practicianService.findPracticianById(admissionDto.getPractician()).orElse(null);
 			
 		Admission admission = new Admission();
-		
+	
 		BeanUtils.copyProperties(admissionDto, admission, "id");
 		admission.setAdmissionNumber(getAdmissionNumber());
 		admission.setPatient(patient);
 		admission.setAct(act);
-		admission.setPractician(praticien);
-		admission.setService(service);
+		admission.setPractician(pratician);
+		admission.setSpeciality(speciality);
 		admission.setAdmissionStartDate(new Date());
         admission.setAdmissionStatus("R");
         admission.setFacilityId(this.getCurrentUserId().getFacilityId());;
@@ -115,8 +101,6 @@ public class AdmissionServiceImpl implements AdmissionService{
 		return repo.save(admission);
 		
 	}
-	
-	
 	
 	@Override
 	public Admission updateAdmission(Long id, AdmissionDTO a)throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException{
@@ -154,7 +138,6 @@ public class AdmissionServiceImpl implements AdmissionService{
 		}
 	}
 		
-	
 	@Override
 	public void removeAdmissionAct(Admission admission) {
 		repo.removeAdmissionAct(admission.getId(), admission.getAct().getId());
@@ -226,60 +209,18 @@ public class AdmissionServiceImpl implements AdmissionService{
 	}
 	
 	@Override
-	public Page<Admission> findAdmissionsInQueue(Long waitingRoom,String facilityId, Pageable pageable){
-		return repo.findAdmissionsInQueue(waitingRoom,facilityId,pageable);
+	public Page<Admission> findAdmissionsInQueue(String facilityId, Pageable pageable){
+		Pratician practican = practicianService.findPracticianByUser(getCurrentUserId().getId()).orElse(null);
+		
+		if (practican == null) return repo.findAllAdmissionsInQueue(facilityId,pageable);
+			
+		return repo.findAdmissionsInQueue(facilityId,practican.getActCategory().getId(),pageable);
 	}
 		
 	@Override
-    public Page<Admission> findAdmissionsInQueueByPatientName (String firstName, String lastName, Long waitingRoom, Pageable pageable){	
-		return repo.findAdmissionsInQueueByPatientName( firstName,  lastName, waitingRoom, pageable);
+	public Page<Admission> findAdmissionsInQueueByDate (Date fromDate, Date toDate, Pageable pageable){
+		return repo.findAdmissionInQueueByDate(fromDate, toDate, pageable);
 	}
-	
-	@Override
-	public Page<Admission> findAdmissionsInQueueByAdmissionNumber(String admissionNumber, Long waitingRoom, Pageable pageable){	
-		return repo.findAdmissionsInQueueByAdmissionNumber( admissionNumber, waitingRoom, pageable);
-	}
-	
-	@Override
-	public Page<Admission> findAdmissionsInQueueByPatientExternalId(String patientExternalId, Long waitingRoom, Pageable pageable){	
-		return repo.findAdmissionsInQueueByPatientExternalId(patientExternalId, waitingRoom, pageable);
-	}
-	
-	@Override
-	public Page<Admission> findAdmissionsInQueueByCellPhone(String cellPhone, Long waitingRoom, Pageable pageable){	
-		return repo.findAdmissionsInQueueByCellPhone(cellPhone, waitingRoom, pageable);
-	}
-	
-	@Override
-	public Page<Admission> findAdmissionsInQueueByCnamNumber(String cnamNumber, Long waitingRoom, Pageable pageable){	
-		return repo.findAdmissionsInQueueByCnamNumber(cnamNumber, waitingRoom, pageable);
-	}
-	
-	@Override
-	public Page<Admission> findAdmissionsInQueueByIdCardNumber(String idCardNumber, Long waitingRoom, Pageable pageable){	
-		return repo.findAdmissionsInQueueByIdCardNumber(idCardNumber, waitingRoom, pageable);
-	}
-	
-	@Override
-	public Page<Admission> findAdmissionsInQueueByPractician(Long practician, Long waitingRoom, Pageable pageable){	
-		return repo.findAdmissionsInQueueByPractician(practician, waitingRoom, pageable);
-	}
-		
-	@Override
-	public Page<Admission> findAdmissionsInQueueByAct(Long act, Long waitingRoom, Pageable pageable){	
-		return repo.findAdmissionsInQueueByAct(act, waitingRoom, pageable);
-	}
-	
-	@Override
-	public Page<Admission> findAdmissionsInQueueByService(Long service, Long waitingRoom, Pageable pageable){	
-		return repo.findAdmissionsInQueueByService(service, waitingRoom, pageable);
-	}
-	
-	@Override
-	public Page<Admission> findAdmissionsInQueueByDate (Date fromDate, Date toDate, Long waitingRoom, Pageable pageable){
-		return repo.findAdmissionInQueueByDate(fromDate, toDate, waitingRoom, pageable);
-	}
-
 
 	@Override
 	public String getAdmissionNumber() {
@@ -290,7 +231,7 @@ public class AdmissionServiceImpl implements AdmissionService{
 		String year = String.format("%02d",calendar.get( Calendar.YEAR ) % 100);
 		String lAdmisionYearandMonth = "";
 		String lAdmissionNb = "";
-		int  number= 0;
+		int number= 0;
 		
 		if(lAdmission ==  null) {
 			lAdmisionYearandMonth = year + month;
@@ -301,17 +242,14 @@ public class AdmissionServiceImpl implements AdmissionService{
 			 lAdmissionNb = an.substring(4);	
 		}
 		
-		
 		if(lAdmisionYearandMonth.equals( year + month)) {
 			number = Integer.parseInt(lAdmissionNb) + 1 ;
 		} else {
 			number = number +1;
 		}
 		
-		return "AD" + year + month +String.format("%04d", number);
-			
+		return "AD" + year + month +String.format("%04d", number);		
 	}
-
 
 	@Override
 	public Page<Admission> findAdmissiondByDate(String date,String facilityId, Pageable pageable) throws ParseException {
@@ -319,7 +257,6 @@ public class AdmissionServiceImpl implements AdmissionService{
 		return repo.findByDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dates[0]+" 00:00:00"),
 				new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dates[1]+" 23:59:59"),facilityId, pageable);
 	}
-
 
 	@Override
 	public Page<Admission> findAdmissionsByFacility(String facilityId, String admissionStatus, Pageable pageable) {

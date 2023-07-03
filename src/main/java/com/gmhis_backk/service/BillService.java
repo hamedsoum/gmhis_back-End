@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gmhis_backk.domain.Admission;
 import com.gmhis_backk.domain.Bill;
 import com.gmhis_backk.domain.BillHasInsured;
 import com.gmhis_backk.domain.Payment;
@@ -39,6 +40,9 @@ public interface BillService {
 	public List<Bill > findBillByAdmissionId(Long admissionId);
 	
 	public Page<Bill> findBills(String billStatus,String facilityId, Pageable pageable);
+	
+	public Page<Bill> findAdmissionWithExamination(String billStatus,String facilityId, Pageable pageable);
+
 	
     public Page<Bill> findBillsByPatientName (String firstName, String lastName, String billStatus,String facilityId, Pageable pageable);
     

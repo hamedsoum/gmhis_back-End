@@ -34,7 +34,7 @@ public interface PracticianService {
 	
 	public List<Pratician> findActivePracticians();
 	
-	public Pratician findPracticianByUser(Long user);
+	public Optional<Pratician> findPracticianByUser(Long user);
 	
 	public Page<Pratician> findByActive(String firstName, String lastName, String phoneContact, String practicianNumber, String active, Pageable pageable);
 	

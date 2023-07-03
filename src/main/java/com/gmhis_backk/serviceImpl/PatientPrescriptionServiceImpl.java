@@ -54,7 +54,7 @@ public class PatientPrescriptionServiceImpl implements PatientPrescriptionServic
 			throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException {
 		
 System.out.println(getPatientPrescriptionNumber());		
-		   Pratician pratician = practicianService.findPracticianByUser(this.getCurrentUserId().getId());
+		   Pratician pratician = practicianService.findPracticianByUser(this.getCurrentUserId().getId()).orElse(null);
 			
 			if (pratician == null) {
 				throw new ResourceNotFoundByIdException("le practicien n'existe pas en base " );

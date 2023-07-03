@@ -12,9 +12,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gmhis_backk.domain.Admission;
 import com.gmhis_backk.domain.Bill;
 import com.gmhis_backk.domain.BillHasInsured;
 import com.gmhis_backk.domain.Payment;
+import com.gmhis_backk.repository.AdmissionRepository;
 import com.gmhis_backk.repository.BillRepository;
 import com.gmhis_backk.repository.PaymentRepository;
 import com.gmhis_backk.service.BillService;
@@ -32,6 +34,10 @@ public class BillServiceImpl implements BillService{
 
 	@Autowired
 	private BillRepository repo;
+	
+	@Autowired
+	private AdmissionRepository admissionRepo;
+	
 	
 	@Autowired
 	PaymentRepository paymentRepo;
@@ -63,8 +69,15 @@ public class BillServiceImpl implements BillService{
 
 	
 	@Override
-	public Page<Bill> findBills(String billStatus,String facilityId, Pageable pageable){
+	public Page<Bill> findBills(String billStatus,String facilityId, Pageable pageable){		
 		return repo.findBills(billStatus,facilityId, pageable);
+	}
+	
+
+	@Override
+	public Page<Bill> findAdmissionWithExamination(String billStatus,String facilityId, Pageable pageable){
+		Page<Bill> bill = repo.findAdmissionWithExamination(facilityId,pageable);
+		return bill;
 	}
 	
 	@Override

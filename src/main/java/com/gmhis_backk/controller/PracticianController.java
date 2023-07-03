@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -52,8 +53,8 @@ public class PracticianController {
 			practicianMap.put("userFirstName", practicianDto.getUser().getFirstName());
 			practicianMap.put("userLastName", practicianDto.getUser().getLastName());
 			practicianMap.put("userId", practicianDto.getUser().getId());
-			practicianMap.put("actCategoryId", practicianDto.getActCategory().getId());
-			practicianMap.put("actCategoryName", practicianDto.getActCategory().getName());
+			practicianMap.put("specialityId", practicianDto.getActCategory().getId());
+			practicianMap.put("specialityName", practicianDto.getActCategory().getName());
 			practicianList.add(practicianMap);
 		});
 
@@ -101,10 +102,12 @@ public class PracticianController {
 		return new ResponseEntity<>(response,HttpStatus.OK);
 	}
 	
-	@ApiOperation("Recupérer la liste des praticien d'une spécialité donnée")
+	@ApiOperation("Recupérer la liste des praticiens d'une spécialité donnée")
 	@GetMapping("/getbyspeciality/{specialityId}")
 	public ResponseEntity<List<Pratician>> praticianBySpecility(@PathVariable Long specialityId){
 		List<Pratician> praticians = practicianService.findActivePracticiansByService(specialityId);
 		return new ResponseEntity<>(praticians, HttpStatus.OK);
 	}
+	
+	
 }

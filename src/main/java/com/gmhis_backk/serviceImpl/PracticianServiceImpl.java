@@ -62,7 +62,7 @@ public class PracticianServiceImpl implements PracticianService{
 	@Autowired
 	private RoleService roleService;
 	
-	public Pratician findPracticianByUser (Long user) {
+	public Optional<Pratician> findPracticianByUser (Long user) {
 		return repo.findByUser(user);
 	}
 

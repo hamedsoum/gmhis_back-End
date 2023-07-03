@@ -19,7 +19,7 @@ public class AdmissionDTO {
 	private Long id;
 	private Date createdAt;
 	private Long patient;
-	private Long service;
+	private Long speciality;
 	private Long act;
 	private Long practician;
 	private Double caution;

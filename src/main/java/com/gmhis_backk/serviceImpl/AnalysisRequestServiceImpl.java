@@ -64,7 +64,6 @@ public class AnalysisRequestServiceImpl implements AnalysisRequestService {
 		}
 		
 		AnalysisRequest analys = new AnalysisRequest();
-		System.out.print(getanalysisNumber());
 		analys.setExamenType(analysDto.getExamenTytpe());
 		analys.setAnalysisNumber(getanalysisNumber());
 		analys.setAdmission(admission);
@@ -97,7 +96,6 @@ public class AnalysisRequestServiceImpl implements AnalysisRequestService {
 
 	@Override
 	public Page<AnalysisRequest> findAnalysisRequestsByPatient(Long patient,Long admissionID, Pageable pageable) {
-		System.out.println(patient);
 		return analysisRequestRepository.findAnalysisRequestByPatient(patient,admissionID, pageable);
 	}
 
@@ -108,8 +106,6 @@ public class AnalysisRequestServiceImpl implements AnalysisRequestService {
 
 	@Override
 	public Page<AnalysisRequest> findAllAnalysisRequests(Boolean examenType, Pageable pageable) {
-		System.out.println(getCurrentUserId().getFacilityId());
-		System.out.println(examenType);
 		if (examenType == true) return analysisRequestRepository.findAllAnalysisRequestsByFacility(examenType,UUID.fromString(getCurrentUserId().getFacilityId()), pageable);
 		
 		return analysisRequestRepository.findAllAnalysis(pageable);

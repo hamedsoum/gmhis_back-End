@@ -22,7 +22,7 @@ import com.gmhis_backk.domain.Pratician;
 public interface PracticianRepository extends JpaRepository<Pratician, Long>{
 
 	@Query(value = "select p from Pratician p join p.user u where u.id=:user")
-	public Pratician findByUser(@Param("user") Long user);
+	public Optional<Pratician> findByUser(@Param("user") Long user);
 	
 	@Query(value = "select p from Pratician p where active = 1")
 	public List<Pratician> findActivePracticians();

@@ -62,11 +62,13 @@ public class PrescriptionServiceImpl implements PrescriptionService {
 		BeanUtils.copyProperties(prescriptionDto, prescription, "id");
 		prescription.setPrescriptionNumber(getPrescriptionNumber());
 		List<Examination> examinations = examinationService.findPatientExaminationsOfLastAdmision(prescriptionDto.getPatientID());
-
 			if (examinations == null) {
 				throw new ResourceNotFoundByIdException("aucune consultation trouvée pour l'identifiant " );
 			}else {
-				prescription.setExamination(examinations.get(0));
+				if (examinations.size() != 0) {
+					System.out.println("here");
+					prescription.setExamination(examinations.get(0));
+				}
 			}
 			prescription.setPrescriptionDate(new Date());
 			prescription.setCreatedBy(this.getCurrentUserId().getId());
