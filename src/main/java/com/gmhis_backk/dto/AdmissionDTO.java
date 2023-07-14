@@ -23,5 +23,7 @@ public class AdmissionDTO {
 	private Long act;
 	private Long practician;
 	private Double caution;
+	private Boolean takeCare;
 
 }
+

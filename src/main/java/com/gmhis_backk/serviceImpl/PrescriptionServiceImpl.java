@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gmhis_backk.AppUtils;
 import com.gmhis_backk.domain.Drug;
 import com.gmhis_backk.domain.Examination;
+import com.gmhis_backk.domain.Insured;
 import com.gmhis_backk.domain.Prescription;
 import com.gmhis_backk.domain.PrescriptionItem;
 import com.gmhis_backk.domain.User;
@@ -162,8 +163,10 @@ public Optional<Prescription> findPrescriptionById(UUID id) {
 }
 
 @Override
-public Prescription findPrescriptionByPrescriptionNumber(String prescriptionNumber) {
-	return prescriptionRepository.findPrescriptionByPrescriptionNumber(prescriptionNumber);
+public Prescription retrievePrescription(String query) {
+	List<Prescription> prescriptions = prescriptionRepository.retrievePrescription(query);
+	Prescription lastPrescription = prescriptions.get(0);
+	return lastPrescription;
 }
 
 }

@@ -162,7 +162,7 @@ public class ExaminationController {
 			examsMap.put("facility", examsDto.getFacility().getName());
 			examsMap.put("practicianFirstName", examsDto.getPratician().getUser().getFirstName());
 			examsMap.put("practicianLastName", examsDto.getPratician().getUser().getLastName());
-			
+			examsMap.put("practicianTel", examsDto.getPratician().getUser().getTel());			
 			examsList.add(examsMap);
 		});
 		return examsList;

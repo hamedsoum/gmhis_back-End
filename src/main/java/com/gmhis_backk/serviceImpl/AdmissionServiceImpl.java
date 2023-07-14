@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gmhis_backk.AppUtils;
 import com.gmhis_backk.domain.Act;
 import com.gmhis_backk.domain.ActCategory;
+import com.gmhis_backk.domain.ActGroup;
 import com.gmhis_backk.domain.Admission;
 import com.gmhis_backk.domain.Bill;
 import com.gmhis_backk.domain.Examination;
@@ -34,6 +35,8 @@ import com.gmhis_backk.service.AdmissionService;
 import com.gmhis_backk.service.ExaminationService;
 import com.gmhis_backk.service.PatientService;
 import com.gmhis_backk.service.PracticianService;
+
+import javassist.NotFoundException;
 
 /**
  * 
@@ -71,6 +74,7 @@ public class AdmissionServiceImpl implements AdmissionService{
 
 	@Override @Transactional
 	public Admission saveAdmission(AdmissionDTO admissionDto)throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException{
+		
 		Pratician pratician = null;
 		
 		Patient patient = patientService.findById(admissionDto.getPatient());
@@ -78,7 +82,6 @@ public class AdmissionServiceImpl implements AdmissionService{
 
         ActCategory speciality = specialityService.findById(admissionDto.getSpeciality()).orElse(null);
         if(speciality == null) throw new ResourceNotFoundByIdException("Aucun Specialite trouvée pour l'identifiant. " );
-        System.out.println(speciality.getId());
 		
 	    Act act = actService.findActById(admissionDto.getAct()).orElse(null);
 		if (act == null) throw new ResourceNotFoundByIdException("Aucun act trouvé pour l'identifiant. " );
@@ -88,6 +91,7 @@ public class AdmissionServiceImpl implements AdmissionService{
 		Admission admission = new Admission();
 	
 		BeanUtils.copyProperties(admissionDto, admission, "id");
+		admission.setTakeCare(false);
 		admission.setAdmissionNumber(getAdmissionNumber());
 		admission.setPatient(patient);
 		admission.setAct(act);
@@ -96,15 +100,24 @@ public class AdmissionServiceImpl implements AdmissionService{
 		admission.setAdmissionStartDate(new Date());
         admission.setAdmissionStatus("R");
         admission.setFacilityId(this.getCurrentUserId().getFacilityId());;
-        admission.setCreatedAt(new Date());
+        admission.setCreatedAt(admissionDto.getCreatedAt());
 		admission.setCreatedBy(getCurrentUserId().getId());
 		return repo.save(admission);
 		
 	}
 	
+	
+	
 	@Override
-	public Admission updateAdmission(Long id, AdmissionDTO a)throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException{
-		return null;
+	public Admission updateAdmission(Long id, AdmissionDTO aDto)throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException{
+		Admission updateAdmission = repo.findById(id).orElse(null);
+		
+		if (updateAdmission == null) throw new ResourceNotFoundByIdException("Aucune admission trouvée pour l'identifiant"); 
+		
+		updateAdmission.setTakeCare(aDto.getTakeCare());
+		updateAdmission.setUpdatedAt(new Date());
+		updateAdmission.setUpdatedBy(getCurrentUserId().getId());
+		return repo.save(updateAdmission);
 	}
 
 	@Override
@@ -209,17 +222,17 @@ public class AdmissionServiceImpl implements AdmissionService{
 	}
 	
 	@Override
-	public Page<Admission> findAdmissionsInQueue(String facilityId, Pageable pageable){
+	public Page<Admission> findAdmissionsInQueue(Boolean takeCare, String facilityId, Pageable pageable){
 		Pratician practican = practicianService.findPracticianByUser(getCurrentUserId().getId()).orElse(null);
 		
-		if (practican == null) return repo.findAllAdmissionsInQueue(facilityId,pageable);
+		if (practican == null) return repo.findAllAdmissionsInQueue(takeCare,facilityId,pageable);
 			
-		return repo.findAdmissionsInQueue(facilityId,practican.getActCategory().getId(),pageable);
+		return repo.findAdmissionsInQueue(takeCare,facilityId,practican.getActCategory().getId(),pageable);
 	}
 		
 	@Override
-	public Page<Admission> findAdmissionsInQueueByDate (Date fromDate, Date toDate, Pageable pageable){
-		return repo.findAdmissionInQueueByDate(fromDate, toDate, pageable);
+	public Page<Admission> findAdmissionsInQueueByDate (Boolean takeCare,Date fromDate, Date toDate, Pageable pageable){
+		return repo.findAdmissionInQueueByDate(takeCare,fromDate, toDate, pageable);
 	}
 
 	@Override
@@ -262,5 +275,18 @@ public class AdmissionServiceImpl implements AdmissionService{
 	public Page<Admission> findAdmissionsByFacility(String facilityId, String admissionStatus, Pageable pageable) {
 		return repo.findAdmissionsByFacility( admissionStatus, facilityId, pageable);
 	}
+
+	@Override
+	public Admission updatetakeCare(Long admissionID, Boolean takeCare) throws NotFoundException {
+		System.out.println("admission id" + admissionID);
+		Admission admission = repo.findById(admissionID).orElse(null);
+		if(admission == null) {
+			throw new NotFoundException("Admission non trouvée");
+		}
+		admission.setTakeCare(takeCare);
+		repo.save(admission);
+		return admission;
+	}
+
 
 }

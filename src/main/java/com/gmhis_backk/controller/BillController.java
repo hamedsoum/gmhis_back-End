@@ -407,28 +407,23 @@ public class BillController {
 			lBillNb = an.substring(4);
 		}
 
-		if (lBillYearandMonth.equals(year + month)) {
-			number = Integer.parseInt(lBillNb) + 1;
-		} else {
-			number = number + 1;
-		}
+		if (lBillYearandMonth.equals(year + month)) number = Integer.parseInt(lBillNb) + 1;
+		 else number = number + 1;
+		
 
 		return "FA" + year + month + String.format("%04d", number);
 
 	}
 	
-	@ApiOperation(value = " retour le out d'un act")
+	@ApiOperation(value = " retourne le cout d'un act")
 	@GetMapping("/get-act-cost")
 	public int getActCost(
 			@RequestParam(required = true) Long actId,
 			@RequestParam(required = false ) Long conventionId ) {
 		
 		int cost = 0;
-		   cost = this.getOneActCostWhithoutConvention(actId);
-
-		
-
-		
+		 cost = this.getOneActCostWhithoutConvention(actId);
+		   
 		return cost;
 	}
 
@@ -514,17 +509,6 @@ public class BillController {
 
 		pBills = billService.findAdmissionWithExamination(billStatus,this.getCurrentUserId().getFacilityId(), pageable);
 		
-//		if (ObjectUtils.isNotEmpty(userID)) {
-//			pBills = billService.facilityInvoicesByPractician( billStatus,this.getCurrentUserId().getFacilityId(),userID, pageable);
-//		}
-//		
-//		if (ObjectUtils.isNotEmpty(date)) {
-//			pBills = billService.facilityInvoicesByDate( billStatus,this.getCurrentUserId().getFacilityId(),date, pageable);
-//		}
-//		
-//		if (ObjectUtils.isNotEmpty(userID) && ObjectUtils.isNotEmpty(date)) {
-//			pBills = billService.facilityInvoicesByPracticianAndDate( billStatus,this.getCurrentUserId().getFacilityId(),userID,date, pageable);
-//		}
 		
 		List<Bill> lBills = pBills.getContent();
 		List<Map<String, Object>> bill = this.getMapFromFacilityInvoicesPracticianList(lBills);
@@ -551,7 +535,10 @@ public class BillController {
 			billMap.put("invoiceNumber", bill.getBillNumber());
 			billMap.put("invoiceNumber", bill.getBillNumber());
 			//TODO : practician from examination, 
-			billMap.put("practicianName", bill.getAdmission().getPractician().getUser().getFirstName() + "" + bill.getAdmission().getPractician().getUser().getLastName());
+			if(bill.getAdmission().getPractician() != null) {
+				billMap.put("userID", bill.getAdmission().getPractician().getUser().getId());
+				billMap.put("practicianName", bill.getAdmission().getPractician().getUser().getFirstName() + " " + bill.getAdmission().getPractician().getUser().getLastName());
+			} 
 			billMap.put("patientNumber", bill.getAdmission().getPatient().getPatientExternalId() );
 			billMap.put("patientNumber", bill.getAdmission().getPatient().getPatientExternalId() );
 			billMap.put("patientAmount", bill.getPatientPart());
@@ -566,10 +553,8 @@ public class BillController {
 	@ApiOperation(value = "liste paginee de toutes les factures des assurances dans le système par Id de l'assurance")
 	@GetMapping("/BillHasInsure_p_list")
 	public ResponseEntity<Map<String, Object>> BillHasInsuredpaginatedList(
-			@RequestParam(required = false, defaultValue = "") Long insuranceId,
-			@RequestParam(required = true, defaultValue = "") String date,
-			@RequestParam(defaultValue = "id,desc") String[] sort, @RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "50") int size) throws ParseException {
+	    @RequestParam(defaultValue = "id,desc") String[] sort, @RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "50") int size) throws ParseException {
 		Map<String, Object> response = new HashMap<>();
 		Sort.Direction dir = sort[1].equalsIgnoreCase("asc") ? dir = Sort.Direction.ASC : Sort.Direction.DESC;
 //
@@ -577,19 +562,7 @@ public class BillController {
 		Page<BillHasInsured> pBills;
 //
 		pBills = billHasInsuredService.findBillsHasInsured(pageable);
-
-		if (ObjectUtils.isNotEmpty(insuranceId)) {
-			pBills = billHasInsuredService.findBillsHasInsuredByInsurance(insuranceId, pageable);
-		}
 		
-		if (ObjectUtils.isNotEmpty(date)) {
-			pBills = billHasInsuredService.findBillsHasInsuredByDate(date, pageable) ;
-		}
-		
-		if (ObjectUtils.isNotEmpty(date) && ObjectUtils.isNotEmpty(insuranceId)) {
-			pBills = billHasInsuredService.findBillsHasInsuredByInsuranceIdAndDate(insuranceId,date, pageable) ;
-		}
-//		
 		List<BillHasInsured> lBills = pBills.getContent();
 //
 		List<Map<String, Object>> bill = this.getMapFromBillHasInsuredList(lBills);
@@ -619,6 +592,8 @@ public class BillController {
 			billsMap.put("billNumber", billHasInsuredDto.getBill().getBillNumber());
 			billsMap.put("billDate", billHasInsuredDto.getBill().getCreatedAt());
 			billsMap.put("insurance", billHasInsuredDto.getInsurance().getName());
+			billsMap.put("insuranceID", billHasInsuredDto.getInsurance().getId());
+			billsMap.put("patientInsuranceNumber", billHasInsuredDto.getInsured().getCardNumber());
 			billsMap.put("insurancePart", billHasInsuredDto.getInsuredPart());
 			billsMap.put("patientPart", billHasInsuredDto.getBill().getPatientPart());
 			billsMap.put("insuranceCoverage", billHasInsuredDto.getInsuredCoverage());
@@ -916,37 +891,25 @@ public class BillController {
 	@ApiOperation(value = "Encaisser une facture ")
 	@PostMapping("/collect")
 	public ResponseEntity<String> collectBill(@RequestBody PaymentDTO paymentDto) throws ResourceNotFoundByIdException, ResourceNameAlreadyExistException {
-		bill = billService.findBillById(paymentDto.getBill()).orElse(bill);
 		
-		if (bill == null) {
-			throw new ResourceNotFoundByIdException("La facture n'existe pas en base !");
-		}
-	
+		bill = billService.findBillById(paymentDto.getBill()).orElse(bill);
+		if (bill == null) throw new ResourceNotFoundByIdException("La facture n'existe pas en base !");
 
-		if (bill.getBillStatus().compareToIgnoreCase("B") == 0) {
-			throw new ResourceNotFoundByIdException("La facture dejà encaisser !");
-		}
+		if (bill.getBillStatus().compareToIgnoreCase("B") == 0) throw new ResourceNotFoundByIdException("La facture dejà encaisser !");
 
-			CashRegister cashRegister = this.cashRegisterService.findCashRegisterById(paymentDto.getCashRegister()).orElse(null);
-				
-			if (cashRegister == null) {
-				throw new ResourceNotFoundByIdException("La caisse n'existe pas en base !");
-			}
-			
+		CashRegister cashRegister = this.cashRegisterService.findCashRegisterById(paymentDto.getCashRegister()).orElse(null);
+		if (cashRegister == null) throw new ResourceNotFoundByIdException("La caisse n'existe pas en base !");
 
-			PaymentType paymentType = this.paymentTypeService.findPaymentTypeById(paymentDto.getPaymentType()).orElse(null);
+		PaymentType paymentType = this.paymentTypeService.findPaymentTypeById(paymentDto.getPaymentType()).orElse(null);
+		if (paymentType == null) throw new ResourceNotFoundByIdException("Le type de payment n'existe pas en base !");
 					
-			if (paymentType == null) {
-				throw new ResourceNotFoundByIdException("Le type de payment n'existe pas en base !");
-			}
-					
-			Payment payment = new Payment();
-			this.setPaymentData(payment, paymentType, paymentDto, cashRegister);
+        Payment payment = new Payment();
+		this.setPaymentData(payment, paymentType, paymentDto, cashRegister);
 			
-			payment = billService.savePayment(this.setPaymentData(payment, paymentType, paymentDto, cashRegister));
-			CashRegisterManagement cashRegisterManagement  = cashRegisterManagementService.getCashierrManagementByCashierAndStateOpened(this.getCurrentUserId().getId());
-			if (cashRegisterManagement == null) {
-				throw new ResourceNotFoundByIdException(
+		payment = billService.savePayment(this.setPaymentData(payment, paymentType, paymentDto, cashRegister));
+		CashRegisterManagement cashRegisterManagement  = cashRegisterManagementService.getCashierrManagementByCashierAndStateOpened(this.getCurrentUserId().getId());
+		if (cashRegisterManagement == null) {
+		throw new ResourceNotFoundByIdException(
 						"Vous n'etes pas autorisé a encaiser une facture !  \n veuillez démander à l'administrateur d'ouvrir une caisse à votre nom.");
 			}else {
 				CashRegisterManagementDto cashRegisterManagementDto = new CashRegisterManagementDto();	

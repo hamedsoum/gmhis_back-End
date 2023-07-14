@@ -2,6 +2,7 @@ package com.gmhis_backk.repository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import javax.transaction.Transactional;
 
@@ -72,17 +73,18 @@ public interface BillRepository extends JpaRepository<Bill, Long>{
 	@Query(value = "SELECT b FROM Bill b WHERE b.billStatus='N'")
 	public Page<Bill> findByBillStatus(String status, Pageable pageable);
 	
-	@Query(value = "SELECT * FROM bill b WHERE b.admission_id IN ( SELECT DISTINCT e.admission_id FROM examination e WHERE e.facility_id =:facilityId )", nativeQuery = true)
-	public Page<Bill> findAdmissionWithExamination(@Param("facilityId") String facilityId,Pageable pageable);
 	
 	@Query(value = "SELECT b FROM Bill b WHERE b.billStatus= :billStatus AND b.admission.facilityId =:facilityId")
 	public Page<Bill> findBills(@Param("billStatus") String billStatus,@Param("facilityId") String facilityId, Pageable pageable);
 	
-	@Query(value = "SELECT b FROM Bill b WHERE b.billStatus= :billStatus AND b.admission.facilityId =:facilityId AND b.admission.practician.user.id =:userID")
-	public Page<Bill> findFacilityInvoicesByPractician(@Param("billStatus") String billStatus,@Param("facilityId") String facilityId,@Param("userID") Long userID, Pageable pageable);
+	@Query(value = "SELECT * FROM bill WHERE admission_id IN ( SELECT admission_id FROM examination WHERE facility_id =:facilityId )", nativeQuery = true)
+	public Page<Bill> findAdmissionWithExamination(@Param("facilityId") String facilityId,Pageable pageable);
 	
-	@Query(value = "SELECT b FROM Bill b WHERE b.billStatus= :billStatus AND b.admission.facilityId =:facilityId and b.createdAt BETWEEN :start AND :end")
-	Page<Bill> findFacilityInvoicesByDate(@Param("billStatus") String billStatus,@Param("facilityId") String facilityId,Date start, Date end, Pageable pageable);
+	@Query(value = "SELECT b FROM Bill b WHERE b.billStatus=:billStatus AND b.admission.id IN ( SELECT DISTINCT e.admission.id FROM Examination e WHERE e.pratician.user.id =:userID AND e.facility.id =:facilityId)")
+	public Page<Bill> findAdmissionWithExaminationByPractician(@Param("billStatus") String billStatus,@Param("facilityId") UUID facilityId,@Param("userID") Long userID, Pageable pageable);
+	
+	@Query(value = "SELECT * FROM bill b WHERE b.admission_id IN ( SELECT DISTINCT e.admission_id FROM examination e WHERE b.billStatus=:billStatus AND e.facility_id =:facilityId AND and b.createdAt BETWEEN :start AND :end", nativeQuery = true)
+	Page<Bill> findAdmissionWithExaminationByDate(@Param("billStatus") String billStatus,@Param("facilityId") String facilityId,Date start, Date end, Pageable pageable);
 	
 	@Query(value = "SELECT b FROM Bill b WHERE b.billStatus= :billStatus AND b.admission.facilityId =:facilityId AND b.admission.practician.user.id =:userID AND b.createdAt BETWEEN :start AND :end")
 	Page<Bill> findByBillhaInsuredInsuranceiDAndDate(@Param("billStatus") String billStatus,@Param("facilityId") String facilityId,@Param("userID") Long userID, Date start, Date end, Pageable pageable);

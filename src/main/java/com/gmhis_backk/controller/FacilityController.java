@@ -87,7 +87,7 @@ public class FacilityController {
 		facilityDto.setEmail(email);
 		facilityDto.setShortName(shortName);
 		Facility facility = facilityService.saveFacility(facilityDto);
-		fileLocationService.save(logo, logo.getBytes(), logo.getOriginalFilename(), logo.getContentType(),facility.getId());
+//		fileLocationService.save(logo, logo.getBytes(), logo.getOriginalFilename(), logo.getContentType(),facility.getId());
 		return new ResponseEntity<Facility>(facility, HttpStatus.OK);
 	} 
 	

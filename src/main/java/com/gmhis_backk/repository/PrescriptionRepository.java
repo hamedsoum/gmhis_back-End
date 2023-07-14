@@ -1,5 +1,6 @@
 package com.gmhis_backk.repository;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -21,6 +22,6 @@ public interface PrescriptionRepository extends JpaRepository<Prescription, UUID
 	@Query(value = "select Count(p) from Prescription p where p.examination.admission.id = :admissionID")
 	public Long findPrescriptionNumber(@Param("admissionID") Long admissionID);
 	
-	@Query(value = "SELECT p FROM Prescription p WHERE p.prescriptionNumber =:prescriptionNumber")
-	public Prescription findPrescriptionByPrescriptionNumber(@Param("prescriptionNumber") String prescriptionNumber);
+	@Query(value = "SELECT p FROM Prescription p WHERE p.prescriptionNumber =:query OR p.examination.admission.patient.cellPhone1 =:query OR (SELECT i.cardNumber FROM p.examination.admission.patient.insurances i WHERE i.society = 'CNAM') =:query ORDER BY p.prescriptionDate DESC ")
+	public List<Prescription> retrievePrescription(@Param("query") String query);
 }

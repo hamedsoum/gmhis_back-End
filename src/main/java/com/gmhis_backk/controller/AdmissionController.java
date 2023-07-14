@@ -19,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -29,9 +30,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.gmhis_backk.AppUtils;
 import com.gmhis_backk.domain.Admission;
+import com.gmhis_backk.domain.Examination;
 import com.gmhis_backk.domain.Pratician;
 import com.gmhis_backk.domain.User;
 import com.gmhis_backk.dto.AdmissionDTO;
+import com.gmhis_backk.dto.admissionTakeCareDTO;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
 import com.gmhis_backk.repository.UserRepository;
@@ -39,6 +42,7 @@ import com.gmhis_backk.service.AdmissionService;
 import com.gmhis_backk.service.WaitingRoomService;
 
 import io.swagger.annotations.ApiOperation;
+import javassist.NotFoundException;
 
 @RestController
 @RequestMapping("/admission")
@@ -53,7 +57,7 @@ public class AdmissionController {
 	@Autowired
 	WaitingRoomService waitingRoomService;
 	
-	@PostMapping("/add")
+	@PostMapping("")
 	@ApiOperation("/Ajouter une admission")
 	public ResponseEntity<Admission> addAdmission(@RequestBody AdmissionDTO admissionDto) throws ResourceNameAlreadyExistException,
 	ResourceNotFoundByIdException{
@@ -61,14 +65,23 @@ public class AdmissionController {
 		return new ResponseEntity<Admission>(admission, HttpStatus.OK);
 	}
 	
-	@PutMapping("/update/{id}")
-	@ApiOperation("/Modifier une admission")
-	public ResponseEntity<Admission> updateAdmission(@PathVariable("id") Long id,  @RequestBody AdmissionDTO admissionDto) throws ResourceNameAlreadyExistException,
+	@PatchMapping("{admissionID}")
+	@ApiOperation("/Update a admission given by his id")
+	public ResponseEntity<Admission> updateAdmission(@PathVariable("admissionID") Long id,  @RequestBody AdmissionDTO admissionDto) throws ResourceNameAlreadyExistException,
 	ResourceNotFoundByIdException{
 		Admission admission = admissionService.updateAdmission(id, admissionDto);
 		return new ResponseEntity<Admission>(admission, HttpStatus.OK);
 	}
 	
+	@PutMapping("/update-takeCare/{admissionID}")
+	@ApiOperation("Update takeCare")
+	public ResponseEntity<Admission> updatetakeCareStatus(@PathVariable Long admissionID,@RequestBody admissionTakeCareDTO takeCareDTO) throws NotFoundException{
+		System.out.println("admissionID " + admissionID);
+		System.out.println("takeCare " + takeCareDTO.getTakeCare());
+
+		Admission admission = admissionService.updatetakeCare(admissionID,takeCareDTO.getTakeCare());
+		return ResponseEntity.accepted().body(admission);
+	}
 	
 	@ApiOperation(value = "Lister la liste paginee de toutes les admission dans le système par status (R: register, B: billed")
 	@GetMapping("/p_list")
@@ -199,6 +212,7 @@ public class AdmissionController {
 
 		Admission admission= admissionService.findAdmissionById(id).orElse(null);
 		response.put("id", admission.getId());
+		response.put("takeCare", admission.getTakeCare());
 		response.put("caution", admission.getCaution());
 		response.put("patientId", admission.getPatient().getId());
 		response.put("patientExternalId", admission.getPatient().getPatientExternalId());
@@ -233,6 +247,7 @@ public class AdmissionController {
 	@ApiOperation(value = "Lister la liste paginee de toutes les admissions en salle d'attente")
 	@GetMapping("/queue/p_list")
 	public ResponseEntity<Map<String, Object>> queuepaginatedList(
+			@RequestParam(required = true) Boolean takeCare,
 			@RequestParam(required = false, defaultValue = "") String firstName,
 			@RequestParam(required = false, defaultValue = "") String patientExternalId,
 			@RequestParam(required = false) Long practician,
@@ -268,10 +283,10 @@ public class AdmissionController {
 		Date date1 = cDate1.getTime();
 		Date date2 = cDate2.getTime();
 	
-		queue = admissionService.findAdmissionsInQueue(this.getCurrentUserId().getFacilityId(), pageable); 
+		queue = admissionService.findAdmissionsInQueue(takeCare,this.getCurrentUserId().getFacilityId(), pageable); 
 
 		if( ObjectUtils.isNotEmpty(fromDate) ||  ObjectUtils.isNotEmpty(toDate) ) {
-			queue = admissionService.findAdmissionsInQueueByDate(date1, date2, pageable);
+			queue = admissionService.findAdmissionsInQueueByDate(takeCare,date1, date2, pageable);
 		}
 	
 		List<Admission> lAdmissions = queue.getContent();

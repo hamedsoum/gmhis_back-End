@@ -82,7 +82,7 @@ public class ExaminationServiceImpl implements ExaminationService{
 			examPatholy.setCreatedAt(new Date());
 			examPatholy.setExamination(examination);
 			examPatholy.setPathology(p);
-			examPatholy.setCreatedBy(this.getCurrentUserId().getId());
+			examPatholy.setCreatedBy(this.getCurrentUser().getId());
 			examPathologyRepo.save(examPatholy);
 			repo.save(examination);
 		}
@@ -107,7 +107,7 @@ public class ExaminationServiceImpl implements ExaminationService{
 		repo.removeExaminationAllPathologies(id);
 	}
 	
-	User getCurrentUserId() {
+	User getCurrentUser() {
 		return this.userRepository.findUserByUsername(AppUtils.getUsername());
 	}
 
@@ -149,7 +149,6 @@ public class ExaminationServiceImpl implements ExaminationService{
 
 	@Override
 	public Examination insertDiagnostic(Long id, String diagnostic) throws NotFoundException {
-		System.out.println(id);
 		Examination examination = repo.findExaminationById(id).orElse(null);
 		if(examination == null) {
 			throw new NotFoundException("Consultation non trouvée");

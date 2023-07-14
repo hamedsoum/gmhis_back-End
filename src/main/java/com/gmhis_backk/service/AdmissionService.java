@@ -20,6 +20,8 @@ import com.gmhis_backk.dto.AdmissionDTO;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
 
+import javassist.NotFoundException;
+
 
 /**
  * 
@@ -35,6 +37,9 @@ public interface AdmissionService {
 	public String getAdmissionNumber();
 	
 	public Admission updateAdmission(Long id, AdmissionDTO a)throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException;
+	
+	public Admission updatetakeCare(Long admissionID, Boolean takeCare)throws NotFoundException;
+
 
 	public Admission findAdmissionByPatient(Long patient);
 	
@@ -72,10 +77,10 @@ public interface AdmissionService {
 	
 	public void setAdmissionStatusToBilled(Long id);
 	
-	public Page<Admission> findAdmissionsInQueue (String facilityId, Pageable pageable) ;
+	public Page<Admission> findAdmissionsInQueue (Boolean takeCare,String facilityId, Pageable pageable) ;
 		
 	
-	public Page<Admission> findAdmissionsInQueueByDate (Date fromDate, Date toDate, Pageable pageable);
+	public Page<Admission> findAdmissionsInQueueByDate (Boolean takeCare,Date fromDate, Date toDate, Pageable pageable);
 	
 	public Page<Admission>findAdmissiondByDate(String date,String facilityId, Pageable pageable) throws ParseException ;
 

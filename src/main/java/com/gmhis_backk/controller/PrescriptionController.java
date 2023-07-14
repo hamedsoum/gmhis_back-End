@@ -116,6 +116,7 @@ public class PrescriptionController {
 			examsMap.put("prescriptionStatus", prescriptionDto.getPrescriptionStatus());
 			examsMap.put("practicienFirstName", prescriptionDto.getExamination().getPratician().getUser().getFirstName());
 			examsMap.put("practicienLastName", prescriptionDto.getExamination().getPratician().getUser().getLastName());
+			examsMap.put("practicienTel", prescriptionDto.getExamination().getPratician().getUser().getTel());
 			prescriptionList.add(examsMap);
 		});
 		return prescriptionList;
@@ -188,11 +189,11 @@ public class PrescriptionController {
 		return new ResponseEntity<>(response,HttpStatus.OK);
 	}
 	
-	@GetMapping("/prescriptionByPrescriptionNumber/{prescriptionNumber}")
-	@ApiOperation("detail d'une ordonnance par son numero")
-	public  ResponseEntity<Map<String, Object>> getDetail(@PathVariable String prescriptionNumber){
+	@GetMapping("{searchPrescription}")
+	@ApiOperation("detail d'une ordonnance par son numero ou le telephone du patient et le numero CNAM")
+	public  ResponseEntity<Map<String, Object>> retrievePrescription(@PathVariable String searchPrescription){
 		Map<String, Object> response = new HashMap<>();
-		Prescription prescription = prescriptionService.findPrescriptionByPrescriptionNumber(prescriptionNumber);
+		Prescription prescription = prescriptionService.retrievePrescription(searchPrescription);
 		response.put("id", prescription.getId());
 		response.put("practicienFirstName", prescription.getExamination().getPratician().getUser().getFirstName());
 		response.put("practicienLastName", prescription.getExamination().getPratician().getUser().getLastName());

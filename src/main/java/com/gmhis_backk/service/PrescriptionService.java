@@ -36,6 +36,6 @@ public interface PrescriptionService {
 
 	public Optional<Prescription> findPrescriptionById(UUID id);
 	
-	public Prescription findPrescriptionByPrescriptionNumber(String prescriptionNumber);
+	public Prescription retrievePrescription(String query);
 
 }

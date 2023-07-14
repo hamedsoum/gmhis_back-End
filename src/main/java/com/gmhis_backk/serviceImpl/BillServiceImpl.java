@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -67,13 +68,11 @@ public class BillServiceImpl implements BillService{
 		return repo.findBillByAdmissionId(admissionId);
 	}
 
-	
 	@Override
 	public Page<Bill> findBills(String billStatus,String facilityId, Pageable pageable){		
 		return repo.findBills(billStatus,facilityId, pageable);
 	}
 	
-
 	@Override
 	public Page<Bill> findAdmissionWithExamination(String billStatus,String facilityId, Pageable pageable){
 		Page<Bill> bill = repo.findAdmissionWithExamination(facilityId,pageable);
@@ -164,14 +163,14 @@ public class BillServiceImpl implements BillService{
 
 	@Override
 	public Page<Bill> facilityInvoicesByPractician(String billStatus, String facilityId, Long PracticianID,Pageable pageable) {
-		return repo.findFacilityInvoicesByPractician(billStatus, facilityId, PracticianID, pageable);
+		return repo.findAdmissionWithExaminationByPractician(billStatus, UUID.fromString(facilityId), PracticianID, pageable);
 	}
 
 	@Override
 	public Page<Bill> facilityInvoicesByDate(String billStatus,String facilityId, String date, Pageable pageable)
 			throws ParseException {
 		String[] dates = date.split(","); 
-		return repo.findFacilityInvoicesByDate(billStatus,facilityId,new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dates[0]+" 00:00:00"),
+		return repo.findAdmissionWithExaminationByDate(billStatus,facilityId,new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dates[0]+" 00:00:00"),
 				new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dates[1]+" 23:59:59"), pageable);
 	}
 

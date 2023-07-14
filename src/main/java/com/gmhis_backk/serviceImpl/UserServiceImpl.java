@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gmhis_backk.AppUtils;
 import com.gmhis_backk.domain.User;
 import com.gmhis_backk.domain.UserPrincipal;
 import com.gmhis_backk.dto.ChangePasswordDto;
@@ -25,6 +26,7 @@ import com.gmhis_backk.dto.ResetPasswordDto;
 import com.gmhis_backk.dto.UserDto;
 import com.gmhis_backk.exception.domain.*;
 import com.gmhis_backk.repository.AuthorityRepository;
+import com.gmhis_backk.repository.FacilityRepository;
 import com.gmhis_backk.repository.RoleRepository;
 import com.gmhis_backk.repository.UserRepository;
 import com.gmhis_backk.service.EmailService;
@@ -56,7 +58,6 @@ import static com.gmhis_backk.constant.UserImplConstant.*;
 @Qualifier("userDetailsService")
 public class UserServiceImpl implements UserService, UserDetailsService {
 	private Logger LOGGER = LoggerFactory.getLogger(getClass());
-	private UserRepository userRepository;
 	private BCryptPasswordEncoder passwordEncoder;
 	private LoginAttemptService loginAttemptService;
 	private EmailService emailService;
@@ -69,7 +70,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	@Autowired
 	private AuthorityRepository authorityRepo;
+	
+	@Autowired 
+	private UserRepository userRepository;
 
+	@Autowired
+	private static FacilityRepository facilityRep;
+
+	User getCurrentUser() {
+		return this.userRepository.findUserByUsername(AppUtils.getUsername());
+	}
 
 	@Autowired
 	public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder,
@@ -114,6 +124,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		user.setPassword(encodePassword(password));
 		user.setActive(true);
 		user.setNotLocked(true);
+		
+		
 		//user.setRole(ROLE_USER.name());
 //		user.setProfileImageUrl(getTemporaryProfileImageUrl(username));
 		userRepository.save(user);
@@ -146,15 +158,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 			user.setRoleIds(StringUtils.join(userDto.getRoles(), ","));
 		user.setNotLocked(true);
 		user.setPasswordMustBeChange(true); 
+		user.setFacilityId(this.getCurrentUser().getFacilityId());
 		user = userRepository.save(user);
 		if (userDto.getRoles().size() != 0) {
 			for (int i = 0; i < userDto.getRoles().size(); i++) {
 				roleRepo.setUserRole(user.getId(), userDto.getRoles().get(i));
 			}
 		}
-		
+				
 		this.setUserRoleAndAuthorities(user);
-		emailService.sendNewPasswordEmail(user.getFirstName(), username, password, user.getEmail());
+//		emailService.sendNewPasswordEmail(user.getFirstName(), username, password, user.getEmail());
 //		eventLogService.addEvent("creation de l'utilisateur: " + user.getFirstName() + " " + user.getLastName(),user.getClass().getSimpleName());
 		return user;
 	}

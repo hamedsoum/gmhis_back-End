@@ -29,7 +29,17 @@ public class Admission implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	
+	@Column(name = "take_care")
+	private Boolean takeCare ;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "take_care_at")
+	private Date takeCareAt;
 
+	@Column(name = "take_care_by")
+	private Long takeCareBy;
+	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "admission_end_date")
 	private Date admissionEndDate;

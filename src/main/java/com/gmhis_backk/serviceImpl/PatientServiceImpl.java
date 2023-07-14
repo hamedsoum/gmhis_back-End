@@ -245,8 +245,8 @@ public class PatientServiceImpl implements PatientService {
 				}
 			
 				
-				updatePatient.setCreatedAt(new Date());
-				updatePatient.setCreatedBy(this.getCurrentUserId().getId());
+				updatePatient.setUpdatedAt(new Date());
+				updatePatient.setUpdatedBy(this.getCurrentUserId().getId());
 				
 				patient = patientRepository.save(updatePatient);
 				System.out.print(patientdto.getInsurances().size());
