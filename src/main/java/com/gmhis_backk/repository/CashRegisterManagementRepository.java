@@ -48,7 +48,7 @@ public interface CashRegisterManagementRepository extends JpaRepository<CashRegi
 	@Query(value = "SELECT c FROM CashRegisterManagement c where c.cashier.id =:cashier AND c.state = true")
 	List<CashRegisterManagement> findAllCashierrManagementByCashierAndStateOpened(@Param("cashier") Long cashier);
 	
-	@Query(value = "SELECT c FROM CashRegisterManagement c where c.cashier.id =:cashier AND c.state = true")
+	@Query(value = "SELECT c FROM CashRegisterManagement c where c.cashier.id =:cashier")
 	CashRegisterManagement getCashierrManagementByCashierAndStateOpened(@Param("cashier") Long cashier);
 
 	@Query(value="SELECT c FROM CashRegisterManagement c WHERE c.cashier.id =:cashier AND c.state = true")

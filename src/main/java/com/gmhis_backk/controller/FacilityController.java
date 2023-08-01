@@ -76,7 +76,7 @@ public class FacilityController {
 		facilityDto.setActive(Boolean.parseBoolean(active));
 		facilityDto.setName(name);
 		facilityDto.setDhisCode(dhisCode);
-		facilityDto.setFacilityCategoryId(facilityCategoryId);
+		if(facilityCategoryId == "null") facilityDto.setFacilityCategoryId(null);
 		facilityDto.setFacilityTypeId(facilityTypeId);
 		facilityDto.setLatitude(Float.parseFloat(latitude));
 		facilityDto.setLocalCode(localCode);
@@ -190,7 +190,7 @@ public class FacilityController {
 			facilitiesMap.put("email", facilityDto.getEmail());
 			facilitiesMap.put("createdAt", facilityDto.getCreatedAt());
 			facilitiesMap.put("updatedAt", facilityDto.getUpdatedAt());
-			facilitiesMap.put("faciityType", facilityDto.getFacilityType().getName());
+			if (facilityDto.getFacilityType() != null) facilitiesMap.put("faciityType", facilityDto.getFacilityType().getName());
 			facilitiesMap.put("createdByLogin", ObjectUtils.isEmpty(createdBy) ? "--" : createdBy.getLogin());
 			facilitiesMap.put("createdByFirstName", ObjectUtils.isEmpty(createdBy) ? "--" : createdBy.getFirstName());
 			facilitiesMap.put("createdByLastName", ObjectUtils.isEmpty(createdBy) ? "--" : createdBy.getLastName());

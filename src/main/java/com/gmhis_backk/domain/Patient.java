@@ -40,9 +40,6 @@ public class Patient implements Serializable {
 	@Column(name = "cell_phone_1", nullable = true)
 	private String cellPhone1;
 
-//	@Column(name = "cell_phone_2", nullable = true)
-//	private String cellPhone2;
-
 	@Column
 	private String correspondant;
 
@@ -81,9 +78,6 @@ public class Patient implements Serializable {
 	@Column(name = "marital_status")
 	private String maritalStatus;
 
-//	@Column(name = "father_name", nullable = true)
-//	private String fatherName;
-
 	@Column(name = "father_profession", nullable = true)
 	private String fatherProfession;
 
@@ -115,8 +109,6 @@ public class Patient implements Serializable {
 	@Column(name = "updated_by")
 	private Long updatedBy;
 
-//	@Column(name = "maiden_name", nullable = true)
-//	private String maidenName;
 
 	@Column(nullable = true)
 	private String civility;
@@ -139,7 +131,19 @@ public class Patient implements Serializable {
 	@JoinColumn(name = "country_id", nullable = true)
 	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 	public Country country;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "city_of_residence", nullable = true)
+	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+	public City cityOfResidence;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "country_of_residence", nullable = true)
+	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+	public Country countryOfResidence;
 
+	public String municipality;
+	
 	@OneToMany(mappedBy = "patient", fetch = FetchType.LAZY)
 	private List<PatientAddress> patientAddresses;
 

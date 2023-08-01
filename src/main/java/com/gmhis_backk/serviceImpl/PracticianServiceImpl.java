@@ -1,6 +1,5 @@
 package com.gmhis_backk.serviceImpl;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -8,7 +7,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import javax.mail.MessagingException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,21 +15,20 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gmhis_backk.AppUtils;
 import com.gmhis_backk.domain.ActCategory;
 import com.gmhis_backk.domain.Facility;
 import com.gmhis_backk.domain.Pratician;
 import com.gmhis_backk.domain.Role;
-import com.gmhis_backk.domain.Speciality;
+import com.gmhis_backk.domain.User;
 import com.gmhis_backk.dto.PraticianDto;
 import com.gmhis_backk.dto.UserDto;
 import com.gmhis_backk.exception.domain.EmailExistException;
-import com.gmhis_backk.exception.domain.InvalidInputException;
-import com.gmhis_backk.exception.domain.NotAnImageFileException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
 import com.gmhis_backk.exception.domain.TelephoneExistException;
-import com.gmhis_backk.exception.domain.UserNotFoundException;
 import com.gmhis_backk.exception.domain.UsernameExistException;
 import com.gmhis_backk.repository.PracticianRepository;
+import com.gmhis_backk.repository.UserRepository;
 import com.gmhis_backk.service.ActCategoryService;
 import com.gmhis_backk.service.FacilityService;
 import com.gmhis_backk.service.PracticianService;
@@ -54,16 +51,20 @@ public class PracticianServiceImpl implements PracticianService{
 	@Autowired
 	private PracticianRepository repo;
 	@Autowired
-	private SpecialityService specialityService;
-	@Autowired
 	private FacilityService facilityService;
 	@Autowired
 	private UserService userService;
 	@Autowired
 	private RoleService roleService;
+	@Autowired 
+	private UserRepository userRepository;
 	
 	public Optional<Pratician> findPracticianByUser (Long user) {
 		return repo.findByUser(user);
+	}
+	
+	User getCurrentUser() {
+		return this.userRepository.findUserByUsername(AppUtils.getUsername());
 	}
 
 	@Override
@@ -71,63 +72,49 @@ public class PracticianServiceImpl implements PracticianService{
 		Pratician pratician = new Pratician();
 		
 		Pratician praticienByEmail = repo.findByEmail(praticianDto.getEmail()).orElse(null);
-		
-		if(praticienByEmail != null) {
-			throw new EmailExistException("Cet email est déjà utilisé");
-		}
+		if(praticienByEmail != null) throw new EmailExistException("Cet email est déjà utilisé");
 		
 		Pratician praticienByTelephone = repo.findByTelephone(praticianDto.getTelephone()).orElse(null);
-		if(praticienByTelephone != null) {
-			throw new TelephoneExistException("Ce numéro de téléphone est déjà utilisé");
-		}
+		if(praticienByTelephone != null) throw new TelephoneExistException("Ce numéro de téléphone est déjà utilisé");
 		
-		BeanUtils.copyProperties(praticianDto, pratician,"id");
+		BeanUtils.copyProperties(praticianDto, pratician,"id");	
 		
-		
-		Speciality speciality = specialityService.findById(praticianDto.getSpeciliaty()).orElse(null);
-		if(speciality == null) {throw new ResourceNotFoundByIdException("Spécialité inexistante");}
-		pratician.setSpeciality(speciality);
+		User user = userService.findById(praticianDto.getUser()).orElse(null);
+		if(user == null) {throw new ResourceNotFoundByIdException("Utilisateur inexistant");}
+		pratician.setUser(user);
 		
 		ActCategory actCategory = actCategoryService.findById(praticianDto.getActCategoryID()).orElse(null);
 		if(actCategory == null) {throw new ResourceNotFoundByIdException("category d'act inexistant");}
 		pratician.setActCategory(actCategory);
 		
-		Facility facility = facilityService.findFacilityById(praticianDto.getFacility()).orElse(null);
+		Facility facility = facilityService.findFacilityById(UUID.fromString(this.getCurrentUser().getFacilityId())).orElse(null);
 		if(facility == null) {throw new ResourceNotFoundByIdException("Centre de sante inexistant");}
 		pratician.setFacility(facility);
 		pratician.setCreatedAt(new Date());
+		pratician.setActive(true);
 		pratician.setPraticianNumber(this.generateSerialNumber());
 		
-		this.generateAccess(pratician);
 		
 		return repo.save(pratician); 
 	}
 	
-	private Boolean generateAccess(Pratician pratician) {
-		try {
-			UserDto userDto = new UserDto();
-			Role role = roleService.findByRoleName("practicien");
-			List<Integer> roles = new ArrayList<>();
-			roles.add(role.getId());
-			userDto.setLastName(pratician.getPrenoms());
-			userDto.setFirstName(pratician.getNom());
-			userDto.setFacilityId(pratician.getFacility().getId());
-			userDto.setEmail(pratician.getEmail());
-			userDto.setPassword(pratician.getNom());
-			userDto.setUsername(pratician.getNom());
-			userDto.setRole("practicien");
-			userDto.setRoles(roles);
-			userDto.setTel(pratician.getTelephone());
-			userDto.setActive(true);
-			userService.addNewUser(userDto);
-			return true;
-		} catch (UserNotFoundException | UsernameExistException | EmailExistException | IOException
-				| NotAnImageFileException | ResourceNotFoundByIdException | MessagingException
-				| InvalidInputException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return false;
+	private Boolean generateAccess(Pratician pratician) throws UsernameExistException {
+		UserDto userDto = new UserDto();
+		Role role = roleService.findByRoleName("practicien");
+		List<Integer> roles = new ArrayList<>();
+		roles.add(role.getId());
+		userDto.setLastName(pratician.getPrenoms());
+		userDto.setFirstName(pratician.getNom());
+		userDto.setFacilityId(pratician.getFacility().getId());
+		userDto.setEmail(pratician.getEmail());
+		userDto.setPassword(pratician.getNom());
+		userDto.setUsername(pratician.getNom());
+		userDto.setRole("practicien");
+		userDto.setRoles(roles);
+		userDto.setTel(pratician.getTelephone());
+		userDto.setActive(true);
+		userService.addNewUser(userDto);
+		return true;
 	}
 	
 	private String generateSerialNumber() {
@@ -153,14 +140,14 @@ public class PracticianServiceImpl implements PracticianService{
 
 	@Override
 	public Page<Pratician> findAllP(Pageable pageable) {
-		Page<Pratician> practicians = repo.findAll(pageable);
+		Page<Pratician> practicians = repo.findAllPracticians(UUID.fromString(this.getCurrentUser().getFacilityId()), pageable);
 		//practicians0
 		return practicians;
 	}
 	
 	@Override
 	public List<Pratician> findActivePracticians() {
-		return repo.findActivePracticians();
+		return repo.findActivePracticians(UUID.fromString(this.getCurrentUser().getFacilityId()));
 	}
 
 

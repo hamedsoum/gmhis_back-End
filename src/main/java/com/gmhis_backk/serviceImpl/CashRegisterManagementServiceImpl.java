@@ -119,7 +119,6 @@ public class CashRegisterManagementServiceImpl implements CashRegisterManagement
 
 	@Override
 	public Optional<CashRegisterManagement> getCashRegisterManagement(UUID id) {
-		System.out.println(id);
 		return cashRegisterManagementRepository.findById(id);
 	}
 
@@ -180,6 +179,7 @@ public class CashRegisterManagementServiceImpl implements CashRegisterManagement
 
 	@Override
 	public CashRegisterManagement getCashierrManagementByCashierAndStateOpened(Long cashier) {
+		System.out.println("cashier ID ==>" + cashier);
 		return cashRegisterManagementRepository.getCashierrManagementByCashierAndStateOpened(cashier);
 	}
 

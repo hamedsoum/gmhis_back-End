@@ -63,9 +63,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	private EmailService emailService;
 
 	@Autowired
-	private EventLogService eventLogService;
-
-	@Autowired
 	private RoleRepository roleRepo;
 
 	@Autowired
@@ -73,9 +70,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	
 	@Autowired 
 	private UserRepository userRepository;
-
-	@Autowired
-	private static FacilityRepository facilityRep;
 
 	User getCurrentUser() {
 		return this.userRepository.findUserByUsername(AppUtils.getUsername());
@@ -135,10 +129,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	}
 
 	@Override @Transactional
-	public User addNewUser(UserDto userDto)
-			throws UserNotFoundException, UsernameExistException, EmailExistException, IOException,
-			NotAnImageFileException, ResourceNotFoundByIdException, MessagingException, InvalidInputException {
-
+	public User addNewUser(UserDto userDto){
+		System.out.println(userDto.getFirstName());
 //		validateFirstNameAndLastNameAndPassword(userDto.getFirstName(), userDto.getLastName(), null, null);
 //
 //		validateNewUsernameAndEmail(EMPTY, null, userDto.getEmail(), userDto.getTel());
@@ -146,22 +138,30 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 //	    System.out.println(userDto.getFacilityId());
 		User user = new User();
 		BeanUtils.copyProperties(userDto, user,"id");
+		
+		if (userDto.getFacilityId() != null) {
+			user.setFacilityId(userDto.getFacilityId().toString());
+		} else {
+			user.setFacilityId(this.getCurrentUser().getFacilityId());
+		}
 		String password = generatePassword(userDto.getPassword());
 
 		user.setUserId(generateUserId());
 		String username = generateUsername(user);
 		user.setJoinDate(new Date());
 		user.setUsername(username);
-
+		System.out.println(password);
 		user.setPassword(encodePassword(password));
+	
 		if (userDto.getRoles().size() != 0)
 			user.setRoleIds(StringUtils.join(userDto.getRoles(), ","));
 		user.setNotLocked(true);
-		user.setPasswordMustBeChange(true); 
-		user.setFacilityId(this.getCurrentUser().getFacilityId());
+		user.setPasswordMustBeChange(false); 
+		user.setActive(true);
 		user = userRepository.save(user);
 		if (userDto.getRoles().size() != 0) {
 			for (int i = 0; i < userDto.getRoles().size(); i++) {
+				System.out.println(userDto.getRoles().get(i));
 				roleRepo.setUserRole(user.getId(), userDto.getRoles().get(i));
 			}
 		}
@@ -239,7 +239,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	@Override
 	public Page<User> getUsers(Pageable pageable) {
-		return userRepository.findAll(pageable);
+		if(this.getCurrentUser().getId() == 0) return userRepository.findAll(pageable);
+		return userRepository.findAllUsers(pageable,this.getCurrentUser().getFacilityId());
 	}
 
 	@Override
@@ -432,7 +433,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	@Override
 	public List<User> findAllActive() {
-		return userRepository.findAllActive();
+		if(this.getCurrentUser().getId() == 0) userRepository.findAllActive();
+		return userRepository.findAllActiveByFacility(this.getCurrentUser().getFacilityId());
 	}
 
 	@Override

@@ -65,6 +65,7 @@ public class ExaminationController {
 
 	//private Object dayNumberBetweenAdmissionFirstExaminationAndCurrentDate;
 
+
 	
 	@ApiOperation(value = "Ajouter une consultation d'un patient")
 	@PostMapping("/add")
@@ -76,12 +77,12 @@ public class ExaminationController {
 			if (admission == null) {
 				throw new ResourceNotFoundByIdException("aucune admission d'acte trouvé pour l'identifiant " );
 			}
-			
-			 Pratician practician = practicianService.findPracticianById(examinationDto.getPratician()).orElse(null);
+			System.out.println("CurrentUserId " + this.getCurrentUserId().getId());
+			 Pratician practician = practicianService.findPracticianByUser(this.getCurrentUserId().getId()).orElse(null);
 				if (practician == null) {
 					throw new ResourceNotFoundByIdException("aucun practician trouvé pour l'utilisateur connecte " );
 				}
-				System.out.println(this.getCurrentUserId().getFacilityId());
+				System.out.println("PracticianID " + practician.getId());
 				examination = new Examination();
 				examination.setAdmission(admission);
 				examination.setConclusion(examinationDto.getConclusion());

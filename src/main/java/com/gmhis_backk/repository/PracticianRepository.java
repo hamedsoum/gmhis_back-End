@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import java.util.UUID;
 
 import com.gmhis_backk.domain.Pratician;
 
@@ -24,9 +25,11 @@ public interface PracticianRepository extends JpaRepository<Pratician, Long>{
 	@Query(value = "select p from Pratician p join p.user u where u.id=:user")
 	public Optional<Pratician> findByUser(@Param("user") Long user);
 	
-	@Query(value = "select p from Pratician p where active = 1")
-	public List<Pratician> findActivePracticians();
+	@Query(value = "select p from Pratician p where active = 1 and p.facility.id =:facilityID")
+	public List<Pratician> findActivePracticians(@Param("facilityID")UUID facilityID );
 	
+	@Query(value = "select p from Pratician p where p.facility.id =:facilityID")
+	public Page<Pratician> findAllPracticians(@Param("facilityID")UUID facilityID,Pageable pageable);
 	
 	@Query(value = "select p from Pratician p where p.user.firstName like %:firstName%  and p.user.lastName like %:lastName% and p.user.tel like %:tel% "
 			+ "and p.praticianNumber like %:practicianNumber% ")

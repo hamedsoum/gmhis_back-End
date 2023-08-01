@@ -57,6 +57,22 @@ public class AdmissionController {
 	@Autowired
 	WaitingRoomService waitingRoomService;
 	
+	@PutMapping("/supervisory/{admissionID}")
+	@ApiOperation("new admission supervisory")
+	public ResponseEntity<Admission> supervisory(@PathVariable Long admissionID) throws NotFoundException{
+		System.out.println("admissionID " + admissionID);
+		Admission admission = admissionService.supervitory(admissionID);
+		return ResponseEntity.accepted().body(admission);
+	}
+	
+	@PutMapping("/update-takeCare/{admissionID}")
+	@ApiOperation("Update takeCare")
+	public ResponseEntity<Admission> updatetakeCareStatus(@PathVariable Long admissionID,@RequestBody admissionTakeCareDTO takeCareDTO) throws NotFoundException{
+		
+		Admission admission = admissionService.updatetakeCare(admissionID,takeCareDTO.getTakeCare());
+		return ResponseEntity.accepted().body(admission);
+	}
+	
 	@PostMapping("")
 	@ApiOperation("/Ajouter une admission")
 	public ResponseEntity<Admission> addAdmission(@RequestBody AdmissionDTO admissionDto) throws ResourceNameAlreadyExistException,
@@ -73,16 +89,7 @@ public class AdmissionController {
 		return new ResponseEntity<Admission>(admission, HttpStatus.OK);
 	}
 	
-	@PutMapping("/update-takeCare/{admissionID}")
-	@ApiOperation("Update takeCare")
-	public ResponseEntity<Admission> updatetakeCareStatus(@PathVariable Long admissionID,@RequestBody admissionTakeCareDTO takeCareDTO) throws NotFoundException{
-		System.out.println("admissionID " + admissionID);
-		System.out.println("takeCare " + takeCareDTO.getTakeCare());
 
-		Admission admission = admissionService.updatetakeCare(admissionID,takeCareDTO.getTakeCare());
-		return ResponseEntity.accepted().body(admission);
-	}
-	
 	@ApiOperation(value = "Lister la liste paginee de toutes les admission dans le système par status (R: register, B: billed")
 	@GetMapping("/p_list")
 	public ResponseEntity<Map<String, Object>> paginatedList(
@@ -171,6 +178,7 @@ public class AdmissionController {
 			User createdBy = ObjectUtils.isEmpty(admissionDto.getCreatedBy()) ? new User() : userRepository.findById(admissionDto.getCreatedBy()).orElse(null);
 			User updatedBy = ObjectUtils.isEmpty(admissionDto.getUpdatedBy()) ? new User() : userRepository.findById(admissionDto.getUpdatedBy()).orElse(null);
 			admissionsMap.put("id", admissionDto.getId());
+			admissionsMap.put("takeCare", admissionDto.getTakeCare());
 			admissionsMap.put("admissionNumber", admissionDto.getAdmissionNumber());
 			admissionsMap.put("facilityName", admissionDto.getFacility().getName());
 			admissionsMap.put("facilityType", admissionDto.getFacility().getFacilityType().getName());

@@ -100,12 +100,10 @@ public class AnalysisRequestController {
 				@RequestParam(required = false, defaultValue = "") String examenType,
 				@RequestParam(defaultValue = "id,desc") String[] sort, @RequestParam(defaultValue = "0") int page,
 				@RequestParam(defaultValue = "50") int size){
-		System.out.println(state);
 		Map<String, Object> response = new HashMap<>();
 		Sort.Direction dir = sort[1].equalsIgnoreCase("asc") ? dir = Sort.Direction.ASC : Sort.Direction.DESC;
 
 		Pageable paging = PageRequest.of(page, size, Sort.by(dir, sort[0]));
-		
 		
 		Page<AnalysisRequest> p_analysisRequest = null; 
 		
@@ -186,7 +184,6 @@ public class AnalysisRequestController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 	
-	
 
 	@GetMapping("/getanalyseRequestNumber/{admissionId}")
 	@ApiOperation("nombre de consultation d'un patient par admission ")
@@ -198,7 +195,6 @@ public class AnalysisRequestController {
 	protected  User getCurrentUserId() {
 		return this.userRepository.findUserByUsername(AppUtils.getUsername());
 	}
-	
 	
 	@ApiOperation(value = "Marquer une ou des demandes d'examens comme effectuée")
 	@PostMapping("/performed")
@@ -237,7 +233,6 @@ public class AnalysisRequestController {
 	@GetMapping("/getAnalysisRequestItems/{analysisRequestId}")
 	@ApiOperation("listes des items d'analyses demandes par l'id de l'analyse ")
 	public  ResponseEntity<List<Map<String, Object>>> getAnalysisRequestItemsByPrescriptionId(@PathVariable UUID analysisRequestId){
-		System.out.println(analysisRequestId);
 		List<AnalysisRequestItem> analysisRequestItem = analysisRequestItemService.findAnalysisRequestItemsByAnalysisRequest(analysisRequestId);
 		List<Map<String, Object>> analysisRequestItemList = this.getMapFromAnalysisRequestItemList(analysisRequestItem);
 
@@ -251,7 +246,7 @@ public class AnalysisRequestController {
 			analysisRequestMap.put("id", analysisRequestItemDto.getId());
 			analysisRequestMap.put("actName", analysisRequestItemDto.getAct().getName());
 			analysisRequestMap.put("state", analysisRequestItemDto.isState());
-			analysisRequestMap.put("medicalAnalysisName", analysisRequestItemDto.getAct().getMedicalAnalysisSpeciality().getName());
+//			analysisRequestMap.put("medicalAnalysisName", analysisRequestItemDto.getAct().getMedicalAnalysisSpeciality().getName());
 			analysisRequestItemList.add(analysisRequestMap);
 		});
 		return analysisRequestItemList;

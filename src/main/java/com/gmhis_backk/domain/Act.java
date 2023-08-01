@@ -85,16 +85,6 @@ public class Act implements Serializable {
 	@JoinColumn(name="medical_analysis_speciality_id")
 	public MedicalAnalysisSpecilaity medicalAnalysisSpeciality;
 
-
-
-	@JsonBackReference
-	@ManyToMany(mappedBy = "act")
-//	@JoinTable(name = "admission", joinColumns = {
-//			@JoinColumn(name = "admission_id", referencedColumnName = "id") }, inverseJoinColumns = {
-//					@JoinColumn(name = "act_id", referencedColumnName = "id") })
-	private List<Admission> admissions;
-	
-
 	@JsonBackReference
 	@ManyToMany
 	@JoinTable(name = "check_up_has_act", joinColumns = {

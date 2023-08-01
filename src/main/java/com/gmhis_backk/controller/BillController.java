@@ -499,7 +499,8 @@ public class BillController {
 			@RequestParam(required = false, defaultValue = "") Long userID,
 			@RequestParam(required = false, defaultValue = "") String date,
 			@RequestParam(required = true, defaultValue = "") String billStatus,
-			@RequestParam(defaultValue = "id,desc") String[] sort, @RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "id,desc") String[] sort,
+			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "25") int size
 			) throws ParseException{
 		Map<String, Object> response = new HashMap<>();

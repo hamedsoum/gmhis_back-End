@@ -11,7 +11,7 @@ public class Base {
 	@Autowired
 	private UserRepository userRepository;
 	
-	protected User getCurrentUserId() {
+	public User getCurrentUserId() {
 		return this.userRepository.findUserByUsername(AppUtils.getUsername());
 	}
 }

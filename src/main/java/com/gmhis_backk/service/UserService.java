@@ -45,7 +45,7 @@ public interface UserService {
     User findUserByTel(String phone);
     
     
-    User addNewUser(UserDto userDto) throws UserNotFoundException, UsernameExistException, EmailExistException, IOException, NotAnImageFileException, ResourceNotFoundByIdException, MessagingException, InvalidInputException;
+    User addNewUser(UserDto userDto) ;
 
     User updateUser(Long id,UserDto userDto) throws UserNotFoundException, UsernameExistException, EmailExistException, IOException, NotAnImageFileException, ResourceNotFoundByIdException, InvalidInputException, ResourceNameAlreadyExistException,MessagingException;
 

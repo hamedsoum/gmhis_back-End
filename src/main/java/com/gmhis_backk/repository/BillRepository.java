@@ -16,7 +16,6 @@ import org.springframework.stereotype.Repository;
 
 import com.gmhis_backk.domain.Admission;
 import com.gmhis_backk.domain.Bill;
-import com.gmhis_backk.domain.BillHasInsured;
 
 
 /**

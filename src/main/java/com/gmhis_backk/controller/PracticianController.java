@@ -50,8 +50,7 @@ public class PracticianController {
 		practicianService.findActivePracticians().stream().forEach(practicianDto -> {
 			Map<String, Object> practicianMap = new HashMap<>();
 			practicianMap.put("id", practicianDto.getId());
-			practicianMap.put("userFirstName", practicianDto.getUser().getFirstName());
-			practicianMap.put("userLastName", practicianDto.getUser().getLastName());
+			practicianMap.put("practicianName", practicianDto.getUser().getFirstName() + " " + practicianDto.getUser().getLastName());
 			practicianMap.put("userId", practicianDto.getUser().getId());
 			practicianMap.put("specialityId", practicianDto.getActCategory().getId());
 			practicianMap.put("specialityName", practicianDto.getActCategory().getName());

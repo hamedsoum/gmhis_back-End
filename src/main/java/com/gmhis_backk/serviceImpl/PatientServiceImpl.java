@@ -94,6 +94,9 @@ public class PatientServiceImpl implements PatientService {
 
 	public Patient save(PatientDTO patientdto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException,EmailExistException {
 
+		System.out.println("countryOfResidence ===>" + patientdto.getCountryOfResidence());
+		System.out.println("cityOfResidence ===>" + patientdto.getCityOfResidence());
+
 		if(patientdto.getEmail() != null) {
 			Boolean isEmailUsed =	patientRepository.findByEmail(patientdto.getEmail()).isEmpty();
 			if(!isEmailUsed) throw new ResourceNotFoundByIdException("Email deja utilise");
@@ -131,6 +134,15 @@ public class PatientServiceImpl implements PatientService {
 			if (patientdto.getCityId() != null) {
 				City city = cityRepository.getOne(patientdto.getCityId());
 				patient.setCity(city);
+			}
+			
+			if (patientdto.getCountryOfResidence() != null) {
+				patient.setCountryOfResidence(countryRepository.getOne(patientdto.getCountryOfResidence()));
+			}
+			
+			if (patientdto.getCityOfResidence() != null) {
+				City cityOfResidence = cityRepository.getOne(patientdto.getCityOfResidence());
+				patient.setCityOfResidence(cityOfResidence);
 			}
 		
 			if(patientdto.getSolde() != null) {
@@ -222,6 +234,8 @@ public class PatientServiceImpl implements PatientService {
 	public Patient update(Long id,PatientDTO patientdto)
 			throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException {
 		 
+		
+		
 			Patient updatePatient = patientRepository.findById(id).orElse(null);
 			System.out.print(updatePatient.getFirstName());
 		    Patient patient = new Patient();
@@ -243,14 +257,21 @@ public class PatientServiceImpl implements PatientService {
 					City city = cityRepository.getOne(patientdto.getCityId());
 					updatePatient.setCity(city);
 				}
+				
+				if (patientdto.getCountryOfResidence() != null) {
+					updatePatient.setCountryOfResidence(countryRepository.getOne(patientdto.getCountryOfResidence()));
+				}
+				
+				if (patientdto.getCityOfResidence() != null) {
+					City cityOfResidence = cityRepository.getOne(patientdto.getCityOfResidence());
+					updatePatient.setCityOfResidence(cityOfResidence);
+				}
 			
 				
 				updatePatient.setUpdatedAt(new Date());
 				updatePatient.setUpdatedBy(this.getCurrentUserId().getId());
 				
-				patient = patientRepository.save(updatePatient);
-				System.out.print(patientdto.getInsurances().size());
-				
+				patient = patientRepository.save(updatePatient);				
 				
 				if (patientdto.getInsurances().size() != 0) {
 					for (InsuredDTO insuredDTO : patientdto.getInsurances()) {

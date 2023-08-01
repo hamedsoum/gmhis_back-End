@@ -87,4 +87,6 @@ public interface AdmissionService {
 	public Page<Admission>findAdmissionsByFacility(String facilityId ,String admissionStatus, Pageable pageable);
 	
 	public Examination findLastExamination(Long id);
+
+	Admission supervitory(Long admissionID) throws NotFoundException;
 }

@@ -30,6 +30,13 @@ public class Admission implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "supervisory_last_date")
+	private Date supervisoryLastDate;
+	
+	@Column(name = "supervisory_number")
+	private int supervisoryNumber;
+	
 	@Column(name = "take_care")
 	private Boolean takeCare ;
 	

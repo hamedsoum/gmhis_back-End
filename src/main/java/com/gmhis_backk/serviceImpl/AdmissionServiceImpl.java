@@ -227,6 +227,7 @@ public class AdmissionServiceImpl implements AdmissionService{
 		
 		if (practican == null) return repo.findAllAdmissionsInQueue(takeCare,facilityId,pageable);
 			
+		System.out.println(practican.getActCategory().getId());
 		return repo.findAdmissionsInQueue(takeCare,facilityId,practican.getActCategory().getId(),pageable);
 	}
 		
@@ -278,13 +279,28 @@ public class AdmissionServiceImpl implements AdmissionService{
 
 	@Override
 	public Admission updatetakeCare(Long admissionID, Boolean takeCare) throws NotFoundException {
-		System.out.println("admission id" + admissionID);
 		Admission admission = repo.findById(admissionID).orElse(null);
-		if(admission == null) {
-			throw new NotFoundException("Admission non trouvée");
-		}
+		if(admission == null) throw new NotFoundException("Admission non trouvée");
+
 		admission.setTakeCare(takeCare);
+		admission.setTakeCareAt(new Date());
+		admission.setTakeCareBy(getCurrentUserId().getId());
 		repo.save(admission);
+		return admission;
+	}
+	
+	@Override
+	public Admission supervitory(Long admissionID) throws NotFoundException {
+		
+		Admission admission = repo.findById(admissionID).orElse(null);
+		if(admission == null) throw new NotFoundException("Admission non trouvée");
+
+		if(admission.getSupervisoryNumber() == 6) throw new NotFoundException("Vous avez atteint le nombre de consultation de surveillance possible ! Veuillez demander une nouvelle Consultation");
+
+		admission.setSupervisoryNumber(admission.getSupervisoryNumber() + 1);
+		admission.setSupervisoryLastDate(new Date());
+		repo.save(admission);
+		admission.setTakeCare(false);
 		return admission;
 	}
 

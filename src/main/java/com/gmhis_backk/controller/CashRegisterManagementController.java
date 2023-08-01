@@ -157,7 +157,6 @@ public class CashRegisterManagementController {
 	@ApiOperation("detail d'une activite de caisse ")
 	public  ResponseEntity<Map<String, Object>> getDetail(@PathVariable Long cashier){
 		Map<String, Object> response = new HashMap<>();
-
 		CashRegisterManagement cashRegisterManagement = cashRegisterManagementService.getCashierrManagementByCashierAndStateOpened(cashier);
 		response.put("id",cashRegisterManagement.getId());
 		response.put("cashRegisterName",cashRegisterManagement.getCashRegister().getName());

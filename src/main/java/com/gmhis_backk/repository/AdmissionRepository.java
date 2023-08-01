@@ -1,5 +1,6 @@
 package com.gmhis_backk.repository;
 
+
 import java.util.Date;
 import java.util.List;
 
@@ -102,7 +103,7 @@ public interface AdmissionRepository extends JpaRepository<Admission, Long> {
 	// admissions queuesi(waiting room)
 	/*******************************************************************************/
 
-	@Query(value = "SELECT * FROM admission a WHERE a.facility_id =:facilityId AND a.take_care =:takeCare AND a.act_category_id =:specialityId GROUP by a.id", nativeQuery = true)
+	@Query(value = "SELECT * FROM admission a, bill b WHERE a.id = b.admission_id AND a.facility_id =:facilityId AND a.admission_status = 'B' AND  b.bill_status = 'C' AND a.take_care =:takeCare AND a.act_category_id =:specialityId GROUP by a.id", nativeQuery = true)
 	public Page<Admission> findAdmissionsInQueue(@Param("takeCare") Boolean takeCare, @Param("facilityId") String facilityId,@Param("specialityId") Long specialityId, Pageable pageable);
 	
 	@Query(value = "SELECT * FROM admission a, bill b WHERE a.id = b.admission_id AND a.facility_id =:facilityId AND a.admission_status = 'B' AND  b.bill_status = 'C' AND a.take_care =:takeCare GROUP by a.id", nativeQuery = true)

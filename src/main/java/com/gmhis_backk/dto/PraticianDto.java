@@ -15,15 +15,16 @@ import javax.validation.constraints.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PraticianDto {
+	@NotNull(message = "Le champ user est requis")
+	private Long user;
+	
 	private String signature;
 	
-	@NotNull(message = "Le champ specialité est requis")
 	private Long speciliaty;
 	
 	@NotNull(message = "Le champ category est requis")
 	private Long actCategoryID;
 	
-	@NotNull(message = "Le champ établissement est requis")
 	private UUID facility;
 	
 	@NotNull(message = "Le champ nom est requis")

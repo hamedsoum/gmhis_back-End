@@ -1,5 +1,6 @@
 package com.gmhis_backk.serviceImpl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +17,7 @@ import com.gmhis_backk.AppUtils;
 import com.gmhis_backk.domain.Facility;
 import com.gmhis_backk.domain.User;
 import com.gmhis_backk.dto.FacilityDTO;
+import com.gmhis_backk.dto.UserDto;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
 import com.gmhis_backk.repository.FacilityRepository;
@@ -23,6 +25,7 @@ import com.gmhis_backk.repository.UserRepository;
 import com.gmhis_backk.service.FacilityCategoryService;
 import com.gmhis_backk.service.FacilityService;
 import com.gmhis_backk.service.FacilityTypeService;
+import com.gmhis_backk.service.UserService;
 
 /**
  * 
@@ -39,6 +42,9 @@ public class FacilityServiceImpl implements FacilityService{
 	@Autowired
 	private UserRepository userRepository;
 	
+	@Autowired
+	UserService userServiceImpl;
+	
 	@Autowired 
 	FacilityTypeService facilityTypeService;
 	
@@ -54,24 +60,28 @@ public class FacilityServiceImpl implements FacilityService{
 		Facility facilityByName = facilityRepository.findByName(facilityDto.getName());
 		if (facilityByName != null) {
 			throw new ResourceNameAlreadyExistException("le centre de santé existe déjà");
-		}
-		
-//		 FacilityType facilityType = facilityTypeService.findFacilityTypeById(facilityDto.getFacilityType()).orElse(null);
-//			if (facilityType == null) {
-//				throw new ResourceNotFoundByIdException("aucun type de centre de sante trouvé pour l'identifiant " );
-//			}
-//		
-//		FaciityCategory facilityCategory = facilityCategoryService.findFaciityCategoryById(facilityDto.getFacilityCategory()).orElse(null);
-//				if (facilityCategory == null) {
-//					throw new ResourceNotFoundByIdException("aucune categorie de centre de sante trouvé pour l'identifiant " );
-//				}
+		}	
+
 		Facility facility = new Facility();
+		UserDto newUser = new UserDto();
 		BeanUtils.copyProperties(facilityDto,facility,"id");
-//		facility.setFacilityType(facilityType);
-//		facility.setFacilityCategory(facilityCategory);
+
 		facility.setCreatedAt(new Date());
 		facility.setCreatedBy(getCurrentUserId().getId());
-		return facilityRepository.save(facility);
+		
+		Facility facilitySaved =  facilityRepository.save(facility);
+		newUser.setFirstName(facilitySaved.getShortName());
+		newUser.setLastName(facilitySaved.getShortName());
+		newUser.setTel(facilitySaved.getContact());
+		newUser.setFacilityId(facilitySaved.getId());
+		newUser.setPassword("Admin123#");
+		newUser.setEmail(facilitySaved.getEmail());
+		ArrayList<Integer> list =new ArrayList<Integer>();
+		list.add(1);
+		newUser.setRoles(list);
+		userServiceImpl.addNewUser(newUser);
+		
+		return facilitySaved;
 	}
 	
 	
