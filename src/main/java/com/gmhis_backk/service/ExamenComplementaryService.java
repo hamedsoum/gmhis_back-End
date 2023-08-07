@@ -52,7 +52,12 @@ public class ExamenComplementaryService {
 			Map<String, Object> billMap = new HashMap<>();
 			billMap.put("id", examenComplementary.getId());
 			billMap.put("actName", examenComplementary.getAct().getName());
+			billMap.put("actCode", examenComplementary.getAct().getName());
 			billMap.put("actID", examenComplementary.getAct().getId());
+			if (examenComplementary.getAct().getMedicalAnalysisSpeciality() != null) {
+				billMap.put("medicalAnalysisId", examenComplementary.getAct().getMedicalAnalysisSpeciality().getId());
+				billMap.put("medicalAnalysisName", examenComplementary.getAct().getMedicalAnalysisSpeciality().getName());
+			} 
 			billMap.put("examenComplementaryType", examenComplementary.getExamenComplementaryType());
 			billMap.put("createdAt", examenComplementary.getCreatedAt());
 			billMap.put("active", examenComplementary.getActive());
@@ -62,8 +67,10 @@ public class ExamenComplementaryService {
 		return cashierList;
 	}
 	
-	public List<ExamenComplementary> find(){
-		return examenComplementaryRepository.findAll();
+	public List<Map<String, Object>> find(){
+		List<ExamenComplementary> examenComplementaries =  examenComplementaryRepository.findAll();
+		return this.map(examenComplementaries);
+
 	}
 	
 	public ResponseEntity<Map<String, Object>>  search(Map<String, ?> examenSearch) {
@@ -131,9 +138,12 @@ public class ExamenComplementaryService {
 	public ExamenComplementary create (ExamenComplementaryCreate examenComplementaryCreate) throws ResourceNotFoundByIdException {
 		ExamenComplementary examenComplementary = new ExamenComplementary();
 		
+		ExamenComplementary retrieveExamen = examenComplementaryRepository.examenComplementaryByActID(examenComplementaryCreate.getActID());
+		if (retrieveExamen != null) throw new ResourceNotFoundByIdException("L'examen existe deja");
+		
 		Act act = actService.findActById(examenComplementaryCreate.getActID()).orElse(null);
 		if (act == null) throw new ResourceNotFoundByIdException("Act inexistant");
-
+		
 		examenComplementary.setActive(true);
 		examenComplementary.setAct(act);
 		examenComplementary.setExamenComplementaryType(examenComplementaryCreate.getExamen());

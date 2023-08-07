@@ -36,7 +36,7 @@ public class ExamenComplementaryController {
 	
 	@ApiOperation(value = "Find Examens Complementaries in the system")
 	@GetMapping("/find")
-	public List<ExamenComplementary> find() {
+	public List<Map<String, Object>> find() {
 		return examenComplementaryServie.find();
 	}
 	

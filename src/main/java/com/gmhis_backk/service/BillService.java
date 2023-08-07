@@ -72,7 +72,7 @@ public interface BillService {
 	
 	public List<Bill> findNomCollectedBillByAdmission(Long admission_id);
 	
-	public Page<Bill> facilityInvoicesByPractician(String billStatus,String facilityId,Long PracticianID, Pageable pageable);
+	public Page<Bill> facilityInvoicesByPractician(String billStatus,String facilityId, Pageable pageable);
 	
 	public Page<Bill>facilityInvoicesByDate(String billStatus,String facilityId,String date, Pageable pageable) throws ParseException ;
 	

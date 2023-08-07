@@ -13,13 +13,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gmhis_backk.domain.Admission;
+import com.gmhis_backk.AppUtils;
 import com.gmhis_backk.domain.Bill;
-import com.gmhis_backk.domain.BillHasInsured;
 import com.gmhis_backk.domain.Payment;
-import com.gmhis_backk.repository.AdmissionRepository;
+import com.gmhis_backk.domain.User;
 import com.gmhis_backk.repository.BillRepository;
 import com.gmhis_backk.repository.PaymentRepository;
+import com.gmhis_backk.repository.UserRepository;
 import com.gmhis_backk.service.BillService;
 
 
@@ -37,11 +37,14 @@ public class BillServiceImpl implements BillService{
 	private BillRepository repo;
 	
 	@Autowired
-	private AdmissionRepository admissionRepo;
-	
+	PaymentRepository paymentRepo;
 	
 	@Autowired
-	PaymentRepository paymentRepo;
+	private UserRepository userRepository;
+	
+	protected User getCurrentUser() {
+		return this.userRepository.findUserByUsername(AppUtils.getUsername());
+	}
 	
 	@Override
 	public Bill saveBill(Bill b) {
@@ -162,8 +165,8 @@ public class BillServiceImpl implements BillService{
 	}
 
 	@Override
-	public Page<Bill> facilityInvoicesByPractician(String billStatus, String facilityId, Long PracticianID,Pageable pageable) {
-		return repo.findAdmissionWithExaminationByPractician(billStatus, UUID.fromString(facilityId), PracticianID, pageable);
+	public Page<Bill> facilityInvoicesByPractician(String billStatus, String facilityId,Pageable pageable) {
+		return repo.findAdmissionWithExaminationByPractician(billStatus, UUID.fromString(facilityId),getCurrentUser().getId(), pageable);
 	}
 
 	@Override

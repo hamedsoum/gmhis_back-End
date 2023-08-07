@@ -5,8 +5,11 @@ import static org.springframework.http.HttpStatus.OK;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +49,9 @@ import com.gmhis_backk.repository.UserRepository;
 import com.gmhis_backk.service.AnalysisRequestItemService;
 import com.gmhis_backk.service.AnalysisRequestService;
 import com.gmhis_backk.service.FileLocationService;
+
+import java.time.LocalDate;  
+import java.time.Period; 
 
 import io.swagger.annotations.ApiOperation;
 
@@ -145,7 +151,7 @@ public class AnalysisRequestController {
 			analystMap.put("patientFirstName", analystDto.getAdmission().getPatient().getFirstName());
 			analystMap.put("patientLastName", analystDto.getAdmission().getPatient().getLastName());
 			analystMap.put("patientGender", analystDto.getAdmission().getPatient().getGender());
-			analystMap.put("patientAge", analystDto.getAdmission().getPatient().getAge());
+			analystMap.put("patientAge", calculateAge(analystDto.getAdmission().getPatient().getBirthDate()));
 			analystMap.put("patientTel1", analystDto.getAdmission().getPatient().getCellPhone1());
 			analystMap.put("idCardNumber", analystDto.getAdmission().getPatient().getIdCardNumber());
 			analystMap.put("observation", analystDto.getObservation());
@@ -154,6 +160,14 @@ public class AnalysisRequestController {
 		});
 		return analystRequestList;
 	}
+	
+	public int calculateAge(Date birthDate) {            
+			    DateFormat formatter = new SimpleDateFormat("yyyyMMdd");                           
+			    int d1 = Integer.parseInt(formatter.format(birthDate));                            
+			    int d2 = Integer.parseInt(formatter.format(new Date()));                          
+			    int age = (d2 - d1) / 10000;                                                       
+			    return age;                                                                        
+			}
 	
 	@ApiOperation(value = "list paginee des demandes d'analyses d'un patient")
 	@GetMapping("getPatientAnalysisRequest")

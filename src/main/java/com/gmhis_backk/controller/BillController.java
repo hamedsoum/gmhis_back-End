@@ -496,7 +496,6 @@ public class BillController {
 	@ApiOperation(value = "liste paginee de toutes les facture du centre de sante vis a vis les practicians ")
 	@GetMapping("/facilityInvoicesPractician")
 	public ResponseEntity<Map<String,Object>>facilityInvoicesPractician(
-			@RequestParam(required = false, defaultValue = "") Long userID,
 			@RequestParam(required = false, defaultValue = "") String date,
 			@RequestParam(required = true, defaultValue = "") String billStatus,
 			@RequestParam(defaultValue = "id,desc") String[] sort,
@@ -508,7 +507,7 @@ public class BillController {
 	    Pageable pageable = PageRequest.of(page, size, Sort.by(dir, sort[0]));
 		Page<Bill> pBills = null;
 
-		pBills = billService.findAdmissionWithExamination(billStatus,this.getCurrentUserId().getFacilityId(), pageable);
+		pBills = billService.facilityInvoicesByPractician(billStatus,this.getCurrentUserId().getFacilityId(), pageable);
 		
 		
 		List<Bill> lBills = pBills.getContent();

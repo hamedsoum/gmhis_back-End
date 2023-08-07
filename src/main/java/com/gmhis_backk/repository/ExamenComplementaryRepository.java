@@ -13,4 +13,7 @@ import com.gmhis_backk.domain.ExamenComplementary;
 public interface ExamenComplementaryRepository extends JpaRepository<ExamenComplementary, UUID> {
 	@Query("SELECT e FROM ExamenComplementary e WHERE e.facilityID =:facility")
 	Page<ExamenComplementary> findAll(@Param("facility") UUID facility,Pageable pageable);
+	
+	@Query("SELECT e FROM ExamenComplementary e WHERE e.act.id =:actID")
+	ExamenComplementary examenComplementaryByActID(@Param("actID") Long actID);
 }
