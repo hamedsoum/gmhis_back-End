@@ -72,7 +72,7 @@ public class BillServiceImpl implements BillService{
 	}
 
 	@Override
-	public Page<Bill> findBills(String billStatus,String facilityId, Pageable pageable){		
+	public Page<Bill> findBills(String billStatus,String facilityId, Pageable pageable){
 		return repo.findBills(billStatus,facilityId, pageable);
 	}
 	
@@ -166,6 +166,9 @@ public class BillServiceImpl implements BillService{
 
 	@Override
 	public Page<Bill> facilityInvoicesByPractician(String billStatus, String facilityId,Pageable pageable) {
+		System.out.println("billStatus ==>" + billStatus);
+		System.out.println("practicianID ==>" + getCurrentUser().getId());
+
 		return repo.findAdmissionWithExaminationByPractician(billStatus, UUID.fromString(facilityId),getCurrentUser().getId(), pageable);
 	}
 

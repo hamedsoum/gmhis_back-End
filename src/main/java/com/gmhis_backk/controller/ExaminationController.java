@@ -80,9 +80,8 @@ public class ExaminationController {
 			System.out.println("CurrentUserId " + this.getCurrentUserId().getId());
 			 Pratician practician = practicianService.findPracticianByUser(this.getCurrentUserId().getId()).orElse(null);
 				if (practician == null) {
-					throw new ResourceNotFoundByIdException("aucun practician trouvé pour l'utilisateur connecte " );
+					throw new ResourceNotFoundByIdException("aucun practicien trouvé pour l'utilisateur connecte " );
 				}
-				System.out.println("PracticianID " + practician.getId());
 				examination = new Examination();
 				examination.setAdmission(admission);
 				examination.setConclusion(examinationDto.getConclusion());
@@ -101,12 +100,6 @@ public class ExaminationController {
 						examinationService.addPathologyToExamination(pathology, examination);
 					});
 				}
-//				
-//				if(examinationDto.getSymptoms() != null && examinationDto.getSymptoms().size() != 0) {
-//					examinationDto.getSymptoms().forEach(symptom -> {
-//						examinationService.addSymptomToExamination(symptom, examination);
-//					});
-//				}
 				return new ResponseEntity<Examination>(examination, HttpStatus.OK);
 
 	} 

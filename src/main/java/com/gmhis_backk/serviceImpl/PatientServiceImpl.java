@@ -102,10 +102,13 @@ public class PatientServiceImpl implements PatientService {
 			if(!isEmailUsed) throw new ResourceNotFoundByIdException("Email deja utilise");
 		}
 		
+
+		
 		if(ObjectUtils.isEmpty(patientdto.getCellPhone1()) || patientdto.getCellPhone1() == null) {
+			throw new ResourceNotFoundByIdException("le numero de Telephone est requis");
+
 		}else {
 			 Boolean isPhone1Used =	patientRepository.findByCellPhone1(patientdto.getCellPhone1()).isEmpty();
-			 System.out.print("Le resultat de la recherche est : "+isPhone1Used);
 			 if(!isPhone1Used) throw new ResourceNotFoundByIdException("le numero de telephone est deja utilisé");	
 		}
 		
@@ -155,10 +158,10 @@ public class PatientServiceImpl implements PatientService {
 			
 			patient.setCreatedAt(new Date());
 			patient.setCreatedBy(this.getCurrentUserId().getId());
-				
+			
+
 			
 			Patient newPatient = patientRepository.save(patient);
-			//System.out.print(patientdto.getInsurances().size());
 			if (patientdto.getInsurances().size() != 0) {
 				for (InsuredDTO insuredDTO : patientdto.getInsurances()) {
 					Insured insured = new Insured();

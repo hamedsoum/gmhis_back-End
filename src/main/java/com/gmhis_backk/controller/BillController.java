@@ -198,6 +198,7 @@ public class BillController {
 		});
         
 		billDto.getActs().forEach(admissionHasAct -> {
+			System.out.println("Bill controller practicianID ===>" + admissionHasAct.getPratician());
 			Admission admission = admissionService.findAdmissionById(admissionHasAct.getAdmission()).orElse(null);
 			Act act = actService.findActById(admissionHasAct.getAct()).orElse(null);
 			Pratician pratician = practicianService.findPracticianById(admissionHasAct.getPratician()).orElse(null);
