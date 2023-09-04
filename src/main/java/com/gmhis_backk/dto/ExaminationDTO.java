@@ -3,6 +3,9 @@ package com.gmhis_backk.dto;
 import java.util.Date;
 import java.util.List;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,7 +20,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ExaminationDTO {
 
-	private Long id;
+	@NotBlank
+	private String clinicalExamination;
+	private String oldTreatment;
 	private String conclusion;
 	private Date endDate;
 	private String examinationType;

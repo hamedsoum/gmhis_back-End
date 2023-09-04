@@ -33,6 +33,9 @@ public class Examination implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(name="clinical_examination")
+	private String clinicalExamination;
+	
 	@Column(nullable=true)
 	private String conclusion;
 
@@ -71,10 +74,6 @@ public class Examination implements Serializable {
 	@Column(name = "examination_reasons")
 	private String examinationReasons;
 	
-	@Column(name = "conclusion_exam_result")
-	private String conclusionExamResult;
-	
-	//private String observation;
 
 	@ManyToOne
 	@JoinColumn(name = "pratician_id")

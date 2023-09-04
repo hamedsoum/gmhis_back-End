@@ -10,20 +10,21 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gmhis_backk.domain.Admission;
 import com.gmhis_backk.domain.Bill;
-import com.gmhis_backk.domain.BillHasInsured;
 import com.gmhis_backk.domain.Payment;
+import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
 
 
 /**
  * 
- * @author Hamed SOUMAHORO
+ * @author Hamed Soumahoro
  *
  */
 @Service
 @Transactional
 public interface BillService {
+	
+	public Object billRecord(Long billID) throws ResourceNotFoundByIdException;
 
 	public Bill saveBill(Bill b);
 	

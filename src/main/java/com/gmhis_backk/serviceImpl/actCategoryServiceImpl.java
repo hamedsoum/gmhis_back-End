@@ -24,16 +24,18 @@ import com.gmhis_backk.repository.ActCategoryRepository;
 import com.gmhis_backk.repository.UserRepository;
 import com.gmhis_backk.service.ActCategoryService;
 
+import lombok.RequiredArgsConstructor;
+
 
 
 @Service
+@RequiredArgsConstructor
 public class actCategoryServiceImpl implements ActCategoryService {
 	
-	@Autowired
-	ActCategoryRepository actCategoryRepo;
+	private final ActCategoryRepository actCategoryRepo;
 	
-	@Autowired
-	UserRepository userRepository;
+
+	private final UserRepository userRepository;
 
 	@Override
 	public Optional<ActCategory> findById(Long id) {
@@ -98,7 +100,7 @@ public class actCategoryServiceImpl implements ActCategoryService {
 	@Override @Transactional 
 	public ActCategory updateActCategory(Long id, ActCategoryDto actCategoryDto)
 			throws ResourceNotFoundByIdException, ResourceNameAlreadyExistException {
-ActCategory updateActCategory = actCategoryRepo.findById(id).orElse(null);
+		ActCategory updateActCategory = actCategoryRepo.findById(id).orElse(null);
 		
 		if (updateActCategory == null) {
 			 throw new ResourceNotFoundByIdException("Aucun groupe trouvé pour l'identifiant");

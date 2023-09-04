@@ -1,6 +1,7 @@
 package com.gmhis_backk.repository;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +16,8 @@ import com.gmhis_backk.domain.BillHasInsured;
 public interface BillHasInsuredRepository extends JpaRepository<BillHasInsured, Long> {
 	
 
+	@Query(value = "SELECT b FROM BillHasInsured b WHERE b.bill.id = :BillID")
+	public List<BillHasInsured> findBillsHasInsuredByBillID(@Param("BillID") Long BillID);
 
 	@Query(value = "SELECT * FROM bill_has_insured WHERE admission_id IN ( SELECT admission_id FROM examination )", nativeQuery = true)
 	public Page<BillHasInsured> findBillsHasInsured(Pageable pageable);

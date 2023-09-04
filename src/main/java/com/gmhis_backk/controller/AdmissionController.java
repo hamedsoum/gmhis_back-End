@@ -81,7 +81,7 @@ public class AdmissionController {
 		return new ResponseEntity<Admission>(admission, HttpStatus.OK);
 	}
 	
-	@PatchMapping("{admissionID}")
+	@PutMapping("{admissionID}")
 	@ApiOperation("/Update a admission given by his id")
 	public ResponseEntity<Admission> updateAdmission(@PathVariable("admissionID") Long id,  @RequestBody AdmissionDTO admissionDto) throws ResourceNameAlreadyExistException,
 	ResourceNotFoundByIdException{
@@ -226,13 +226,13 @@ public class AdmissionController {
 		response.put("patientExternalId", admission.getPatient().getPatientExternalId());
 		response.put("admissionDate", admission.getAdmissionStartDate());
 		response.put("service", admission.getSpeciality().getName());
+		response.put("serviceID", admission.getSpeciality().getId());
 		response.put("admissionNumber", admission.getAdmissionNumber());
 		response.put("facilityName", admission.getFacility().getName());
 		response.put("facilityType", admission.getFacility().getFacilityType().getName());
 		response.put("admissionStatus", admission.getAdmissionStatus());
 		response.put("patientExternalId", admission.getPatient().getPatientExternalId());
-		response.put("patientFirstName", admission.getPatient().getFirstName());
-		response.put("patientLastName", admission.getPatient().getLastName());
+		response.put("patientName", admission.getPatient().getFirstName() + " " + admission.getPatient().getLastName());
 		response.put("patientType", admission.getPatient().getIsAssured());
 		response.put("act", admission.getAct().getName());
 		response.put("actId", admission.getAct().getId());

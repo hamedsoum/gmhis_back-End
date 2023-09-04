@@ -165,8 +165,8 @@ public class PrescriptionController {
 
 		Prescription prescription = prescriptionService.findPrescriptionById(id).orElse(null);
 		response.put("id", prescription.getId());
-		response.put("practicienFirstName", prescription.getExamination().getPratician().getUser().getFirstName());
-		response.put("practicienLastName", prescription.getExamination().getPratician().getUser().getLastName());
+		response.put("practicianName", prescription.getExamination().getPratician().getUser().getFirstName() + "" + prescription.getExamination().getPratician().getUser().getLastName());
+		response.put("practicianSignature", prescription.getExamination().getPratician().getSignature());
 		response.put("facilityName", prescription.getExamination().getFacility().getName());
 		response.put("facilityName", prescription.getExamination().getFacility().getName());
 		response.put("speciality", prescription.getExamination().getAdmission().getSpeciality().getName());

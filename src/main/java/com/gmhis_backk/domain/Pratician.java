@@ -13,8 +13,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
-import java.util.Optional;
-import java.util.UUID;
 
 /**
  * @author Pascal
@@ -35,21 +33,21 @@ public class Pratician implements Serializable {
 	@Column
 	private Boolean active;
 	
-	@JoinColumn(unique=true,name = "signature", nullable = true)
+	@JoinColumn(unique=true,name = "signature")
 	private String signature;
 	
 	
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "last_updated_at", nullable = true)
+	@Column(name = "last_updated_at")
 	private Date lastUpdatedAt;
 
 	@Column(name = "pratician_number")
 	private String praticianNumber;
 
-	@JsonBackReference
-	@OneToOne
-	@JoinColumn(name = "user_id", nullable = true)
-	private User user = null;
+	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id")
+	private User user;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "updated_at")

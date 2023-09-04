@@ -117,13 +117,13 @@ public class Admission implements Serializable {
 					@JoinColumn(name = "act_id", referencedColumnName = "id") })
 	private List<Act> acts = new ArrayList<>();
 	
-	
-	@JsonBackReference
-	@ManyToMany
-	@JoinTable(name = "admission_has_act", joinColumns = {
-			@JoinColumn(name = "admission_id", referencedColumnName = "id") }, inverseJoinColumns = {
-					@JoinColumn(name = "pratician_id", referencedColumnName = "id") })
-	private List<Pratician> practicians = new ArrayList<>();
+//	
+//	@JsonBackReference
+//	@ManyToMany
+//	@JoinTable(name = "admission_has_act", joinColumns = {
+//			@JoinColumn(name = "admission_id", referencedColumnName = "id") }, inverseJoinColumns = {
+//					@JoinColumn(name = "pratician_id", referencedColumnName = "id") })
+//	private List<Pratician> practicians = new ArrayList<>();
 	
 	@JsonBackReference
 	@ManyToMany

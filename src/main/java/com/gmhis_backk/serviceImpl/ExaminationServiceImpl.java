@@ -1,15 +1,22 @@
 package com.gmhis_backk.serviceImpl;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,17 +25,20 @@ import com.gmhis_backk.domain.Examination;
 import com.gmhis_backk.domain.ExaminationHasPathology;
 import com.gmhis_backk.domain.ExaminationSymptom;
 import com.gmhis_backk.domain.Pathology;
+import com.gmhis_backk.domain.Pratician;
 import com.gmhis_backk.domain.Symptom;
 import com.gmhis_backk.domain.User;
 import com.gmhis_backk.repository.ExaminationHasPathologyRepository;
 import com.gmhis_backk.repository.ExaminationRepository;
 import com.gmhis_backk.repository.ExaminationSymptomRepository;
 import com.gmhis_backk.repository.PathologyRepository;
+import com.gmhis_backk.repository.PracticianRepository;
 import com.gmhis_backk.repository.SymptomRepository;
 import com.gmhis_backk.repository.UserRepository;
 import com.gmhis_backk.service.ExaminationService;
 
 import javassist.NotFoundException;
+import lombok.extern.log4j.Log4j2;
 
 
 /**
@@ -38,25 +48,88 @@ import javassist.NotFoundException;
  */
 @Service
 @Transactional
+@Log4j2
 public class ExaminationServiceImpl implements ExaminationService{
 
 	@Autowired
 	private ExaminationRepository repo;
 	
 	@Autowired
-	PathologyRepository pathologyRepo;
+	private PathologyRepository pathologyRepo;
 	
 	@Autowired
-	SymptomRepository symptomRepo;
+	private SymptomRepository symptomRepo;
 	
 	@Autowired
-	ExaminationSymptomRepository examSymptomRepo;
+	private ExaminationSymptomRepository examSymptomRepo;
 	
 	@Autowired
-	ExaminationHasPathologyRepository examPathologyRepo;
+	private ExaminationHasPathologyRepository examPathologyRepo;
 	
 	@Autowired 
-	UserRepository userRepository;
+	private UserRepository userRepository;
+	
+	@Autowired
+	private PracticianRepository practicianRepository;
+	
+	protected List<Map<String, Object>> map(List<Examination> examinations) {
+		List<Map<String, Object>> examinationList = new ArrayList<>();
+		
+		examinations.stream().forEach(examination -> {
+			log.info("examinationID ===> {}",  examination.getId());
+
+			Map<String, Object> billMap = new HashMap<>();
+			billMap.put("id", examination.getId());
+			billMap.put("practicianName", examination.getPratician().getNom() + " "+ examination.getPratician().getPrenoms());
+			billMap.put("practicianName", examination.getPratician().getNom() + " "+ examination.getPratician().getPrenoms());
+			billMap.put("patientNumber", examination.getAdmission().getPatient().getPatientExternalId());
+			billMap.put("patientNumber", examination.getAdmission().getPatient().getFirstName() + " " +  examination.getAdmission().getPatient().getLastName());
+
+			examinationList.add(billMap);
+		});
+		return examinationList;
+	}
+	
+		public ResponseEntity<Map<String, Object>>  searchPracticianExaminations(Map<String, ?> cashierSearch) throws NotFoundException {
+		
+		Map<String, Object> response = new HashMap<>();
+		
+		int page = (int) cashierSearch.get("page");
+		String[] sort = (String[]) cashierSearch.get("sort");
+		int size = (int) cashierSearch.get("size");
+		
+		Sort.Direction dir = sort[1].equalsIgnoreCase("asc") ? dir = Sort.Direction.ASC : Sort.Direction.DESC;
+	    Pageable pageable = PageRequest.of(page, size, Sort.by(dir, sort[0]));
+		Page<Examination> pexaminations = null;
+
+		log.info("practicianID ===> {}",  getCurrentUser().getId());
+		
+		Pratician practician = practicianRepository.findByUser(getCurrentUser().getId()).orElse(null);
+		if(practician == null) throw new NotFoundException("Practician non trouvée");
+			
+		else {
+			Long practicianID = practician.getId();
+			pexaminations = repo.retrievePracticianExaminations(practicianID, pageable);
+		} 
+		
+		List<Examination> examinations = pexaminations.getContent();
+		
+		log.info("examinations size {}", examinations.size());
+
+		List<Map<String, Object>> examination = this.map(examinations);
+		response.put("items", examination);
+		response.put("totalElements", pexaminations.getTotalElements());
+		response.put("totalPages", pexaminations.getTotalPages());
+		response.put("size", pexaminations.getSize());
+		response.put("pageNumber", pexaminations.getNumber());
+		response.put("numberOfElements", pexaminations.getNumberOfElements());
+		response.put("first", pexaminations.isFirst());
+		response.put("last", pexaminations.isLast());
+		response.put("empty", pexaminations.isEmpty());
+		
+		return new ResponseEntity<>(response, HttpStatus.OK);
+		
+	}
 	
 	@Override
 	public Examination saveExamination(Examination a) {
@@ -157,4 +230,6 @@ public class ExaminationServiceImpl implements ExaminationService{
 		repo.save(examination);
 		return examination;
 	}
+
+
 }

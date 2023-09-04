@@ -1,26 +1,43 @@
 package com.gmhis_backk.serviceImpl;
 
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StreamUtils;
 
 import com.gmhis_backk.AppUtils;
 import com.gmhis_backk.domain.Bill;
+import com.gmhis_backk.domain.BillHasInsured;
+import com.gmhis_backk.domain.Files;
 import com.gmhis_backk.domain.Payment;
 import com.gmhis_backk.domain.User;
+import com.gmhis_backk.domain.UserHasCashRegister;
+import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
 import com.gmhis_backk.repository.BillRepository;
+import com.gmhis_backk.repository.FileDbRepository;
 import com.gmhis_backk.repository.PaymentRepository;
 import com.gmhis_backk.repository.UserRepository;
+import com.gmhis_backk.service.BillHasInsuredService;
 import com.gmhis_backk.service.BillService;
+import com.gmhis_backk.service.UserHasCashRegisterService;
+
+import lombok.extern.log4j.Log4j2;
 
 
 
@@ -31,6 +48,7 @@ import com.gmhis_backk.service.BillService;
  */
 @Service
 @Transactional
+@Log4j2
 public class BillServiceImpl implements BillService{
 
 	@Autowired
@@ -41,6 +59,29 @@ public class BillServiceImpl implements BillService{
 	
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private UserHasCashRegisterService userHasCashRegisterService;
+	
+	@Autowired
+	private BillHasInsuredService billHasInsuredService;
+	
+	 @Autowired
+     private FileDbRepository fileRepository;
+	
+	public String facilityLogoInBase64(UUID facilityID) throws IOException {	
+		List<Files> fileList = fileRepository.findFIleByFacilityId(facilityID.toString());
+		Files file = fileList.get(0);
+		var imgFile = new FileSystemResource(Paths.get(file.getLocation()));
+	    byte[] bytes = StreamUtils.copyToByteArray(imgFile.getInputStream());
+	    String encodedString = Base64.getEncoder().encodeToString(bytes);
+	    String basse64 = "data:"+file.getType()+";base64," + encodedString ;	
+	    return basse64;
+}
+	
+	protected User getCurrentUserId() {
+		return this.userRepository.findUserByUsername(AppUtils.getUsername());
+	}
 	
 	protected User getCurrentUser() {
 		return this.userRepository.findUserByUsername(AppUtils.getUsername());
@@ -54,6 +95,63 @@ public class BillServiceImpl implements BillService{
 	@Override
 	public Optional<Bill> findBillById(Long id){
 		return repo.findById(id);
+		
+	}
+	
+	public Object billRecord(Long billID) throws ResourceNotFoundByIdException {
+		
+		Bill bill = repo.findById(billID).orElse(null);
+		if( bill == null ) throw new ResourceNotFoundByIdException("facture inexistant");
+
+		Map<String, Object> billMap = new HashMap<>();
+
+		UserHasCashRegister userHascashRegister = userHasCashRegisterService.findCashierByUser(this.getCurrentUserId().getId());
+		
+		List<BillHasInsured> insurances = billHasInsuredService.findBillsHasInsuredByBillID(bill.getId());
+		
+		if(insurances.size() != 0 ) {
+			  List<Map<String, Object>> billInsurances = new ArrayList<>();
+
+			  insurances.forEach(insurance -> {
+				Map<String, Object> insuranceMap = new HashMap<>();
+				insuranceMap.put("insuranceName", insurance.getInsurance().getName());
+				insuranceMap.put("coverage", insurance.getInsuredCoverage());
+				insuranceMap.put("insurancePart", insurance.getInsuredPart());
+				billInsurances.add(insuranceMap);
+			});
+				billMap.put("insurances", billInsurances);
+		}
+		
+		billMap.put("billID", bill.getId());
+		billMap.put("billNumber", bill.getBillNumber());
+		billMap.put("patientNumber", bill.getAdmission().getPatient().getPatientExternalId());
+		billMap.put("patientFirstName", bill.getAdmission().getPatient().getFirstName());
+		billMap.put("patientLastName", bill.getAdmission().getPatient().getLastName());
+		billMap.put("patientAge", bill.getAdmission().getPatient().getAge());
+		billMap.put("patientHeight", bill.getAdmission().getPatient().getHeight());
+		billMap.put("patientWeight", bill.getAdmission().getPatient().getHeight());
+		billMap.put("billDate", bill.getCreatedAt());
+		billMap.put("accountNumber", bill.getAccountNumber());
+		billMap.put("admissionNumber", bill.getAdmission().getAdmissionNumber());
+		billMap.put("facilityName", bill.getAdmission().getFacility().getName());
+		billMap.put("facilityLogo", bill.getAdmission().getFacility().getLogo());
+		billMap.put("admissionStartDate", bill.getAdmission().getAdmissionStartDate());
+		billMap.put("admissionEndDate", bill.getAdmission().getAdmissionEndDate());
+		billMap.put("serviceName", bill.getAdmission().getSpeciality().getName());
+		billMap.put("billStatus", bill.getBillStatus());
+		billMap.put("billType", bill.getBillType());
+		billMap.put("discountInCfa", bill.getDiscountInCfa());
+		billMap.put("discountInPercentage", bill.getDiscountInPercentage());
+		
+		if (userHascashRegister != null) billMap.put("cashRegister", userHascashRegister.getCashRegister().getName());
+		
+		if (bill.getConvention() != null) billMap.put("convention", bill.getConvention().getName());
+
+		billMap.put("partTakenCareOf", bill.getPartTakenCareOf());
+		billMap.put("patientPart", bill.getPatientPart());
+		billMap.put("patientType", bill.getPatientType());
+		billMap.put("totalAmount", bill.getTotalAmount());
+		return billMap;
 	}
 
 	@Override
@@ -166,8 +264,7 @@ public class BillServiceImpl implements BillService{
 
 	@Override
 	public Page<Bill> facilityInvoicesByPractician(String billStatus, String facilityId,Pageable pageable) {
-		System.out.println("billStatus ==>" + billStatus);
-		System.out.println("practicianID ==>" + getCurrentUser().getId());
+		
 
 		return repo.findAdmissionWithExaminationByPractician(billStatus, UUID.fromString(facilityId),getCurrentUser().getId(), pageable);
 	}

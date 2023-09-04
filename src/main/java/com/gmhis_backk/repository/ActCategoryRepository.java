@@ -12,7 +12,6 @@ import org.springframework.stereotype.Repository;
 import com.gmhis_backk.domain.ActCategory;
 
 @Repository
-
 public interface ActCategoryRepository extends JpaRepository<ActCategory, Long> {
 	
 	ActCategory findByName(String name);

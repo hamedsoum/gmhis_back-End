@@ -105,8 +105,6 @@ public class ActController {
 		return new ResponseEntity<>(response, OK);
 	}
 	
-	
-	
 	protected List<Map<String, Object>> getMapFromActList(List<Act> acts) {
 		List<Map<String, Object>> actList = new ArrayList<>();
 		acts.stream().forEach(actDto -> {
@@ -140,7 +138,6 @@ public class ActController {
 	@ApiOperation("Modifier un acte dans le systeme")
 	public ResponseEntity<Act>updateGroup(@PathVariable("id") Long id,@RequestBody ActDTO actDto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException{
 		Act updateact = actService.updateAct(id, actDto);
-		updateact.getActCategory().getId();
 		return new ResponseEntity<>(updateact,HttpStatus.OK);
 	}
 	
@@ -174,6 +171,7 @@ public class ActController {
 			Map<String, Object> actMap = new HashMap<>();
 			actMap.put("id", actDto.getId());
 			actMap.put("name", actDto.getName());
+			actMap.put("amount", actDto.getActCode().getValue() * actDto.getCoefficient());
 			actList.add(actMap);
 		});
 
@@ -200,10 +198,10 @@ public class ActController {
 	}
 	
 	@ApiOperation(value = "Retourne la liste des actes d'une facture")
-	@GetMapping("/find-by-bill/{bill_id}")
-	public ResponseEntity<List<Map<String, Object>>> findActsByBill( @PathVariable Long bill_id) {
-
-		Bill bill = billService.findBillById(bill_id).orElse(null);
+	@GetMapping("/find-by-bill/{billID}")
+	public ResponseEntity<List<Map<String, Object>>> findActsByBill( @PathVariable Long billID) {
+		
+		Bill bill = billService.findBillById(billID).orElse(null);
 	  List<Map<String, Object>> actList = new ArrayList<>();
 	  
 	  if(bill != null ) {
@@ -211,13 +209,11 @@ public class ActController {
 			actService.findActsByBill(bill.getId()).stream().forEach(actDto -> {
 				Map<String, Object> actMap = new HashMap<>();
 				actMap.put("id", actDto.getId());
-				actMap.put("practicianFirstName", actDto.getPractician().getUser().getFirstName());
-				actMap.put("practicianLastName", actDto.getPractician().getUser().getLastName());
-				actMap.put("practicianName", actDto.getPractician().getId());
-				actMap.put("bill", actDto.getBill().getId());
-				actMap.put("admission", actDto.getAdmission().getId());
-				actMap.put("act", actDto.getAct().getId());
+				actMap.put("practicianName", actDto.getPractician().getUser().getFirstName() + "" + actDto.getPractician().getUser().getLastName());
 				actMap.put("actName", actDto.getAct().getName());
+				actMap.put("actCodification", actDto.getAct().getCodification());
+				actMap.put("actCoefficient", actDto.getAct().getCoefficient());
+				actMap.put("actCode", actDto.getAct().getActCode().getValue());
 				actMap.put("actCost", actDto.getAct().getActCode().getValue() * actDto.getAct().getCoefficient());
 				actList.add(actMap);
 			});

@@ -37,6 +37,7 @@ import com.gmhis_backk.service.PatientService;
 import com.gmhis_backk.service.PracticianService;
 
 import javassist.NotFoundException;
+import lombok.extern.log4j.Log4j2;
 
 /**
  * 
@@ -45,6 +46,7 @@ import javassist.NotFoundException;
  */
 @Service
 @Transactional
+@Log4j2
 public class AdmissionServiceImpl implements AdmissionService{
 	
 	@Autowired
@@ -112,9 +114,28 @@ public class AdmissionServiceImpl implements AdmissionService{
 	public Admission updateAdmission(Long id, AdmissionDTO aDto)throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException{
 		Admission updateAdmission = repo.findById(id).orElse(null);
 		
+		log.info("dmissionID {}" , aDto.getAct());
+		
+		Patient patient = patientService.findById(aDto.getPatient());
+		if (patient == null) throw new ResourceNotFoundByIdException("Aucun patient trouvé pour l'identifiant. " );
+
+        ActCategory speciality = specialityService.findById(aDto.getSpeciality()).orElse(null);
+        if(speciality == null) throw new ResourceNotFoundByIdException("Aucun Specialite trouvée pour l'identifiant. " );
+		
+	    Act act = actService.findActById(aDto.getAct()).orElse(null);
+		if (act == null) throw new ResourceNotFoundByIdException("Aucun act trouvé pour l'identifiant. " );
+	
+		Pratician pratician = practicianService.findPracticianById(aDto.getPractician()).orElse(null);
+		if (pratician == null) throw new ResourceNotFoundByIdException("Aucun Practicien trouvé pour l'identifiant. " );
+
 		if (updateAdmission == null) throw new ResourceNotFoundByIdException("Aucune admission trouvée pour l'identifiant"); 
 		
-		updateAdmission.setTakeCare(aDto.getTakeCare());
+		BeanUtils.copyProperties(aDto, updateAdmission, "id");
+		updateAdmission.setPatient(patient);
+		updateAdmission.setAct(act);
+		updateAdmission.setPractician(pratician);
+		updateAdmission.setSpeciality(speciality);
+		updateAdmission.setTakeCare(false);
 		updateAdmission.setUpdatedAt(new Date());
 		updateAdmission.setUpdatedBy(getCurrentUserId().getId());
 		return repo.save(updateAdmission);

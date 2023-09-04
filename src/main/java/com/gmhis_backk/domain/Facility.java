@@ -100,4 +100,7 @@ public class Facility implements Serializable {
 	private String contact;
 	
 	private String email;
+	
+	private String logo;
+
 }

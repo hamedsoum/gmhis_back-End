@@ -43,10 +43,7 @@ public class FacilityServiceImpl implements FacilityService{
 	private UserRepository userRepository;
 	
 	@Autowired
-	UserService userServiceImpl;
-	
-	@Autowired 
-	FacilityTypeService facilityTypeService;
+	private UserService userServiceImpl;
 	
 	
 	@Autowired 
@@ -57,34 +54,37 @@ public class FacilityServiceImpl implements FacilityService{
 	
 	@Override
 	public Facility saveFacility(FacilityDTO facilityDto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException {
+		
 		Facility facilityByName = facilityRepository.findByName(facilityDto.getName());
-		if (facilityByName != null) {
-			throw new ResourceNameAlreadyExistException("le centre de santé existe déjà");
-		}	
+		if (facilityByName != null) throw new ResourceNameAlreadyExistException("le centre de santé existe déjà");	
 
 		Facility facility = new Facility();
-		UserDto newUser = new UserDto();
 		BeanUtils.copyProperties(facilityDto,facility,"id");
-
 		facility.setCreatedAt(new Date());
 		facility.setCreatedBy(getCurrentUserId().getId());
 		
 		Facility facilitySaved =  facilityRepository.save(facility);
-		newUser.setFirstName(facilitySaved.getShortName());
-		newUser.setLastName(facilitySaved.getShortName());
-		newUser.setTel(facilitySaved.getContact());
-		newUser.setFacilityId(facilitySaved.getId());
-		newUser.setPassword("Admin123#");
-		newUser.setEmail(facilitySaved.getEmail());
-		ArrayList<Integer> list =new ArrayList<Integer>();
-		list.add(1);
-		newUser.setRoles(list);
-		userServiceImpl.addNewUser(newUser);
+		facilityAdmin(facilitySaved);
 		
 		return facilitySaved;
 	}
 	
-	
+	private void facilityAdmin(Facility facility) {
+		UserDto newUser = new UserDto();
+		
+		newUser.setFirstName(facility.getShortName());
+		newUser.setLastName(facility.getShortName());
+		newUser.setTel(facility.getContact());
+		newUser.setFacilityId(facility.getId());
+		newUser.setPassword("Admin123#");
+		newUser.setEmail(facility.getEmail());
+		
+		ArrayList<Integer> list =new ArrayList<Integer>();
+		list.add(1);
+		newUser.setRoles(list);
+		
+		userServiceImpl.addNewUser(newUser);
+	}
 
 	@Override
 	public Facility updateFacility(FacilityDTO facilityDto, UUID id) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException {

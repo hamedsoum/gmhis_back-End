@@ -31,4 +31,5 @@ public class FacilityDTO {
     private String address;
     private String contact;
     private String email;
+    private String logo;
 }

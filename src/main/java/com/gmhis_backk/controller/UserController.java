@@ -249,6 +249,11 @@ public class UserController{
 				Map<String, Object> userMap = new HashMap<>();
 				userMap.put("id", userDto.getId());
 				userMap.put("name", userDto.getFirstName() + " " + userDto.getLastName());
+				userMap.put("firstName", userDto.getFirstName());
+				userMap.put("lastName", userDto.getLastName());
+				userMap.put("phoneNumber", userDto.getTel());
+				userMap.put("email", userDto.getEmail());
+
 				userList.add(userMap);
 			});
 

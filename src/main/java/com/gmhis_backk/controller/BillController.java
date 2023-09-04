@@ -52,7 +52,6 @@ import com.gmhis_backk.domain.Payment;
 import com.gmhis_backk.domain.PaymentType;
 import com.gmhis_backk.domain.Pratician;
 import com.gmhis_backk.domain.User;
-import com.gmhis_backk.domain.UserHasCashRegister;
 import com.gmhis_backk.dto.AdmisionHasActDTO;
 import com.gmhis_backk.dto.BillDTO;
 import com.gmhis_backk.dto.CashRegisterManagementDto;
@@ -76,10 +75,10 @@ import com.gmhis_backk.service.InsuranceService;
 import com.gmhis_backk.service.InsuredService;
 import com.gmhis_backk.service.PaymentTypeService;
 import com.gmhis_backk.service.PracticianService;
-import com.gmhis_backk.service.UserHasCashRegisterService;
 import com.gmhis_backk.service.UserService;
 
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.log4j.Log4j2;
 
 /**
  * 
@@ -90,8 +89,10 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping("/bill")
 //public class BillController extends BaseController {
 
+@Log4j2
 public class BillController {
 
+	
 	@Autowired
 	private BillService billService;
 
@@ -114,19 +115,16 @@ public class BillController {
 	private CashRegisterService cashRegisterService;
 
 	@Autowired
-	private UserHasCashRegisterService userHasCashRegisterService;
-
-	@Autowired
 	private PaymentTypeService paymentTypeService;
 	
 	@Autowired 
-	UserRepository userRepository;
+	private UserRepository userRepository;
 	
 	@Autowired
 	private UserService praticianService;
 	
 	@Autowired 
-	BillHasInsuredRepository billHasInsuredRepository;
+	private BillHasInsuredRepository billHasInsuredRepository;
 	
 	@Autowired
 	private PracticianService practicianService;
@@ -142,8 +140,10 @@ public class BillController {
 	
 	@Autowired
 	private CashRegisterManagementService cashRegisterManagementService;
+	
+	
 	 @Autowired
-     FileDbRepository fileRepository;
+     private FileDbRepository fileRepository;
 
 	private Admission admission = null;
 	private Convention convention = null;
@@ -198,7 +198,6 @@ public class BillController {
 		});
         
 		billDto.getActs().forEach(admissionHasAct -> {
-			System.out.println("Bill controller practicianID ===>" + admissionHasAct.getPratician());
 			Admission admission = admissionService.findAdmissionById(admissionHasAct.getAdmission()).orElse(null);
 			Act act = actService.findActById(admissionHasAct.getAct()).orElse(null);
 			Pratician pratician = practicianService.findPracticianById(admissionHasAct.getPratician()).orElse(null);
@@ -215,68 +214,8 @@ public class BillController {
 		return this.userRepository.findUserByUsername(AppUtils.getUsername());
 	}
 
-	@ApiOperation(value = "Calculer le cout de la facture ")
-	@PostMapping("/get_cost")
-	public Object getBillCost(@RequestBody BillDTO billDto) throws ResourceNotFoundByIdException {
 
-		if (billDto.getConvention() != null) {
-			System.out.print(billDto.getConvention());
-			this.convention = conventionService.findConventionById(billDto.getConvention()).orElse(null);					
-			if (this.convention == null) {
-				throw new ResourceNotFoundByIdException("La convention n'existe pas en base !");
-			}
-
-			int costWithConvention = this.getActWithConvention(billDto.getActs(), convention);
-			this.patientPart = costWithConvention;
-
-		} else {
-
-			int costWhithoutConvention = this.getActCostWhithoutConvention(billDto.getActs());
-			this.patientPart = costWhithoutConvention;
-
-		}
-
-		if (billDto.getInsured() != null) {
-			this.insured = insuredService.findInsuredById(billDto.getInsured()).orElse(null);
-			if (this.insured == null) {
-				throw new ResourceNotFoundByIdException("l'assure n'existe pas en base !");
-			}	
-		
-			int cost = this.getActCostWhithoutConvention(billDto.getActs());
-			this.patientPart = this.getPatientPart(cost, insured);
-			this.partTakenCareOf = this.getPartTakenCareOf(cost, insured);
-
-		}
-
-		if (billDto.getDiscountInCfa() != 0) {
-			System.out.println(billDto.getDiscountInCfa());
-			int discount = billDto.getDiscountInCfa();
-			this.patientPart = this.patientPart - discount;
-		}
-
-
-		
-		System.out.println(this.patientPart);
-		System.out.println(this.partTakenCareOf);
-		System.out.println(discount);
-
-		
-		this.totalAmount = this.patientPart + this.partTakenCareOf - discount;
-		
-		Map<String, Object> billCostMap = new HashMap<>();
-		billCostMap.put("patientPart", this.patientPart);
-		billCostMap.put("partTakenCareOf", this.partTakenCareOf);
-		billCostMap.put("totalAmount", this.totalAmount);
-
-		return billCostMap;
-	}
-
-	/**
-	 * get the cost of acts if no convention
-	 * 
-	 * @param acts
-	 * @return
-	 */
+	
 	public int getActCostWhithoutConvention(List<AdmisionHasActDTO> admissionActs) {
 
 		this.actCosts = 0;
@@ -351,13 +290,11 @@ public class BillController {
 		Act act = null;
 		act = this.actService.findActById(id).orElse(null);
 
-			if (act != null) {
-				cost = act.getCoefficient() * act.getActCode().getValue();
-			}
+			if (act != null) cost = act.getCoefficient() * act.getActCode().getValue();
+			
 		
 			ConventionHasAct conventionAct = this.actService.findActByConventionAndAct(convention, act);
-			ConventionHasActCode conventionActCode = this.actCodeService.findActCodeByConventionAndAct(convention,
-					act.getActCode());
+			ConventionHasActCode conventionActCode = this.actCodeService.findActCodeByConventionAndAct(convention,act.getActCode());
 
 			if (conventionAct != null) {
 				cost = conventionAct.getCoefficient() * conventionAct.getAct().getActCode().getValue();
@@ -637,6 +574,7 @@ public class BillController {
 					actsMap.put("act", act.getAct().getName());
 					actsMap.put("actCost", act.getActCost());
 					actsMap.put("actGroup", act.getAct());	
+				if(act.getPractician() != null)	actsMap.put("practician", act.getPractician().getNom());	
 					actList.add(actsMap);
 				});
 					
@@ -675,79 +613,10 @@ public class BillController {
 		return billList;
 	}
 
-	@ApiOperation(value = "Retourne les details d'une facture specifique")
-	@GetMapping("/detail/{id}")
-	public Object detail(@PathVariable Long id) throws IOException {
-		bill = new Bill();
-
-		bill = billService.findBillById(id).orElseGet(() -> {
-			return null;
-		});
-
-		UserHasCashRegister userHascashRegister = userHasCashRegisterService.findCashierByUser(this.getCurrentUserId().getId());
-
-		Map<String, Object> billMap = new HashMap<>();
-
-		billMap.put("id", bill.getId());
-		billMap.put("billNumber", bill.getBillNumber());
-		billMap.put("patientId", bill.getAdmission().getPatient().getId());
-		billMap.put("patientExternalId", bill.getAdmission().getPatient().getPatientExternalId());
-		billMap.put("patientFirstName", bill.getAdmission().getPatient().getFirstName());
-		billMap.put("patientLastName", bill.getAdmission().getPatient().getLastName());
-		billMap.put("patientAge", bill.getAdmission().getPatient().getAge());
-		billMap.put("patientHeight", bill.getAdmission().getPatient().getHeight());
-		billMap.put("patientWeight", bill.getAdmission().getPatient().getHeight());
-		billMap.put("billDate", bill.getCreatedAt());
-		billMap.put("accountNumber", bill.getAccountNumber());
-		billMap.put("admissionNumber", bill.getAdmission().getAdmissionNumber());
-		billMap.put("facilityName", bill.getAdmission().getFacility().getName());
-		billMap.put("facilityLogo", this.facilityLogoInBase64(bill.getAdmission().getFacility().getId()));
-		billMap.put("admissionId", bill.getAdmission().getId());
-		billMap.put("admissionStartDate", bill.getAdmission().getAdmissionStartDate());
-		billMap.put("admissionEndDate", bill.getAdmission().getAdmissionEndDate());
-		billMap.put("specialityId", bill.getAdmission().getSpeciality().getId());
-		billMap.put("specialityName", bill.getAdmission().getSpeciality().getId());
-		billMap.put("billStatus", bill.getBillStatus());
-		billMap.put("billType", bill.getBillType());
-		billMap.put("billId", bill.getId());
-		billMap.put("discountInCfa", bill.getDiscountInCfa());
-		billMap.put("discountInPercentage", bill.getDiscountInPercentage());
-		if (userHascashRegister != null) {
-			billMap.put("cashRegister", userHascashRegister.getCashRegister().getId());
-		} else {
-			billMap.put("cashRegister", null);
-		}
-
-		if (bill.getConvention() != null) {
-			billMap.put("conventionId", bill.getConvention().getId());
-			billMap.put("convention", bill.getConvention().getName());
-
-		} else {
-			billMap.put("conventionId", null);
-			billMap.put("convention", null);
-		}
-
-		if (bill.getInsured() != null) {
-			billMap.put("coverage", bill.getInsured().getCoverage());
-			billMap.put("insuranceName", bill.getInsured().getInsurance().getName());
-			billMap.put("insuranceId", bill.getInsured().getInsurance().getId());
-			billMap.put("subscriberId", bill.getInsured().getInsuranceSuscriber().getId());
-			billMap.put("subscriberName", bill.getInsured().getInsuranceSuscriber().getName());
-			billMap.put("subscriberAdress", bill.getInsured().getInsuranceSuscriber().getAddress());
-
-		} else {
-			billMap.put("coverage", 0);
-			billMap.put("insuranceName", null);
-			billMap.put("insuranceId", null);
-			billMap.put("subscriberId", null);
-			billMap.put("subscriberName", null);
-		}
-
-		billMap.put("partTakenCareOf", bill.getPartTakenCareOf());
-		billMap.put("patientPart", bill.getPatientPart());
-		billMap.put("patientType", bill.getPatientType());
-		billMap.put("totalAmount", bill.getTotalAmount());
-		return billMap;
+	@ApiOperation(value = "Retourne les details d'une facture")
+	@GetMapping("/detail/{billID}")
+	public Object retrieve(@PathVariable Long billID) throws IOException, ResourceNotFoundByIdException {
+		return billService.billRecord(billID);
 	}
 
 	@ApiOperation(value = "Supprimer une facture")
@@ -917,7 +786,6 @@ public class BillController {
 				//Revoir ce code
 				cashRegisterManagementDto.setOpeningBalance(cashRegisterManagement.getOpeningBalance());
 				cashRegisterManagementDto.setCashRegisterBalance(cashRegisterManagement.getCashRegisterBalance() + payment.getAmount());
-				System.out.println(cashRegisterManagementDto.getCashRegisterBalance());
 				cashRegisterManagementDto.setCashier(this.getCurrentUserId().getId());
 				cashRegisterManagementDto.setCashRegister(payment.getCashRegister().getId());
 				cashRegisterManagementService.updateCashRegisterManagement(cashRegisterManagement.getId(), cashRegisterManagementDto);

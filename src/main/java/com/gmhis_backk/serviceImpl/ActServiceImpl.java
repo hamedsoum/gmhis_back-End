@@ -103,8 +103,8 @@ public class ActServiceImpl implements ActService{
 	}
 
 	@Override
-	public List<AdmissionHasAct> findActsByBill(Long bill) {
-		return actRepository.findActsByBill(bill);
+	public List<AdmissionHasAct> findActsByBill(Long billID) {
+		return actRepository.findActsByBill(billID);
 	}
 
 	@Override

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.gmhis_backk.domain.Facility;
 import com.gmhis_backk.domain.User;
+import com.gmhis_backk.dto.ActDTO;
 import com.gmhis_backk.dto.FacilityDTO;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
@@ -56,74 +58,14 @@ public class FacilityController {
 
 	@PostMapping("/add")
 	@ApiOperation("/Ajouter un centre de sante")
-	public ResponseEntity<Facility>addFacility(
-			@RequestParam(required = false) String name,
-			@RequestParam(required = false) String active,
-			@RequestParam(required = false) String dhisCode,
-			@RequestParam(required = false) String facilityCategoryId,
-			@RequestParam(required = false) String facilityTypeId,
-			@RequestParam(required = false) String latitude,
-			@RequestParam(required = false) String localCode,
-			@RequestParam(required = false) Long localityId,
-			@RequestParam(required = false) String longitude,
-			@RequestParam(required = false) String shortName,
-			@RequestParam(required = false) String address,
-			@RequestParam(required = false) String contact,
-			@RequestParam(required = false) String email,
-    		@RequestParam(required = false) MultipartFile logo
-			) throws ResourceNameAlreadyExistException,ResourceNotFoundByIdException, Exception{
-		FacilityDTO facilityDto = new FacilityDTO();
-		facilityDto.setActive(Boolean.parseBoolean(active));
-		facilityDto.setName(name);
-		facilityDto.setDhisCode(dhisCode);
-		if(facilityCategoryId == "null") facilityDto.setFacilityCategoryId(null);
-		facilityDto.setFacilityTypeId(facilityTypeId);
-		facilityDto.setLatitude(Float.parseFloat(latitude));
-		facilityDto.setLocalCode(localCode);
-		facilityDto.setLocalityId(localityId);
-		facilityDto.setLongitude(Float.parseFloat(longitude));
-		facilityDto.setAddress(address);
-		facilityDto.setContact(contact);
-		facilityDto.setEmail(email);
-		facilityDto.setShortName(shortName);
+	public ResponseEntity<Facility>addFacility(@RequestBody FacilityDTO facilityDto) throws ResourceNameAlreadyExistException,ResourceNotFoundByIdException, Exception{		
 		Facility facility = facilityService.saveFacility(facilityDto);
-//		fileLocationService.save(logo, logo.getBytes(), logo.getOriginalFilename(), logo.getContentType(),facility.getId());
 		return new ResponseEntity<Facility>(facility, HttpStatus.OK);
 	} 
 	
-	@PutMapping("/update")
+	@PutMapping("/update/{id}")
 	@ApiOperation("/Modiifer un centre de sante")
-	public ResponseEntity<Facility> updateFacility(
-			@RequestParam(required = false) String id,
-			@RequestParam(required = false) String name,
-			@RequestParam(required = false) String active,
-			@RequestParam(required = false) String dhisCode,
-			@RequestParam(required = false) String facilityCategoryId,
-			@RequestParam(required = false) String facilityTypeId,
-			@RequestParam(required = false) String latitude,
-			@RequestParam(required = false) String localCode,
-			@RequestParam(required = false) Long localityId,
-			@RequestParam(required = false) String longitude,
-			@RequestParam(required = false) String shortName,
-			@RequestParam(required = false) String address,
-			@RequestParam(required = false) String contact,
-			@RequestParam(required = false) String email,
-    		@RequestParam(required = false) MultipartFile logo
-			) throws IOException, Exception{
-		FacilityDTO facilityDto = new FacilityDTO();
-		facilityDto.setActive(Boolean.parseBoolean(active));
-		facilityDto.setName(name);
-		facilityDto.setDhisCode(dhisCode);
-		facilityDto.setFacilityCategoryId(facilityCategoryId);
-		facilityDto.setFacilityTypeId(facilityTypeId);
-		facilityDto.setLatitude(Float.parseFloat(latitude));
-		facilityDto.setLocalCode(localCode);
-		facilityDto.setLocalityId(localityId);
-		facilityDto.setLongitude(Float.parseFloat(longitude));
-		facilityDto.setAddress(address);
-		facilityDto.setContact(contact);
-		facilityDto.setEmail(email);
-		facilityDto.setShortName(shortName);
+	public ResponseEntity<Facility> updateFacility(@PathVariable("id") String id,@RequestBody FacilityDTO facilityDto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException{
 		Facility facility = facilityService.updateFacility(facilityDto, UUID.fromString(id));
 		return new ResponseEntity<Facility>(facility, HttpStatus.OK);
 	}
@@ -235,10 +177,13 @@ public class FacilityController {
 		response.put("shortName", falicity.getShortName());
 		response.put("contact", falicity.getContact());
 		response.put("address", falicity.getAddress());
-		response.put("facilityTypeName", falicity.getFacilityType().getName());
-		response.put("facilityCategoryName", falicity.getFacilityCategory().getName());
+		response.put("email", falicity.getEmail());
 		response.put("facilityTypeId", falicity.getFacilityType().getId());
-		response.put("facilityCategoryId", falicity.getFacilityCategory().getId());
+		response.put("facilityTypeName", falicity.getFacilityType().getName());
+		if(falicity.getFacilityCategory() != null) {
+			response.put("facilityCategoryId", falicity.getFacilityCategory().getId());
+			response.put("facilityCategoryName", falicity.getFacilityCategory().getName());
+		} 
 		return new ResponseEntity<>(response,HttpStatus.OK);
 		
 	}

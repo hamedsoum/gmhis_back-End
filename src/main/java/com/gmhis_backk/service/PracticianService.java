@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gmhis_backk.domain.Pratician;
 import com.gmhis_backk.dto.PraticianDto;
 import com.gmhis_backk.exception.domain.EmailExistException;
+import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
 import com.gmhis_backk.exception.domain.TelephoneExistException;
 
@@ -24,6 +25,9 @@ import com.gmhis_backk.exception.domain.TelephoneExistException;
 @Transactional
 public interface PracticianService {
 
+	public Pratician update(Long id, PraticianDto p) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException, EmailExistException;
+
+	
 	public Pratician savePractician(PraticianDto p) throws ResourceNotFoundByIdException, EmailExistException, TelephoneExistException;
 
 	public Optional<Pratician> findPracticianById(Long id);

@@ -21,9 +21,11 @@ import com.gmhis_backk.domain.Facility;
 import com.gmhis_backk.domain.Pratician;
 import com.gmhis_backk.domain.Role;
 import com.gmhis_backk.domain.User;
+import com.gmhis_backk.dto.FacilityDTO;
 import com.gmhis_backk.dto.PraticianDto;
 import com.gmhis_backk.dto.UserDto;
 import com.gmhis_backk.exception.domain.EmailExistException;
+import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
 import com.gmhis_backk.exception.domain.TelephoneExistException;
 import com.gmhis_backk.exception.domain.UsernameExistException;
@@ -33,7 +35,6 @@ import com.gmhis_backk.service.ActCategoryService;
 import com.gmhis_backk.service.FacilityService;
 import com.gmhis_backk.service.PracticianService;
 import com.gmhis_backk.service.RoleService;
-import com.gmhis_backk.service.SpecialityService;
 import com.gmhis_backk.service.UserService;
 
 
@@ -66,20 +67,27 @@ public class PracticianServiceImpl implements PracticianService{
 	User getCurrentUser() {
 		return this.userRepository.findUserByUsername(AppUtils.getUsername());
 	}
+	
+	protected User getCurrentUserId() {
+		return this.userRepository.findUserByUsername(AppUtils.getUsername());
+	}
 
 	@Override
 	public Pratician savePractician(PraticianDto praticianDto) throws ResourceNotFoundByIdException, EmailExistException, TelephoneExistException {
 		Pratician pratician = new Pratician();
 		
+		Pratician praticienByUser = repo.findByUser(praticianDto.getUserID()).orElse(null);
+		if(praticienByUser != null) throw new EmailExistException("Ce Practicien a déjà été associé a un utisateur");
+		
 		Pratician praticienByEmail = repo.findByEmail(praticianDto.getEmail()).orElse(null);
 		if(praticienByEmail != null) throw new EmailExistException("Cet email est déjà utilisé");
 		
 		Pratician praticienByTelephone = repo.findByTelephone(praticianDto.getTelephone()).orElse(null);
-		if(praticienByTelephone != null) throw new TelephoneExistException("Ce numéro de téléphone est déjà utilisé");
+		if(praticienByTelephone != null) throw new EmailExistException("Ce numéro de téléphone est déjà utilisé");
 		
 		BeanUtils.copyProperties(praticianDto, pratician,"id");	
 		
-		User user = userService.findById(praticianDto.getUser()).orElse(null);
+		User user = userService.findById(praticianDto.getUserID()).orElse(null);
 		if(user == null) {throw new ResourceNotFoundByIdException("Utilisateur inexistant");}
 		pratician.setUser(user);
 		
@@ -96,6 +104,18 @@ public class PracticianServiceImpl implements PracticianService{
 		
 		
 		return repo.save(pratician); 
+	}
+	
+	public Pratician update(Long id,PraticianDto praticianDto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException, EmailExistException {
+		Pratician updatepractician = repo.findById(id).orElse(null);
+		
+		if (updatepractician == null) {
+			 throw new ResourceNotFoundByIdException("Practician inexistant");
+		} 
+		BeanUtils.copyProperties(praticianDto, updatepractician,"id");
+		updatepractician.setUpdatedAt(new Date());
+		updatepractician.setUpdatedBy(getCurrentUserId().getId());
+		return repo.save(updatepractician);
 	}
 	
 	private Boolean generateAccess(Pratician pratician) throws UsernameExistException {

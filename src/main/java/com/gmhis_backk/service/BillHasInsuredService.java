@@ -1,6 +1,6 @@
 package com.gmhis_backk.service;
 
-import java.text.ParseException;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,5 +12,7 @@ import com.gmhis_backk.domain.BillHasInsured;
 public interface BillHasInsuredService {
 	
 	public Page<BillHasInsured>findBillsHasInsured(Pageable pageable);
+	
+	public List<BillHasInsured>findBillsHasInsuredByBillID(Long BillID);
 	
 }

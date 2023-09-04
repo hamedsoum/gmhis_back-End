@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -63,32 +64,32 @@ public class ExaminationController {
 	
 	private Examination examination = null;
 
-	//private Object dayNumberBetweenAdmissionFirstExaminationAndCurrentDate;
 
 
 	
 	@ApiOperation(value = "Ajouter une consultation d'un patient")
 	@PostMapping("/add")
-	public ResponseEntity<Examination> addExaminations(@RequestBody ExaminationDTO examinationDto) throws ResourceNameAlreadyExistException,
+	
+	public ResponseEntity<Examination> addExaminations(@Validated @RequestBody ExaminationDTO examinationDto) throws ResourceNameAlreadyExistException,
 	ResourceNotFoundByIdException{
 	    
-		
-		 Admission admission = admissionService.findAdmissionById(examinationDto.getAdmission()).orElse(null);
-			if (admission == null) {
-				throw new ResourceNotFoundByIdException("aucune admission d'acte trouvé pour l'identifiant " );
-			}
-			System.out.println("CurrentUserId " + this.getCurrentUserId().getId());
+		 Admission admission = admissionService.findAdmissionById(examinationDto.getAdmission())
+				 .orElseThrow(() -> new ResourceNotFoundByIdException("aucune admission d'acte trouvé pour l'identifiant " ));
+			
 			 Pratician practician = practicianService.findPracticianByUser(this.getCurrentUserId().getId()).orElse(null);
 				if (practician == null) {
 					throw new ResourceNotFoundByIdException("aucun practicien trouvé pour l'utilisateur connecte " );
 				}
+				System.out.println("getClinicalExamination ===>" + examinationDto.getClinicalExamination());
 				examination = new Examination();
 				examination.setAdmission(admission);
 				examination.setConclusion(examinationDto.getConclusion());
+				examination.setHistory(examinationDto.getHistory());
+				examination.setOldTreatment(examinationDto.getOldTreatment());
 				examination.setEndDate(examinationDto.getEndDate());
 				examination.setExaminationReasons(examinationDto.getExaminationReasons());
+				examination.setClinicalExamination(examinationDto.getClinicalExamination());
 				examination.setExaminationType(examinationDto.getExaminationType());
-				examination.setConclusionExamResult(examinationDto.getConclusionExamResult());
 				examination.setFacilityId(UUID.fromString(this.getCurrentUserId().getFacilityId()));
 				examination.setHistory(examinationDto.getHistory());
 				examination.setPratician(practician);
@@ -152,7 +153,11 @@ public class ExaminationController {
 			examsMap.put("admission", examsDto.getAdmission().getId());
 			examsMap.put("patientId", examsDto.getAdmission().getPatient().getId());
 			examsMap.put("date", examsDto.getStartDate());
+			examsMap.put("examinationReasons", examsDto.getExaminationReasons());
 			examsMap.put("conclusion", examsDto.getConclusion());
+			examsMap.put("history", examsDto.getHistory());
+			examsMap.put("oldTreatment", examsDto.getOldTreatment());
+			examsMap.put("clinicalExamination", examsDto.getClinicalExamination());
 			examsMap.put("facility", examsDto.getFacility().getName());
 			examsMap.put("practicianFirstName", examsDto.getPratician().getUser().getFirstName());
 			examsMap.put("practicianLastName", examsDto.getPratician().getUser().getLastName());
@@ -224,6 +229,22 @@ public class ExaminationController {
 	public ResponseEntity<Examination> updateExamination(@PathVariable Long examinationId,@RequestBody() String diagnostic) throws NotFoundException{
 		Examination examination = examinationService.insertDiagnostic(examinationId,diagnostic);
 		return ResponseEntity.accepted().body(examination);
+	}
+	
+	@ApiOperation(value = "find All Practicians Examination in the system")
+	@GetMapping("/practicianExamination")
+	public ResponseEntity<Map<String, Object>>  search(
+			@RequestParam(defaultValue = "id,desc") String[] sort,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "25") int size) throws NotFoundException {
+	
+		Map<String, Object> search = new HashMap<>();
+		
+		search.put("sort", sort);
+		search.put("page", page);
+		search.put("size", size);
+
+		return examinationService.searchPracticianExaminations(search);	
 	}
 	
 }

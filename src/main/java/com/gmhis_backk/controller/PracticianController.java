@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -25,10 +24,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gmhis_backk.domain.Admission;
 import com.gmhis_backk.domain.Pratician;
 import com.gmhis_backk.dto.PraticianDto;
 import com.gmhis_backk.exception.domain.EmailExistException;
+import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
 import com.gmhis_backk.exception.domain.TelephoneExistException;
 import com.gmhis_backk.service.PracticianService;
@@ -65,6 +64,12 @@ public class PracticianController {
 	@PostMapping("/add")
 	public ResponseEntity<Pratician> savePratician(@Valid @RequestBody() PraticianDto praticianDto) throws ResourceNotFoundByIdException, EmailExistException, TelephoneExistException{
 		Pratician pratician = practicianService.savePractician(praticianDto);
+		return new ResponseEntity<>(pratician,HttpStatus.CREATED);
+	}
+	@ApiOperation(value="Ajouter un pratician")
+	@PutMapping("{id}")
+	public ResponseEntity<Pratician> update(@PathVariable Long id,  @RequestBody() PraticianDto praticianDto) throws ResourceNotFoundByIdException, EmailExistException, TelephoneExistException, ResourceNameAlreadyExistException{
+		Pratician pratician = practicianService.update(id, praticianDto);
 		return new ResponseEntity<>(pratician,HttpStatus.CREATED);
 	}
 	

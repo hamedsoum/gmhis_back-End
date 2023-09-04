@@ -16,7 +16,7 @@ import javax.validation.constraints.*;
 @NoArgsConstructor
 public class PraticianDto {
 	@NotNull(message = "Le champ user est requis")
-	private Long user;
+	private Long userID;
 	
 	private String signature;
 	
