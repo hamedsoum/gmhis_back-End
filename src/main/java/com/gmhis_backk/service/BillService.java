@@ -38,7 +38,7 @@ public interface BillService {
 
 	public List<Bill> findBills();
 	
-	public List<Bill > findBillByAdmissionId(Long admissionId);
+	public List<Bill> findBillByAdmissionId(Long admissionId);
 	
 	public Page<Bill> findBills(String billStatus,String facilityId, Pageable pageable);
 	

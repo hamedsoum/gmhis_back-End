@@ -62,6 +62,21 @@ public class Examination implements Serializable {
 	@Lob
 	@Column(name = "old_treatment")
 	private String oldTreatment;
+	
+	@Lob
+	@Column(name = "anamnesis_socio_professional")
+	private String anamnesisSocioProfessional;
+	
+	@Lob
+	@Column(name = "antecedents_family")
+	private String antecedentsFamily;
+	
+	private String habits;
+	
+	@Lob
+	@Column(name = "diagnosis_presumptive")
+	private String diagnosisPresumptive;
+	
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "start_date")

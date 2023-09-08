@@ -22,6 +22,10 @@ public class ExaminationDTO {
 
 	@NotBlank
 	private String clinicalExamination;
+	private String anamnesisSocioProfessional;
+	private String antecedentsFamily;
+	private String habits;
+	private String diagnosisPresumptive;
 	private String oldTreatment;
 	private String conclusion;
 	private Date endDate;

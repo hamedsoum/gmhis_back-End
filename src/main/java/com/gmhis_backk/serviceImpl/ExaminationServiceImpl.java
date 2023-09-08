@@ -35,6 +35,7 @@ import com.gmhis_backk.repository.PathologyRepository;
 import com.gmhis_backk.repository.PracticianRepository;
 import com.gmhis_backk.repository.SymptomRepository;
 import com.gmhis_backk.repository.UserRepository;
+import com.gmhis_backk.service.BillService;
 import com.gmhis_backk.service.ExaminationService;
 
 import javassist.NotFoundException;
@@ -71,19 +72,23 @@ public class ExaminationServiceImpl implements ExaminationService{
 	
 	@Autowired
 	private PracticianRepository practicianRepository;
+
+	@Autowired
+	private BillService billService;
+	
 	
 	protected List<Map<String, Object>> map(List<Examination> examinations) {
 		List<Map<String, Object>> examinationList = new ArrayList<>();
 		
 		examinations.stream().forEach(examination -> {
-			log.info("examinationID ===> {}",  examination.getId());
-
+			
+			billService.findBillByAdmissionId(null);
 			Map<String, Object> billMap = new HashMap<>();
-			billMap.put("id", examination.getId());
-			billMap.put("practicianName", examination.getPratician().getNom() + " "+ examination.getPratician().getPrenoms());
+			billMap.put("date", examination.getStartDate());
 			billMap.put("practicianName", examination.getPratician().getNom() + " "+ examination.getPratician().getPrenoms());
 			billMap.put("patientNumber", examination.getAdmission().getPatient().getPatientExternalId());
-			billMap.put("patientNumber", examination.getAdmission().getPatient().getFirstName() + " " +  examination.getAdmission().getPatient().getLastName());
+			billMap.put("patientName", examination.getAdmission().getPatient().getFirstName() + " " +  examination.getAdmission().getPatient().getLastName());
+			billMap.put("amount", examination.getAdmission().getAct().getActCode().getValue() *  examination.getAdmission().getAct().getCoefficient());
 
 			examinationList.add(billMap);
 		});

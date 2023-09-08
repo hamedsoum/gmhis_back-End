@@ -50,7 +50,6 @@ import com.gmhis_backk.domain.Insured;
 import com.gmhis_backk.domain.Patient;
 import com.gmhis_backk.domain.Payment;
 import com.gmhis_backk.domain.PaymentType;
-import com.gmhis_backk.domain.Pratician;
 import com.gmhis_backk.domain.User;
 import com.gmhis_backk.dto.AdmisionHasActDTO;
 import com.gmhis_backk.dto.BillDTO;
@@ -198,9 +197,7 @@ public class BillController {
 		});
         
 		billDto.getActs().forEach(admissionHasAct -> {
-			Admission admission = admissionService.findAdmissionById(admissionHasAct.getAdmission()).orElse(null);
-			Act act = actService.findActById(admissionHasAct.getAct()).orElse(null);
-			Pratician pratician = practicianService.findPracticianById(admissionHasAct.getPratician()).orElse(null);
+			 practicianService.findPracticianById(admissionHasAct.getPratician()).orElse(null);
 			int actCost = 0;
 			actCost = this.getOneActCostWhithoutConvention(admissionHasAct.getAct());
 			admissionService.addActToAdmission(admissionHasAct, actCost, bill);
@@ -271,9 +268,7 @@ public class BillController {
 		acts.forEach(act -> {
 
 			ConventionHasAct conventionAct = this.actService.findActByConventionAndAct(convention, act);
-			ConventionHasActCode conventionActCode = this.actCodeService.findActCodeByConventionAndAct(convention,
-					act.getActCode());
-
+			
 			if (conventionAct != null) {
 				int ac = conventionAct.getCoefficient() * conventionAct.getAct().getActCode().getValue();
 				this.actCosts = this.actCosts + ac;

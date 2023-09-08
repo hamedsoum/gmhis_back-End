@@ -25,7 +25,7 @@ import com.gmhis_backk.domain.Examination;
 @Repository
 public interface ExaminationRepository extends JpaRepository<Examination, Long> {
 	
-	@Query(value = "select e from Examination e where e.pratician.id = :practicianID")
+	@Query(value = "select e from Examination e where e.pratician.id = :practicianID GROUP BY e.admission.id")
 	public Page<Examination> retrievePracticianExaminations(@Param("practicianID") Long practicianID, Pageable pageable);
 	
 	@Query(value = "SELECT * FROM `examination` WHERE admission_id = (SELECT id FROM admission a WHERE a.patient_id =:patientID ORDER BY ID DESC LIMIT 1)", nativeQuery = true)
