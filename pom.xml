@@ -7,13 +7,13 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.4.5</version>
-		
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	
 	<groupId>com.gmhis_backk</groupId>
 	<artifactId>gmhis</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
 	<name>gmhis_backk</name>
 	<description>ERP to manage ghmis</description>
 	<properties>

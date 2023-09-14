@@ -81,6 +81,10 @@ public class ExaminationController {
 					throw new ResourceNotFoundByIdException("aucun practicien trouvé pour l'utilisateur connecte " );
 				}
 				examination = new Examination();
+				examination.setAnamnesisSocioProfessional(examinationDto.getAnamnesisSocioProfessional());
+				examination.setAntecedentsFamily(examinationDto.getAntecedentsFamily());
+				examination.setHabits(examinationDto.getHabits());
+				examination.setDiagnosisPresumptive(examinationDto.getDiagnosisPresumptive());
 				examination.setAdmission(admission);
 				examination.setConclusion(examinationDto.getConclusion());
 				examination.setHistory(examinationDto.getHistory());
@@ -156,6 +160,10 @@ public class ExaminationController {
 			examsMap.put("conclusion", examsDto.getConclusion());
 			examsMap.put("history", examsDto.getHistory());
 			examsMap.put("oldTreatment", examsDto.getOldTreatment());
+			examsMap.put("anamnesisSocioProfessional", examsDto.getAnamnesisSocioProfessional());
+			examsMap.put("antecedentsFamily", examsDto.getAntecedentsFamily());
+			examsMap.put("habits", examsDto.getHabits());
+			examsMap.put("diagnosisPresumptive", examsDto.getDiagnosisPresumptive());
 			examsMap.put("clinicalExamination", examsDto.getClinicalExamination());
 			examsMap.put("facility", examsDto.getFacility().getName());
 			examsMap.put("practicianFirstName", examsDto.getPratician().getUser().getFirstName());
