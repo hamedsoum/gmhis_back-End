@@ -48,15 +48,15 @@ public class CashierService {
 		List<Map<String, Object>> cashierList = new ArrayList<>();
 		
 		cashiers.stream().forEach(cashier -> {
-			Map<String, Object> billMap = new HashMap<>();
-			billMap.put("id", cashier.getId());
-			billMap.put("userID", cashier.getUser().getId());
-			billMap.put("createdAt", cashier.getCreatedAt());
-			billMap.put("active", cashier.getActive());
-			billMap.put("firstName", cashier.getUser().getFirstName());
-			billMap.put("lastName", cashier.getUser().getLastName());
+			Map<String, Object> cashierMap = new HashMap<>();
+			cashierMap.put("id", cashier.getId());
+			cashierMap.put("userID", cashier.getUser().getId());
+			cashierMap.put("createdAt", cashier.getCreatedAt());
+			cashierMap.put("active", cashier.getActive());
+			cashierMap.put("firstName", cashier.getUser().getFirstName());
+			cashierMap.put("lastName", cashier.getUser().getLastName());
 
-			cashierList.add(billMap);
+			cashierList.add(cashierMap);
 		});
 		return cashierList;
 	}

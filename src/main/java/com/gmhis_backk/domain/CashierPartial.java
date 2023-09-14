@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 public class CashierPartial {
 	
 	private Boolean active;
+	
 	private String firstName;
+	
 	private String lastName;
 }
