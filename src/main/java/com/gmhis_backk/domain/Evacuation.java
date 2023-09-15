@@ -6,9 +6,12 @@ import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -16,6 +19,8 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -36,18 +41,29 @@ public class Evacuation implements Serializable{
     @Type(type = "uuid-char")
 	private UUID id;
 
-	@Column(name="evacuation_facility")
+	
+	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "evacuation_facility_id")
 	private Facility evacuationFacility;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="start_date")
 	private Date startDate;
 	
+	@JsonBackReference
 	@ManyToOne
+	@JoinColumn(name="service_id")
 	private ActCategory service;
 	
+	@JsonBackReference
+	@ManyToOne
+	@JoinColumn(name="practician_id")
 	private Pratician practician;
 	
+	@JsonBackReference
+	@ManyToOne
+	@JoinColumn(name="patient_id")
 	private Patient patient;
 	
 	@Column(name="evacuation_reason")
@@ -59,7 +75,9 @@ public class Evacuation implements Serializable{
 	@Column(name="treatment_received")
 	private String treatmentReceived;
 	
-	@Column(name="reception_facility")
+	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "reception_facility_id")
 	private Facility receptionFacility;
 	
 	@Temporal(TemporalType.TIMESTAMP)

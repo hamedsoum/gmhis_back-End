@@ -1,6 +1,7 @@
 package com.gmhis_backk.domain;
 
 import java.util.Date;
+import java.util.UUID;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,16 +11,18 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EvacuationPartial {
-
-	private Facility evacuationFacility;
+	
+	private UUID id;
+	 
+	private String evacuationFacilityName;
 	
 	private Date startDate;
 	
-	private ActCategory service;
+	private String service;
 	
-	private Pratician practician;
+	private String practicianName;
 	
-	private Patient patient;
+	private String patientName;
 	
 	private String evacuationReason;
 	
@@ -27,5 +30,5 @@ public class EvacuationPartial {
 	
 	private String treatmentReceived;
 	
-	private Facility receptionFacility;
+	private String receptionFacilityName;
 }
