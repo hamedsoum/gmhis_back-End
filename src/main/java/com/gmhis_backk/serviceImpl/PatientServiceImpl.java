@@ -94,8 +94,6 @@ public class PatientServiceImpl implements PatientService {
 
 	public Patient save(PatientDTO patientdto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException,EmailExistException {
 
-		System.out.println("countryOfResidence ===>" + patientdto.getCountryOfResidence());
-		System.out.println("cityOfResidence ===>" + patientdto.getCityOfResidence());
 
 		if(patientdto.getEmail() != null) {
 			Boolean isEmailUsed =	patientRepository.findByEmail(patientdto.getEmail()).isEmpty();
@@ -352,6 +350,13 @@ public class PatientServiceImpl implements PatientService {
 	public Examination findLastAdmission(Long id) {
 		Examination lastExam = admissionService.findLastExamination(id);
 		return lastExam;
+	}
+
+	@Override
+	public void setPatientDeathDate(Long PatientID, Date deathDate) throws ResourceNotFoundByIdException {
+		Patient patient = patientRepository.findById(PatientID)
+				.orElseThrow(() -> new ResourceNotFoundByIdException("le patient est inexistant"));
+		patient.setDeathDate(deathDate);
 	}
 
 }

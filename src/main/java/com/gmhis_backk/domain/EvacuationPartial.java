@@ -15,14 +15,19 @@ public class EvacuationPartial {
 	private UUID id;
 	 
 	private String evacuationFacilityName;
+	private UUID evacuationFacilityID;
+
 	
 	private Date startDate;
 	
 	private String service;
+	private Long serviceID;
 	
 	private String practicianName;
+	private Long practicianID;
 	
 	private String patientName;
+	private Long patientID;
 	
 	private String evacuationReason;
 	
@@ -31,4 +36,6 @@ public class EvacuationPartial {
 	private String treatmentReceived;
 	
 	private String receptionFacilityName;
+	private UUID receptionFacilityID;
+
 }

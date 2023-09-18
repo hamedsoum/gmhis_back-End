@@ -1,5 +1,6 @@
 package com.gmhis_backk.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -23,6 +24,9 @@ import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
 @Service
 @Transactional
 public interface PatientService {
+	
+	public void setPatientDeathDate (Long patientID, Date deathDate)  throws ResourceNotFoundByIdException ;
+	
 	public Page<Patient> findByIdPatientNumber(String patientNumber, Pageable pageable);
 
 	public Page<Patient> findByIdCardNumber(String idCardNumber, Pageable pageable);

@@ -24,6 +24,7 @@ import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
 import com.gmhis_backk.service.EvacuationService;
 
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.java.Log;
 import lombok.extern.log4j.Log4j2;
 
 /**
@@ -49,6 +50,7 @@ public class EvacuationController {
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public EvacuationPartial evacuation(@RequestBody EvacuationCreate evacuationCreate) throws ResourceNotFoundByIdException {
+		log.info("clinical Controller {} ", evacuationCreate.getClinicalInformation());
 		return evacuationService.toPartial(evacuationService.Create(evacuationCreate));
 	}
 	

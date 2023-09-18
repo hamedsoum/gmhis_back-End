@@ -92,15 +92,27 @@ public class EvacuationService {
 		EvacuationPartial evacuationPartial = new EvacuationPartial();
 		
 		evacuationPartial.setId(evacuation.getId());
+		
 		evacuationPartial.setEvacuationFacilityName(evacuation.getEvacuationFacility().getName());
+		evacuationPartial.setEvacuationFacilityID(evacuation.getReceptionFacility().getId());
+		
 		evacuationPartial.setStartDate(evacuation.getStartDate());
+		
 		evacuationPartial.setService(evacuation.getService().getName());
+		evacuationPartial.setServiceID(evacuation.getService().getId());
+		
 		evacuationPartial.setPracticianName(evacuation.getPractician().getNom() + " " + evacuation.getPractician().getPrenoms());
+		evacuationPartial.setPracticianID(evacuation.getPractician().getId());
+		
 		evacuationPartial.setPatientName(evacuation.getPatient().getLastName() + " " + evacuation.getPatient().getFirstName());
+		evacuationPartial.setPatientID(evacuation.getPatient().getId());
+		
 		evacuationPartial.setEvacuationReason(evacuation.getEvacuationReason());
 		evacuationPartial.setClinicalInformation(evacuation.getClinicalInformation());
 		evacuationPartial.setTreatmentReceived(evacuation.getTreatmentReceived());
+		
 		evacuationPartial.setReceptionFacilityName(evacuation.getReceptionFacility().getName());
+		evacuationPartial.setReceptionFacilityID(evacuation.getReceptionFacility().getId());
 
 		return evacuationPartial;
 	}  
@@ -116,11 +128,13 @@ public class EvacuationService {
 		ActCategory service = categoryService.findById(evacuationCreate.getServiceID())
 		.orElseThrow(() -> new ResourceNotFoundByIdException("Le service est inexistant"));
 		
-		Pratician practician = practicianService.findPracticianById(evacuationCreate.getPracticianID())
-		.orElseThrow(() -> new ResourceNotFoundByIdException("Le practien est inexistant"));
-		
+		log.info("patienID {}", evacuationCreate.getPatientID());
 		Patient patient = patientService.findById(evacuationCreate.getPatientID());
 		if (patient == null) throw new ResourceNotFoundByIdException("Patient Inexistant");
+		
+		log.info("practicianID {}", evacuationCreate.getPracticianID());
+		Pratician practician = practicianService.findPracticianById(evacuationCreate.getPracticianID())
+		.orElseThrow(() -> new ResourceNotFoundByIdException("Le practien est inexistant"));
 		
 		Evacuation evacuation = new Evacuation();
 		BeanUtils.copyProperties(evacuationCreate,evacuation,"id");

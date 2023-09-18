@@ -15,8 +15,8 @@ public class EvacuationCreate {
 	private UUID evacuationFacilityID;
 	private Date startDate;
 	private Long serviceID;
-	private Long PracticianID;
-	private Long PatientID;
+	private Long practicianID;
+	private Long patientID;
 	private String evacuationReason;
 	private String clinicalInformation;
 	private String treatmentReceived;

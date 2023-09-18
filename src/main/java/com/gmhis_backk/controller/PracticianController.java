@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -111,6 +112,24 @@ public class PracticianController {
 	public ResponseEntity<List<Pratician>> praticianBySpecility(@PathVariable Long specialityId){
 		List<Pratician> praticians = practicianService.findActivePracticiansByService(specialityId);
 		return new ResponseEntity<>(praticians, HttpStatus.OK);
+	}
+	
+	
+	@ApiOperation("retrieve Practician on system by userID")
+	@GetMapping("byUser/{userID}")
+	public  ResponseEntity<Map<String, Object>>  retrieveByUserID(@PathVariable Long userID) throws ResourceNotFoundByIdException{
+		Pratician pratician = practicianService.findPracticianByUser(userID)
+		.orElseThrow(() -> new ResourceNotFoundByIdException("practicien est inexistant"));
+		
+		Map<String, Object> practicianMap = new HashMap<>();
+		practicianMap.put("id", pratician.getId());
+		practicianMap.put("practicianName", pratician.getUser().getFirstName() + " " + pratician.getUser().getLastName());
+		practicianMap.put("userId", pratician.getUser().getId());
+		practicianMap.put("specialityId", pratician.getActCategory().getId());
+		practicianMap.put("specialityName", pratician.getActCategory().getName());
+		return new ResponseEntity<>(practicianMap, HttpStatus.OK);
+
+		
 	}
 	
 	

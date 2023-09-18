@@ -2,6 +2,7 @@ package com.gmhis_backk.controller;
 
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gmhis_backk.domain.Examination;
@@ -33,8 +35,9 @@ import com.gmhis_backk.repository.PatientRepository;
 import com.gmhis_backk.service.PatientService;
 
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.log4j.Log4j2;
 
-
+@Log4j2
 @RestController
 @RequestMapping("/patient")
 public class PatientController {
@@ -44,6 +47,15 @@ public class PatientController {
 	
 	@Autowired 
 	PatientRepository patientRepository ;
+	
+	
+	@PutMapping("/death/{id}")
+	@ApiOperation("Modifier un Patient")
+	@ResponseStatus(HttpStatus.CREATED)
+	public void setPatientDeathDate(@PathVariable("id") Long id, @RequestBody Date deathDate) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException,EmailExistException {
+		log.info("death date {}",deathDate);
+		 patientService.setPatientDeathDate(id, deathDate);
+	}
 	
 	
 	@PostMapping("/add")
