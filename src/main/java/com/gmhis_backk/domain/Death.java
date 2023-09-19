@@ -59,8 +59,8 @@ public class Death {
 	@Column(name="death_declaration_date")
 	private Date deathDeclarationDate;
 	
-	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-	@OneToOne(fetch = FetchType.LAZY)
+	@JsonBackReference
+	@ManyToOne
 	@JoinColumn(name = "death_declaration_by")
 	User deathDeclarationBy;
 	

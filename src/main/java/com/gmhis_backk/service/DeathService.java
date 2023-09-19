@@ -52,6 +52,7 @@ public class DeathService {
 		deathPartial.setId(death.getId());
 		deathPartial.setCode(death.getCode());
 		deathPartial.setDeathDate(death.getDeathDate());
+		deathPartial.setDeathDeclarationDate(death.getDeathDeclarationDate());
 		deathPartial.setDeathDeclaratedByName(death.getDeathDeclarationBy().getFirstName() + " " + death.getDeathDeclarationBy().getLastName());
 		deathPartial.setDeathDeclarationByID(death.getDeathDeclarationBy().getId());
 		deathPartial.setDeathReason(death.getDeathReason());
@@ -86,6 +87,7 @@ public class DeathService {
 		
 		BeanUtils.copyProperties(deathCreate,deathToUpdate,"id");
 		deathToUpdate.setDeathDate(deathCreate.getDeathDate());
+		deathToUpdate.setDeathDeclarationDate(deathCreate.getDeathDeclarationDate());
 		deathToUpdate.setUpdatededAt(new Date());
 		deathToUpdate.setUpdatedBy(getCurrentUser().getId());
 		
@@ -105,7 +107,9 @@ public class DeathService {
 		death.setPatient(patient);
 		
 		BeanUtils.copyProperties(deathCreate,death,"id");
+		death.setCode("GMHIS-DTH-246");
 		death.setCreatedAt(new Date());
+		death.setDeathDeclarationDate(deathCreate.getDeathDeclarationDate());
 		death.setCreatedBy(getCurrentUser().getId());
 		
 		return toPartial(deathRepository.save(death));

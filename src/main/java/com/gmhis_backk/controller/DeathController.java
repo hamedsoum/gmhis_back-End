@@ -51,6 +51,7 @@ public class DeathController {
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public DeathPartial create( @RequestBody deathCreate deathCreate) throws ResourceNotFoundByIdException {
+		log.info("patientID {} ", deathCreate.getPatientID());
 		return deathService.create(deathCreate);
 	}
 	
