@@ -20,7 +20,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.gmhis_backk.AppUtils;
-import com.gmhis_backk.domain.Cashier;
 import com.gmhis_backk.domain.Death;
 import com.gmhis_backk.domain.DeathPartial;
 import com.gmhis_backk.domain.Patient;

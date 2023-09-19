@@ -50,7 +50,6 @@ public class EvacuationController {
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public EvacuationPartial evacuation(@RequestBody EvacuationCreate evacuationCreate) throws ResourceNotFoundByIdException {
-		log.info("clinical Controller {} ", evacuationCreate.getClinicalInformation());
 		return evacuationService.toPartial(evacuationService.Create(evacuationCreate));
 	}
 	
