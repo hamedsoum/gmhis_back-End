@@ -128,11 +128,9 @@ public class EvacuationService {
 		ActCategory service = categoryService.findById(evacuationCreate.getServiceID())
 		.orElseThrow(() -> new ResourceNotFoundByIdException("Le service est inexistant"));
 		
-		log.info("patienID {}", evacuationCreate.getPatientID());
 		Patient patient = patientService.findById(evacuationCreate.getPatientID());
 		if (patient == null) throw new ResourceNotFoundByIdException("Patient Inexistant");
 		
-		log.info("practicianID {}", evacuationCreate.getPracticianID());
 		Pratician practician = practicianService.findPracticianById(evacuationCreate.getPracticianID())
 		.orElseThrow(() -> new ResourceNotFoundByIdException("Le practien est inexistant"));
 		
