@@ -67,7 +67,7 @@ public class CashierController {
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "25") int size) {
 	
-		Map<String, Object> cashierSearch = new HashMap<>();
+		HashMap<String, Object> cashierSearch = new HashMap<>();
 		
 		cashierSearch.put("active", active);
 		cashierSearch.put("sort", sort);

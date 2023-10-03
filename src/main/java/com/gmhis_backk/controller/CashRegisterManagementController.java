@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gmhis_backk.domain.CashRegisterManagement;
-import com.gmhis_backk.domain.Drug;
 import com.gmhis_backk.dto.CashRegisterManagementDto;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
@@ -85,7 +84,7 @@ public class CashRegisterManagementController {
 			@RequestParam(defaultValue = "10") int size,
 			@RequestParam(defaultValue = "id,desc") String[] sort){
 		
-		Map<String, Object> response = new HashMap<>();
+		Map<String, Object> response = new HashMap<String, Object>();
 
 		Sort.Direction dir = sort[1].equalsIgnoreCase("asc") ? dir = Sort.Direction.ASC : Sort.Direction.DESC;
 
@@ -132,32 +131,32 @@ public class CashRegisterManagementController {
 	private List<Map<String, Object>> getMaFromCashRegisterManagementlist(List<CashRegisterManagement> cashRegisterManagements) {
 		List<Map<String, Object>> crManagenementList = new ArrayList<>();
 		
-		cashRegisterManagements.stream().forEach(el -> {
+		cashRegisterManagements.forEach(cashRegisterManagement -> {
 			
 			Map<String, Object> crmMap = new HashMap<>();
-			crmMap.put("id",el.getId());
-			crmMap.put("cashRegisterName",el.getCashRegister().getName());
-			crmMap.put("cashRegister",el.getCashRegister().getId());
-			crmMap.put("cashierName",el.getCashier().getFirstName() + " " + el.getCashier().getLastName());
-			crmMap.put("cashier",el.getCashier().getId());
-			crmMap.put("openingDate",el.getOpeningDate());
-			crmMap.put("state",el.getState());
-			crmMap.put("openingBalance",el.getOpeningBalance());
-			crmMap.put("closingBalance",el.getClosingBalance());
-			crmMap.put("cashRegisterBalance",el.getCashRegisterBalance());
-			crmMap.put("closingDate",el.getClosingDate());
-			crmMap.put("realClosingBalance",el.getRealClosingBalance());
+			crmMap.put("id",cashRegisterManagement.getId());
+			crmMap.put("cashRegisterName",cashRegisterManagement.getCashRegister().getName());
+			crmMap.put("cashRegister",cashRegisterManagement.getCashRegister().getId());
+			crmMap.put("cashierName",cashRegisterManagement.getCashier().getFirstName() + " " + cashRegisterManagement.getCashier().getLastName());
+			crmMap.put("cashier",cashRegisterManagement.getCashier().getId());
+			crmMap.put("openingDate",cashRegisterManagement.getOpeningDate());
+			crmMap.put("state",cashRegisterManagement.getState());
+			crmMap.put("openingBalance",cashRegisterManagement.getOpeningBalance());
+			crmMap.put("closingBalance",cashRegisterManagement.getClosingBalance());
+			crmMap.put("cashRegisterBalance",cashRegisterManagement.getCashRegisterBalance());
+			crmMap.put("closingDate",cashRegisterManagement.getClosingDate());
+			crmMap.put("realClosingBalance",cashRegisterManagement.getRealClosingBalance());
 			crManagenementList.add(crmMap);
 		});
 		return crManagenementList;
 	}
 	
 	
-	@GetMapping("crM/{cashier}")
+	@GetMapping("crM/{cashierID}")
 	@ApiOperation("detail d'une activite de caisse ")
-	public  ResponseEntity<Map<String, Object>> getDetail(@PathVariable Long cashier){
+	public  ResponseEntity<Map<String, Object>> getDetail(@PathVariable Long cashierID){
 		Map<String, Object> response = new HashMap<>();
-		CashRegisterManagement cashRegisterManagement = cashRegisterManagementService.getCashierrManagementByCashierAndStateOpened(cashier);
+		CashRegisterManagement cashRegisterManagement = cashRegisterManagementService.getCashierManagementByCashierAndStateOpened(cashierID);
 		response.put("id",cashRegisterManagement.getId());
 		response.put("cashRegisterName",cashRegisterManagement.getCashRegister().getName());
 		response.put("cashRegister",cashRegisterManagement.getCashRegister().getId());
@@ -171,7 +170,7 @@ public class CashRegisterManagementController {
 		return new ResponseEntity<>(response,HttpStatus.OK);
 	}
 
-	
-	
-	
+
+
+
 }

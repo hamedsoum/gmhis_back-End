@@ -1,7 +1,5 @@
 package com.gmhis_backk.domain;
 
-import java.util.Date;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,13 +7,14 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class deathCreate {
-		
-	private Date deathDate;
+@NoArgsConstructor
+public class GMHISHospitalizationRequestCreate {
+    private Long PraticianID;
 
-	private String deathReason;
-			
-	private Long patientID;
+    private Long PatientID;
+
+    private String reason;
+
+    private int dayNumber;
 }

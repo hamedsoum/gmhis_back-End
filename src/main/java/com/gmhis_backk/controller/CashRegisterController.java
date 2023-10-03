@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,7 @@ import io.swagger.annotations.ApiOperation;
 
 @RestController()
 @RequestMapping("/cashRegister")
+@Log4j2
 public class CashRegisterController {
 	 @Autowired
 	 CashRegisterService cashRegisterService;
@@ -147,7 +149,7 @@ public class CashRegisterController {
 		public ResponseEntity<List<Map<String, Object>>> activeActName() {
 			List<Map<String, Object>> cashRegisterList = new ArrayList<>();
 
-			cashRegisterService.findActiveActs().stream().forEach(CashRegisterDto -> {
+			cashRegisterService.findActiveActs().forEach(CashRegisterDto -> {
 				Map<String, Object> cashRegisterMap = new HashMap<>();
 				cashRegisterMap.put("id", CashRegisterDto.getId());
 				cashRegisterMap.put("name", CashRegisterDto.getName());

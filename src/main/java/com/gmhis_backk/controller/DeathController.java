@@ -51,7 +51,6 @@ public class DeathController {
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public DeathPartial create( @RequestBody deathCreate deathCreate) throws ResourceNotFoundByIdException {
-		log.info("patientID {} ", deathCreate.getPatientID());
 		return deathService.create(deathCreate);
 	}
 	
@@ -71,7 +70,6 @@ public class DeathController {
 	
 		Map<String, Object> deathSearchField = new HashMap<>();
 		
-		log.info("service {}", service);
 		deathSearchField.put("service", service);
 		deathSearchField.put("sort", sort);
 		deathSearchField.put("page", page);

@@ -56,7 +56,8 @@ public class DeathService {
 		deathPartial.setDeathDeclaratedByName(death.getDeathDeclarationBy().getFirstName() + " " + death.getDeathDeclarationBy().getLastName());
 		deathPartial.setDeathDeclarationByID(death.getDeathDeclarationBy().getId());
 		deathPartial.setDeathReason(death.getDeathReason());
-		deathPartial.setPatientName(death.getPatient().getFirstName() + " "+ death.getPatient().getLastName());
+		deathPartial.setPatientFirstName(death.getPatient().getFirstName() );
+		deathPartial.setPatientLastName(death.getPatient().getLastName());
 		deathPartial.setPatientID(death.getPatient().getId());
 		
 		return deathPartial;
@@ -65,7 +66,7 @@ public class DeathService {
 	protected List<DeathPartial> map(List<Death> deaths) {
 		List<DeathPartial> deathList = new ArrayList<>();
 		
-			deaths.stream().forEach(death -> {
+			deaths.forEach(death -> {
 			deathList.add(toPartial(death));
 			});
 			
@@ -77,17 +78,17 @@ public class DeathService {
 		Death deathToUpdate = deathRepository.findById(deathID)
 					.orElseThrow(() -> new ResourceNotFoundByIdException("le deces evacuateur est inexistant"));
 		
-		User beathDeclarationBy = userRepository.findById(deathCreate.getDeathDeclarationByID())
-				.orElseThrow(() -> new ResourceNotFoundByIdException("utilisateur inexistant"));
-		deathToUpdate.setDeathDeclarationBy(beathDeclarationBy);
+		User dathDeclarationBy = userRepository.findById(getCurrentUser().getId())
+				.orElseThrow(() -> new ResourceNotFoundByIdException("Utilisateur inexistant"));
+		deathToUpdate.setDeathDeclarationBy(dathDeclarationBy);
 		
 		Patient patient = patientService.findById(deathCreate.getPatientID());
-		if (patient == null) throw new ResourceNotFoundByIdException("Patient inexistant");
+		if (patient == null) throw new ResourceNotFoundByIdException("Patient Inexistant");
 		deathToUpdate.setPatient(patient);
 		
 		BeanUtils.copyProperties(deathCreate,deathToUpdate,"id");
 		deathToUpdate.setDeathDate(deathCreate.getDeathDate());
-		deathToUpdate.setDeathDeclarationDate(deathCreate.getDeathDeclarationDate());
+		deathToUpdate.setDeathDeclarationDate(new Date());
 		deathToUpdate.setUpdatededAt(new Date());
 		deathToUpdate.setUpdatedBy(getCurrentUser().getId());
 		
@@ -98,7 +99,7 @@ public class DeathService {
 	public DeathPartial create(deathCreate deathCreate) throws ResourceNotFoundByIdException {
 		Death death = new Death();
 		
-		User beathDeclarationBy = userRepository.findById(deathCreate.getDeathDeclarationByID())
+		User beathDeclarationBy = userRepository.findById(getCurrentUser().getId())
 				.orElseThrow(() -> new ResourceNotFoundByIdException("utilisateur inexistant"));
 		death.setDeathDeclarationBy(beathDeclarationBy);
 		
@@ -106,10 +107,12 @@ public class DeathService {
 		if (patient == null) throw new ResourceNotFoundByIdException("Patient inexistant");
 		death.setPatient(patient);
 		
+		 patientService.setPatientDeathDate(patient.getId(), deathCreate.getDeathDate());
+
 		BeanUtils.copyProperties(deathCreate,death,"id");
 		death.setCode("GMHIS-DTH-246");
+		death.setDeathDeclarationDate(new Date());
 		death.setCreatedAt(new Date());
-		death.setDeathDeclarationDate(deathCreate.getDeathDeclarationDate());
 		death.setCreatedBy(getCurrentUser().getId());
 		
 		return toPartial(deathRepository.save(death));

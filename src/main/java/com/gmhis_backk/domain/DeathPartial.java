@@ -35,7 +35,8 @@ public class DeathPartial {
 	private String deathDeclaratedByName;
 	private Long deathDeclarationByID;
 	
-	private String patientName;
+	private String patientFirstName;
+	private String patientLastName;
 	private Long patientID;
 
 }

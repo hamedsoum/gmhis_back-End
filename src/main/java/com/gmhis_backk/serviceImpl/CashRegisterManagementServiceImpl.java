@@ -7,16 +7,14 @@ import java.util.UUID;
 
 import javax.transaction.Transactional;
 
+import com.gmhis_backk.domain.*;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.gmhis_backk.domain.CashRegister;
-import com.gmhis_backk.domain.CashRegisterManagement;
-import com.gmhis_backk.domain.CashRegisterMovement;
-import com.gmhis_backk.domain.User;
 import com.gmhis_backk.dto.CashRegisterManagementDto;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
@@ -26,6 +24,7 @@ import com.gmhis_backk.service.CashRegisterService;
 import com.gmhis_backk.service.UserService;
 
 @Service
+@Log4j2
 public class CashRegisterManagementServiceImpl implements CashRegisterManagementService {
 
 	@Autowired
@@ -159,14 +158,14 @@ public class CashRegisterManagementServiceImpl implements CashRegisterManagement
 	protected  void  verifyCashRegisterAndCashier(Long cashier, Long cashRegister) throws ResourceNotFoundByIdException{
 		List<CashRegisterManagement> cashRegisterManagementList = cashRegisterManagementRepository.findAllCashRegisterManagementByCashRegisterAndStateOpenened(cashRegister);
 		
-		List<CashRegisterManagement> cashierManagementList = cashRegisterManagementRepository.findAllCashierrManagementByCashierAndStateOpened(cashier);
+		List<CashRegisterManagement> cashierManagementList = cashRegisterManagementRepository.findAllCashierManagementByCashierAndStateOpened(cashier);
 		
 
-		if (cashRegisterManagementList.size() > 0) {
-			throw new ResourceNotFoundByIdException("caisse deja en activitee");
+		if (cashRegisterManagementList.isEmpty()) {
+			throw new ResourceNotFoundByIdException("Caisse deja en Activitée");
 		}
 		
-		if (cashierManagementList.size() > 0) {
+		if (cashierManagementList.isEmpty()) {
 			throw new ResourceNotFoundByIdException("caissier deja en activitee");
 		}
 		
@@ -178,13 +177,12 @@ public class CashRegisterManagementServiceImpl implements CashRegisterManagement
 	}
 
 	@Override
-	public CashRegisterManagement getCashierrManagementByCashierAndStateOpened(Long cashier) {
-		System.out.println("cashier ID ==>" + cashier);
-		return cashRegisterManagementRepository.getCashierrManagementByCashierAndStateOpened(cashier);
+	public CashRegisterManagement getCashierManagementByCashierAndStateOpened(Long cashier) {
+ 		return cashRegisterManagementRepository.getCashierManagementByCashier(cashier);
 	}
 
 	public void closeCashRegisterManagement(Long cashier, double realClosingBalance) {
-		CashRegisterManagement cashRegisterManagement = cashRegisterManagementRepository.getCashierrManagementByCashierAndStateOpened(cashier);
+		CashRegisterManagement cashRegisterManagement = cashRegisterManagementRepository.getCashierManagementByCashier(cashier);
 		cashRegisterManagement.setState(false);
 		cashRegisterManagement.setRealClosingBalance(realClosingBalance);
 		cashRegisterManagement.setClosingDate(new Date());

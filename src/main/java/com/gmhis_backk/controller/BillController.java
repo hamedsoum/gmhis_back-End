@@ -772,7 +772,7 @@ public class BillController {
 		this.setPaymentData(payment, paymentType, paymentDto, cashRegister);
 			
 		payment = billService.savePayment(this.setPaymentData(payment, paymentType, paymentDto, cashRegister));
-		CashRegisterManagement cashRegisterManagement  = cashRegisterManagementService.getCashierrManagementByCashierAndStateOpened(this.getCurrentUserId().getId());
+		CashRegisterManagement cashRegisterManagement  = cashRegisterManagementService.getCashierManagementByCashierAndStateOpened(this.getCurrentUserId().getId());
 		if (cashRegisterManagement == null) {
 		throw new ResourceNotFoundByIdException(
 						"Vous n'etes pas autorisé a encaiser une facture !  \n veuillez démander à l'administrateur d'ouvrir une caisse à votre nom.");

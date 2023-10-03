@@ -8,9 +8,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gmhis_backk.AppUtils;
-import com.gmhis_backk.controller.EvacuationController;
 import com.gmhis_backk.domain.ActCategory;
 import com.gmhis_backk.domain.Evacuation;
 import com.gmhis_backk.domain.EvacuationCreate;
@@ -68,7 +64,7 @@ public class EvacuationService {
 	
 	protected List<Map<String, Object>> map(List<Evacuation> evacuations) {
 		List<Map<String, Object>> evacuationList = new ArrayList<>();
-		evacuations.stream().forEach(evacuation -> {
+		evacuations.forEach(evacuation -> {
 			Map<String, Object> evacuationMap = new HashMap<>();
 			evacuationMap.put("id", evacuation.getId());
 			evacuationMap.put("evacuationFacilityName", evacuation.getEvacuationFacility().getName());
@@ -80,6 +76,7 @@ public class EvacuationService {
 			evacuationMap.put("clinicalInformation", evacuation.getClinicalInformation());
 			evacuationMap.put("treatmentReceived", evacuation.getTreatmentReceived());
 			evacuationMap.put("receptionFacilityName", evacuation.getReceptionFacility().getName());
+			evacuationMap.put("facilityLogo", evacuation.getPractician().getFacility().getLogo());
 
 			evacuationList.add(evacuationMap);
 		});
@@ -194,7 +191,6 @@ public ResponseEntity<Map<String, Object>>  search(Map<String, ?> evacuationSear
 		Map<String, Object> response = new HashMap<>();
 		
 		Long service = (Long) evacuationSearch.get("service");
-		log.info("service {}", service);
 
 		int page = (int) evacuationSearch.get("page");
 		String[] sort = (String[]) evacuationSearch.get("sort");
