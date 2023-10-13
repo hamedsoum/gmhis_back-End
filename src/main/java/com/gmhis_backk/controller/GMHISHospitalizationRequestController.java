@@ -17,7 +17,7 @@ import java.util.UUID;
 
 @RestController
 @Log4j2
-@RequestMapping("/hospitalisation-request")
+@RequestMapping("/hospitalization-request")
 public class GMHISHospitalizationRequestController {
 
     private final GMHISHospitalizationRequestService hospitalizationRequestService;

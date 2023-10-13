@@ -1,12 +1,8 @@
 package com.gmhis_backk.controller;
 
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -65,7 +61,11 @@ public class ExaminationController {
 	private Examination examination = null;
 
 
-
+	@GetMapping("/{examinationID}")
+	@ApiOperation("retrieve examination in the systeme")
+	public Optional<Examination> retrieve(@PathVariable Long examinationID) throws ParseException{
+        return examinationService.findExaminationById(examinationID);
+	}
 	
 	@ApiOperation(value = "Ajouter une consultation d'un patient")
 	@PostMapping("/add")

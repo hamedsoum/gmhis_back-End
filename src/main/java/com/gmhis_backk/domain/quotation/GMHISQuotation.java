@@ -1,21 +1,25 @@
-package com.gmhis_backk.domain;
+package com.gmhis_backk.domain.quotation;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import lombok.*;
+import com.gmhis_backk.domain.Insurance;
+import com.gmhis_backk.domain.Patient;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.Date;
 import java.util.UUID;
-
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name= "hospitalization_request")
-public class GMHISHospitalizationRequest {
+@Table(name= "quotation")
+public class GMHISQuotation {
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
@@ -25,30 +29,30 @@ public class GMHISHospitalizationRequest {
 
     private String code;
 
-    @JsonBackReference
-    @ManyToOne
-    @JoinColumn(name="practician_id")
-    private Pratician practician;
+    private String quotationNumber;
+
+    private  String affection;
+
+    private  String indication;
+
+    @JoinColumn(name="insurance_id")
+    private Long insuranceId;
+
+    @JoinColumn(name="insurance_name")
+    private String insuranceName;
 
     @JsonBackReference
     @ManyToOne
     @JoinColumn(name="patient_id")
     private Patient patient;
 
-    @JoinColumn(name="examination_id")
-    private Long examination_id;
+    @JoinColumn(name="total_amount")
+    private Double totalAmount ;
 
-    @JoinColumn(name="admission_id")
-    private Long admission_id;
+    @JoinColumn(name="moderator_ticket")
+    private Double moderatorTicket;
 
-    private String reason;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="start_Date")
-    private Date startDate;
-
-    @Column(name="day_number")
-    private int dayNumber;
+    private String status;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name="created_at")

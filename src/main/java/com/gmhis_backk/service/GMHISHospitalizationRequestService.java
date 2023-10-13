@@ -16,13 +16,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-@Log4j2
 @Transactional
 @Service
 public class GMHISHospitalizationRequestService {
 
     private final PatientService patientService;
     private final PracticianService practicianService;
+
+    private final ExaminationService examinationService;
 
     private final GMHISHospitalizationRequestRepository hospitalizationRequestRepository;
 
@@ -31,12 +32,14 @@ public class GMHISHospitalizationRequestService {
             final PatientService patientService,
             final PracticianService practicianService,
             final UserService userService,
-            final GMHISHospitalizationRequestRepository hospitalizationRequestRepository
+            final GMHISHospitalizationRequestRepository hospitalizationRequestRepository,
+            final ExaminationService examinationService
         ) {
         this.patientService = patientService;
         this.practicianService = practicianService;
         this.userService = userService;
         this.hospitalizationRequestRepository = hospitalizationRequestRepository;
+        this.examinationService = examinationService;
     }
 
 
@@ -49,11 +52,17 @@ public class GMHISHospitalizationRequestService {
         GMHISHospitalizationRequestPartial hospitalizationRequestPartial = new GMHISHospitalizationRequestPartial();
         hospitalizationRequestPartial.setId( hospitalizationRequest.getId());
         hospitalizationRequestPartial.setCode(hospitalizationRequest.getCode());
+        hospitalizationRequestPartial.setPatientID(hospitalizationRequest.getPatient().getId());
         hospitalizationRequestPartial.setPatientName(new GMHISName(hospitalizationRequest.getPatient().getFirstName(), hospitalizationRequest.getPatient().getLastName()));
         hospitalizationRequestPartial.setPraticianName(new GMHISName(hospitalizationRequest.getPractician().getPrenoms(), hospitalizationRequest.getPractician().getNom()));
         hospitalizationRequestPartial.setReason(hospitalizationRequest.getReason());
         hospitalizationRequestPartial.setDayNumber(hospitalizationRequest.getDayNumber());
-
+        hospitalizationRequestPartial.setDate(hospitalizationRequest.getCreatedAt());
+        hospitalizationRequestPartial.setExaminationID(hospitalizationRequest.getExamination_id());
+        hospitalizationRequestPartial.setAdmissionID(hospitalizationRequest.getAdmission_id());
+        Examination examination = examinationService.findExaminationById(hospitalizationRequest.getExamination_id()).orElse(null);
+        if(examination != null) hospitalizationRequestPartial.setExamination(examination);
+        hospitalizationRequestPartial.setStartDate(hospitalizationRequest.getStartDate());
         return hospitalizationRequestPartial;
     }
 
@@ -68,20 +77,19 @@ public class GMHISHospitalizationRequestService {
     }
 
     public GMHISHospitalizationRequestPartial create(GMHISHospitalizationRequestCreate hospitalizationRequestCreate) throws ResourceNotFoundByIdException {
-        log.info("patientID {}", hospitalizationRequestCreate.getPatientID());
-        log.info("practianID {}", hospitalizationRequestCreate.getPraticianID());
-        log.info("reason {}", hospitalizationRequestCreate.getReason());
-        log.info("dayNumber {}", hospitalizationRequestCreate.getDayNumber());
         Patient patient = patientService.findById(hospitalizationRequestCreate.getPatientID());
         if (patient == null) throw new ResourceNotFoundByIdException("Patient Inexistant");
 
-        Pratician practician = practicianService.findPracticianById(hospitalizationRequestCreate.getPraticianID())
+        Pratician practician = practicianService.findPracticianById(1L)
                 .orElseThrow(() -> new ResourceNotFoundByIdException(" Practien inexistant"));
 
         GMHISHospitalizationRequest hospitalizationRequest = new GMHISHospitalizationRequest();
         hospitalizationRequest.setPatient(patient);
+        hospitalizationRequest.setExamination_id(hospitalizationRequestCreate.getExaminationID());
+        hospitalizationRequest.setAdmission_id(hospitalizationRequestCreate.getAdmissionID());
         hospitalizationRequest.setPractician(practician);
         hospitalizationRequest.setCode("GMHIS-HOR-1233459");
+        hospitalizationRequest.setStartDate(hospitalizationRequestCreate.getStartDate());
         BeanUtils.copyProperties(hospitalizationRequestCreate,hospitalizationRequest,"id");
         hospitalizationRequest.setCreatedBy(getCurrentUser().getId());
         hospitalizationRequest.setCreatedAt(new Date());
@@ -102,7 +110,7 @@ public class GMHISHospitalizationRequestService {
         Patient patient = patientService.findById(hospitalizationRequestCreate.getPatientID());
         if (patient == null) throw new ResourceNotFoundByIdException("Patient Inexistant");
 
-        Pratician practician = practicianService.findPracticianById(hospitalizationRequestCreate.getPraticianID())
+        Pratician practician = practicianService.findPracticianById(1L)
                 .orElseThrow(() -> new ResourceNotFoundByIdException(" Practien inexistant"));
 
         hospitalizationRequest.setPatient(patient);
@@ -130,9 +138,9 @@ public class GMHISHospitalizationRequestService {
 
         List<GMHISHospitalizationRequest> hospitalizationList = hospitalizationPage.getContent();
 
-        List<GMHISHospitalizationRequestPartial> hospitalization = this.map(hospitalizationList);
+        List<GMHISHospitalizationRequestPartial> hospitalizations = this.map(hospitalizationList);
 
-        searchResult.put("items", hospitalization);
+        searchResult.put("items", hospitalizations);
         searchResult.put("totalElements", hospitalizationPage.getTotalElements());
         searchResult.put("totalPages", hospitalizationPage.getTotalPages());
         searchResult.put("size", hospitalizationPage.getSize());

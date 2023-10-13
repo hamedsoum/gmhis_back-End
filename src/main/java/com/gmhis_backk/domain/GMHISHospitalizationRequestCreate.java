@@ -5,16 +5,22 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class GMHISHospitalizationRequestCreate {
-    private Long PraticianID;
+    private Long examinationID;
 
-    private Long PatientID;
+    private Long admissionID;
+
+    private Long patientID;
 
     private String reason;
 
     private int dayNumber;
+
+    private Date startDate;
 }
