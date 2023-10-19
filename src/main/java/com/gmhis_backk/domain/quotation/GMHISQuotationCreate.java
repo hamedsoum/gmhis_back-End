@@ -18,9 +18,9 @@ public class GMHISQuotationCreate {
 
     private  String indication;
 
-    private Long InsuranceID;
+    private Long insuranceID;
 
-    private Long PatientID;
+    private Long patientID;
 
     private Double totalAmount;
 

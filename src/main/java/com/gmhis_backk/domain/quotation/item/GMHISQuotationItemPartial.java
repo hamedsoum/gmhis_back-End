@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
 import java.util.UUID;
 
 @Getter
@@ -16,9 +17,13 @@ public class GMHISQuotationItemPartial {
 
     private Long actID;
 
+    private Double actCodeValue;
+
     private String actCode;
 
-    private int actNumber;
+    private String actName;
+
+    private int actCoefficient;
 
     private int quantity;
 
@@ -39,4 +44,6 @@ public class GMHISQuotationItemPartial {
     private GMHISName praticianName;
 
     private  Long practicianID;
+
+    private Date dateOp;
 }

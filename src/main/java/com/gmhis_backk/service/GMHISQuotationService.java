@@ -67,6 +67,9 @@ public class GMHISQuotationService {
         quotationPartial.setInsuranceID(quotation.getInsuranceId());
         quotationPartial.setInsuranceName(quotation.getInsuranceName());
         quotationPartial.setModeratorTicket(quotation.getModeratorTicket());
+        quotationPartial.setDateOp(quotation.getCreatedAt());
+        quotationPartial.setAffection(quotation.getAffection());
+        quotationPartial.setIndication(quotation.getIndication());
         return   quotationPartial;
     }
 
@@ -95,8 +98,11 @@ public class GMHISQuotationService {
                 quotation.setInsuranceName(insurance.getName());
             } ;
         }
-        quotation.setCode("GMHIS-QUO-112233");
-        quotation.setQuotationNumber("GMHIS-QUO-112233");
+
+        Random rnd = new Random();
+        int n = 100000 + rnd.nextInt(900000);
+        quotation.setCode("GMHIS-QUO-" + n);
+        quotation.setQuotationNumber("GMHIS-QUO" + n);
         quotation.setStatus(GMHISQuotationStatus.DRAFT);
         quotation.setModeratorTicket(quotationCreate.getModeratorTicket());
         quotation.setTotalAmount(quotationCreate.getTotalAmount());
@@ -107,8 +113,7 @@ public class GMHISQuotationService {
         GMHISQuotation quotationSaved  = quotationRepository.save(quotation);
 
         quotationCreate.getQuotationItems().forEach(item -> {
-            item.setQuotationID(quotationSaved.getId());
-            quotationItemService.create(item);
+            quotationItemService.create(item, quotationSaved.getId());
         });
 
         return  toPartial(quotationSaved);

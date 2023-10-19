@@ -33,16 +33,16 @@ public class GMHISQuotationItem {
     @JoinColumn(name="act_id")
     private Long actId;
 
-    @JoinColumn(name="act_code")
-    private String actCode;
+    @JoinColumn(name="act_code_id")
+    private Long actCodeId;
 
-    @JoinColumn(name="act_number")
-    private int actNumber;
+    @JoinColumn(name="act_coefficient")
+    private int actCoefficient;
 
     private int quantity;
 
-    @JoinColumn(name="unit_price")
-    private Double unitPrice;
+    @JoinColumn(name="unit_code_value")
+    private Double actCodeValue;
 
     @JoinColumn(name="total_amount")
     private Double totalAmount;
@@ -63,10 +63,9 @@ public class GMHISQuotationItem {
     @JoinColumn(name="insurance_percent")
     private int insurancePercent;
 
-    @JsonBackReference
-    @ManyToOne
+
     @JoinColumn(name="practician_id")
-    private Pratician practician;
+    private Long practicianId;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name="created_at")

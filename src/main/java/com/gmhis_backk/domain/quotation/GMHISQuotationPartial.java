@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -41,6 +42,8 @@ public class GMHISQuotationPartial {
     private String status;
 
     private List<GMHISQuotationItemCreate> quotationItems;
+
+    private Date dateOp;
 
 }
 

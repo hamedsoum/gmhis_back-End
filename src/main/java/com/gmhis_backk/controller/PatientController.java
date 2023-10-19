@@ -71,7 +71,15 @@ public class PatientController {
 		Patient patient = patientService.update(id,patienDto);
 		return new ResponseEntity<Patient>(patient,HttpStatus.OK);
 	}
-	
+
+	@ApiOperation(value = "retrieve all patients")
+	@GetMapping("/patients")
+	List<Patient> list(){
+		List<Patient> patients;
+		patients = patientService.findAll();
+		return patients;
+	};
+
 	@ApiOperation(value = "retourne la liste paginee des patients")
 	@GetMapping("/p_list")
 	public ResponseEntity<Map<String, Object>> paginatedList(

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.JoinColumn;
 import java.util.UUID;
 
 @Getter
@@ -15,17 +16,9 @@ public class GMHISQuotationItemCreate {
 
     private Long actId;
 
-    private String actCode;
-
-    private int actNumber;
-
     private int quantity;
 
-    private Double unitPrice;
-
     private Double totalAmount;
-
-    private UUID quotationID;
 
     private Double moderatorTicket;
 
@@ -35,7 +28,7 @@ public class GMHISQuotationItemCreate {
 
     private int insurancePercent;
 
-    private Long PracticianID;
+    private Long practicianID;
 
 
 }
