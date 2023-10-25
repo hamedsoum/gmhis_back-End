@@ -1,4 +1,4 @@
-package com.gmhis_backk.domain.quotation.item;
+package com.gmhis_backk.domain.invoiceH.item;
 
 import com.gmhis_backk.domain.ActPartial;
 import com.gmhis_backk.domain.GMHISName;
@@ -14,7 +14,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class GMHISQuotationItemPartial {
+public class GMHISInvoiceHItemPartial {
 
     private Long actID;
 

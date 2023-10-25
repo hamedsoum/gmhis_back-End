@@ -1,7 +1,6 @@
-package com.gmhis_backk.domain.quotation;
+package com.gmhis_backk.domain.invoiceH;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.gmhis_backk.domain.Insurance;
 import com.gmhis_backk.domain.Patient;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,13 +12,14 @@ import org.hibernate.annotations.Type;
 import javax.persistence.*;
 import java.util.Date;
 import java.util.UUID;
+
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name= "quotation")
-public class GMHISQuotation {
+@Table(name= "invoice_h")
+public class GMHISInvoiceH {
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
@@ -29,7 +29,7 @@ public class GMHISQuotation {
 
     private String code;
 
-    private String quotationNumber;
+    private String invoiceNumber;
 
     private  String affection;
 

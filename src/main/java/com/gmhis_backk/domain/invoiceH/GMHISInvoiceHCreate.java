@@ -1,20 +1,19 @@
-package com.gmhis_backk.domain.quotation;
+package com.gmhis_backk.domain.invoiceH;
 
 
-import com.gmhis_backk.domain.quotation.item.GMHISQuotationItemCreate;
+import com.gmhis_backk.domain.invoiceH.item.GMHISinvoiceHItemCreate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
 import java.util.List;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class GMHISQuotationCreate {
+public class GMHISInvoiceHCreate {
     private  String affection;
 
     private  String indication;
@@ -27,7 +26,7 @@ public class GMHISQuotationCreate {
 
     private Double moderatorTicket;
 
-    private List<GMHISQuotationItemCreate> quotationItems;
+    private List<GMHISinvoiceHItemCreate> invoiceHItems;
 
     private Double cmuPart;
 

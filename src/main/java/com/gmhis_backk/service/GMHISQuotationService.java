@@ -6,11 +6,8 @@ import com.gmhis_backk.domain.*;
 import com.gmhis_backk.domain.quotation.GMHISQuotation;
 import com.gmhis_backk.domain.quotation.GMHISQuotationCreate;
 import com.gmhis_backk.domain.quotation.GMHISQuotationPartial;
-import com.gmhis_backk.domain.quotation.item.GMHISQuotationItem;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
-import com.gmhis_backk.repository.GMHISQuotationItemRepository;
 import com.gmhis_backk.repository.GMHISQuotationRepository;
-import lombok.extern.java.Log;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -51,8 +48,27 @@ public class GMHISQuotationService {
         this.insuranceService = insuranceService;
     }
 
+    protected String generateQuotationNumber() {
+        Random rnd = new Random();
+        int n = 100000 + rnd.nextInt(900000);
+        return "GMHIS-QUO-" + n;
+    }
     protected User getCurrentUser() {
         return this.userService.findUserByUsername(AppUtils.getUsername());
+    }
+
+    public String updateQuotationStatus(UUID quotationID, String quotationStatus) throws ResourceNotFoundByIdException {
+        GMHISQuotation quotationToUpdate = quotationRepository.findById(quotationID)
+                .orElseThrow(() -> new ResourceNotFoundByIdException(" le Devis est Inexistant"));
+        quotationToUpdate.setStatus(quotationStatus);
+        log.info("quotationStatus {}", quotationStatus);
+        if (quotationStatus == "pending") {
+            quotationToUpdate.setQuotationNumber(generateQuotationNumber());
+        }
+        if (quotationToUpdate.getStatus() == null || Objects.equals(quotationStatus, GMHISQuotationStatus.TO_BE_INVOICED)) quotationToUpdate.setQuotationNumber(generateQuotationNumber());
+
+        return quotationRepository.save(quotationToUpdate).getStatus();
+
     }
 
     public GMHISQuotationPartial toPartial(GMHISQuotation quotation) {
@@ -70,6 +86,8 @@ public class GMHISQuotationService {
         quotationPartial.setDateOp(quotation.getCreatedAt());
         quotationPartial.setAffection(quotation.getAffection());
         quotationPartial.setIndication(quotation.getIndication());
+        quotationPartial.setCmuPart(quotation.getCmuPart());
+        quotationPartial.setInsurancePart(quotation.getInsurancePart());
         return   quotationPartial;
     }
 
@@ -101,13 +119,14 @@ public class GMHISQuotationService {
 
         Random rnd = new Random();
         int n = 100000 + rnd.nextInt(900000);
-        quotation.setCode("GMHIS-QUO-" + n);
-        quotation.setQuotationNumber("GMHIS-QUO" + n);
+        quotation.setCode(generateQuotationNumber());
         quotation.setStatus(GMHISQuotationStatus.DRAFT);
         quotation.setModeratorTicket(quotationCreate.getModeratorTicket());
         quotation.setTotalAmount(quotationCreate.getTotalAmount());
         quotation.setAffection(quotationCreate.getAffection());
         quotation.setIndication(quotationCreate.getIndication());
+        quotation.setCmuPart(quotationCreate.getCmuPart());
+        quotation.setInsurancePart(quotationCreate.getInsurancePart());
         quotation.setCreatedAt(new Date());
         quotation.setCreatedBy(getCurrentUser().getId());
         GMHISQuotation quotationSaved  = quotationRepository.save(quotation);
@@ -121,7 +140,7 @@ public class GMHISQuotationService {
 
     public GMHISQuotationPartial retrieve(UUID quotationID) throws ResourceNotFoundByIdException{
         GMHISQuotation quotation = quotationRepository.findById(quotationID)
-                .orElseThrow(() -> new ResourceNotFoundByIdException(" la devis est inexistante"));
+                .orElseThrow(() -> new ResourceNotFoundByIdException(" le devis est inexistant"));
         return toPartial(quotation);
     }
 

@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import com.gmhis_backk.domain.*;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,15 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gmhis_backk.AppUtils;
-import com.gmhis_backk.domain.Act;
-import com.gmhis_backk.domain.ActCategory;
-import com.gmhis_backk.domain.ActCode;
-import com.gmhis_backk.domain.ActGroup;
-import com.gmhis_backk.domain.AdmissionHasAct;
-import com.gmhis_backk.domain.Convention;
-import com.gmhis_backk.domain.ConventionHasAct;
-import com.gmhis_backk.domain.MedicalAnalysisSpecilaity;
-import com.gmhis_backk.domain.User;
 import com.gmhis_backk.dto.ActDTO;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
@@ -111,7 +103,18 @@ public class ActServiceImpl implements ActService{
 	public Optional<Act> findActById(Long id) {
 		return actRepository.findById(id);
 	}
-	
+
+	@Override
+	public ActPartial toPartial(Act act) {
+		ActPartial actPartial = new ActPartial();
+		actPartial.setId(act.getId());
+		actPartial.setName(act.getName());
+		actPartial.setCoefficient(act.getCoefficient());
+		actPartial.setCode(act.getActCode().getName());
+		actPartial.setCodValue(act.getActCode().getValue());
+		return  actPartial;
+	}
+
 	protected  User getCurrentUserId() {
 		return this.userRepository.findUserByUsername(AppUtils.getUsername());
 	}

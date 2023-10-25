@@ -10,7 +10,7 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ActPartial {
-    private String id;
+    private Long id;
 
     private String name;
 

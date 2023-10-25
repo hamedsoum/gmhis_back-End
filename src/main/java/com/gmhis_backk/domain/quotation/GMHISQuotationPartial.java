@@ -45,6 +45,10 @@ public class GMHISQuotationPartial {
 
     private Date dateOp;
 
+    private Double cmuPart;
+
+    private Double insurancePart;
+
 }
 
 

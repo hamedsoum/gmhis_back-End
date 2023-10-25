@@ -53,11 +53,15 @@ public class GMHISQuotationItemService {
 
     private GMHISQuotationItemPartial toPartial(GMHISQuotationItem quotationItem) {
         GMHISQuotationItemPartial quotationItemPartial = new GMHISQuotationItemPartial();
+        quotationItemPartial.setActCode(quotationItem.getActCode());
         quotationItemPartial.setDateOp(quotationItem.getCreatedAt());
         quotationItemPartial.setActCodeValue(quotationItem.getActCodeValue());
         quotationItemPartial.setActCoefficient(quotationItem.getActCoefficient());
         quotationItemPartial.setUnitPrice((double) (quotationItem.getActCoefficient() * quotationItem.getActCodeValue()));
         quotationItemPartial.setActID(quotationItem.getActId());
+
+        actService.findActById(quotationItem.getActId()).ifPresent(act -> quotationItemPartial.setAct(actService.toPartial(act)));
+
         quotationItemPartial.setQuantity(quotationItem.getQuantity());
         quotationItemPartial.setTotalAmount(quotationItem.getTotalAmount());
         quotationItemPartial.setQuotationID(quotationItem.getQuotation().getId());
@@ -92,9 +96,10 @@ public class GMHISQuotationItemService {
         if(act != null) {
             quotationItem.setActCoefficient(act.getCoefficient());
             quotationItem.setActCodeId(act.getActCode().getId());
-            quotationItem.setActCodeValue((double) (act.getCoefficient() * act.getActCode().getValue()));
-        }
+            quotationItem.setActCodeValue((double) (act.getActCode().getValue()));
+            quotationItem.setActCode(act.getCodification());
 
+        }
         quotationItem.setCreatedAt(new Date());
         quotationItem.setCreatedBy(getCurrentUser().getId());
         BeanUtils.copyProperties(quotationItemCreate,quotationItem,"id");

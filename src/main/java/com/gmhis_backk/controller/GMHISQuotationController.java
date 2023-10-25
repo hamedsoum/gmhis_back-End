@@ -38,6 +38,12 @@ public class GMHISQuotationController {
     }
 
     @ApiOperation(value = "update existing quotation in the system")
+    @PutMapping("/{quotationID}/status")
+    public String updateStatus(@PathVariable UUID quotationID, @RequestBody String status) throws ResourceNotFoundByIdException {
+        return quotationService.updateQuotationStatus(quotationID, status);
+    }
+
+    @ApiOperation(value = "update existing quotation in the system")
     @PutMapping("/{quotationID}")
     public GMHISQuotationPartial update(@PathVariable UUID quotationID, @RequestBody GMHISQuotationCreate quotationCreate) throws ResourceNotFoundByIdException {
         return quotationService.update(quotationID, quotationCreate);

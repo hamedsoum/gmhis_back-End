@@ -1,7 +1,6 @@
-package com.gmhis_backk.domain.quotation.item;
+package com.gmhis_backk.domain.invoiceH.item;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.gmhis_backk.domain.Pratician;
+import com.gmhis_backk.domain.invoiceH.GMHISInvoiceH;
 import com.gmhis_backk.domain.quotation.GMHISQuotation;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,8 +18,8 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name= "quotation_item")
-public class GMHISQuotationItem {
+@Table(name= "invoice_h_item")
+public class GMHISInvoiceHItem {
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
@@ -51,8 +50,8 @@ public class GMHISQuotationItem {
     private Double totalAmount;
 
     @ManyToOne
-    @JoinColumn(name="quotation_id")
-    private GMHISQuotation quotation;
+    @JoinColumn(name="invoice_h_id")
+    private GMHISInvoiceH invoiceH;
 
     @JoinColumn(name="moderator_ticket")
     private Double moderatorTicket;

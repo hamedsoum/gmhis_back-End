@@ -1,25 +1,37 @@
-package com.gmhis_backk.domain.quotation;
+package com.gmhis_backk.domain.invoiceH;
 
-
+import com.gmhis_backk.domain.GMHISName;
 import com.gmhis_backk.domain.quotation.item.GMHISQuotationItemCreate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class GMHISQuotationCreate {
+public class GMHISInvoiceHPartial {
+
+    private UUID id;
+
+    private String code;
+
+    private String invoiceNumber;
+
+    private String InsuranceName;
+
     private  String affection;
 
     private  String indication;
 
-    private Long insuranceID;
+    private Long InsuranceID;
+
+    private GMHISName patientName;
 
     private Long patientID;
 
@@ -27,10 +39,16 @@ public class GMHISQuotationCreate {
 
     private Double moderatorTicket;
 
+    private String status;
+
     private List<GMHISQuotationItemCreate> quotationItems;
+
+    private Date dateOp;
 
     private Double cmuPart;
 
     private Double insurancePart;
 
 }
+
+

@@ -4,14 +4,11 @@ package com.gmhis_backk.service;
 import java.util.List;
 import java.util.Optional;
 
+import com.gmhis_backk.domain.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.gmhis_backk.domain.Act;
-import com.gmhis_backk.domain.AdmissionHasAct;
-import com.gmhis_backk.domain.Convention;
-import com.gmhis_backk.domain.ConventionHasAct;
 import com.gmhis_backk.dto.ActDTO;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
@@ -46,7 +43,8 @@ public List<Act> findActs();
 	public List<AdmissionHasAct> findActsByBill(Long bill);
 		
 	public Optional<Act> findActById(Long id); 
-	  
+
+	public ActPartial toPartial(Act act);
 	 public Act addAct(ActDTO actDto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException;
 	
 	 public Act updateAct(Long id,ActDTO actDto) throws ResourceNotFoundByIdException, ResourceNameAlreadyExistException;
