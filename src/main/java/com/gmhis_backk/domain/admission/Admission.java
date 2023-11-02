@@ -1,4 +1,4 @@
-package com.gmhis_backk.domain;
+package com.gmhis_backk.domain.admission;
 
 
 import java.io.Serializable;
@@ -7,6 +7,7 @@ import javax.persistence.*;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import com.gmhis_backk.domain.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -29,7 +30,9 @@ public class Admission implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
+
+	private String type; // Emenergency or Normal
+
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "supervisory_last_date")
 	private Date supervisoryLastDate;
@@ -116,23 +119,14 @@ public class Admission implements Serializable {
 			@JoinColumn(name = "admission_id", referencedColumnName = "id") }, inverseJoinColumns = {
 					@JoinColumn(name = "act_id", referencedColumnName = "id") })
 	private List<Act> acts = new ArrayList<>();
-	
-//	
-//	@JsonBackReference
-//	@ManyToMany
-//	@JoinTable(name = "admission_has_act", joinColumns = {
-//			@JoinColumn(name = "admission_id", referencedColumnName = "id") }, inverseJoinColumns = {
-//					@JoinColumn(name = "pratician_id", referencedColumnName = "id") })
-//	private List<Pratician> practicians = new ArrayList<>();
-	
+
 	@JsonBackReference
 	@ManyToMany
 	@JoinTable(name = "admission_has_act", joinColumns = {
 			@JoinColumn(name = "admission_id", referencedColumnName = "id") }, inverseJoinColumns = {
 					@JoinColumn(name = "bill_id", referencedColumnName = "id") })
 	private List<Bill> bills = new ArrayList<>();
-//
-//	
+
 	@JsonBackReference
 	@OneToMany(mappedBy = "admission")
 	private List<AnalysisRequest> analysisRequests;
@@ -140,9 +134,7 @@ public class Admission implements Serializable {
 	@JsonBackReference
 	@OneToMany(mappedBy = "admission")
 	private List<Examination> examinations;
-	
-	
-	 
+
 	@Column(name = "facility_id", nullable = true)
 	private String facilityId;
 	    

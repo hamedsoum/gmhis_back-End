@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gmhis_backk.AppUtils;
-import com.gmhis_backk.domain.Admission;
+import com.gmhis_backk.domain.admission.Admission;
 import com.gmhis_backk.domain.PatientPrescription;
 import com.gmhis_backk.domain.Pratician;
 import com.gmhis_backk.domain.User;
@@ -60,7 +60,7 @@ System.out.println(getPatientPrescriptionNumber());
 				throw new ResourceNotFoundByIdException("le practicien n'existe pas en base " );
 			}		
 			
-			 Admission admission = admissionService.findAdmissionById(pdto.getAdmission()).orElse(null);
+			 Admission admission = admissionService.retrieve(pdto.getAdmission()).orElse(null);
 				
 			if (admission == null) {
 				throw new ResourceNotFoundByIdException("l'admission n'existe pas en base " );

@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -16,15 +17,14 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gmhis_backk.AppUtils;
 import com.gmhis_backk.domain.Act;
 import com.gmhis_backk.domain.ActCategory;
-import com.gmhis_backk.domain.ActGroup;
-import com.gmhis_backk.domain.Admission;
+import com.gmhis_backk.domain.admission.Admission;
 import com.gmhis_backk.domain.Bill;
 import com.gmhis_backk.domain.Examination;
 import com.gmhis_backk.domain.Patient;
 import com.gmhis_backk.domain.Pratician;
 import com.gmhis_backk.domain.User;
 import com.gmhis_backk.dto.AdmisionHasActDTO;
-import com.gmhis_backk.dto.AdmissionDTO;
+import com.gmhis_backk.dto.AdmissionCreate;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
 import com.gmhis_backk.repository.AdmissionRepository;
@@ -51,7 +51,7 @@ public class AdmissionServiceImpl implements AdmissionService{
 	
 	@Autowired
 	private ActService actService;
-	
+
 	@Autowired
 	private ActCategoryService specialityService;
 	
@@ -75,24 +75,24 @@ public class AdmissionServiceImpl implements AdmissionService{
 	}
 
 	@Override @Transactional
-	public Admission saveAdmission(AdmissionDTO admissionDto)throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException{
+	public Admission create(AdmissionCreate admissionCreate)throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException{
 		
 		Pratician pratician = null;
 		
-		Patient patient = patientService.findById(admissionDto.getPatient());
+		Patient patient = patientService.findById(admissionCreate.getPatient());
 		if (patient == null) throw new ResourceNotFoundByIdException("Aucun patient trouvé pour l'identifiant. " );
 
-        ActCategory speciality = specialityService.findById(admissionDto.getSpeciality()).orElse(null);
-        if(speciality == null) throw new ResourceNotFoundByIdException("Aucun Specialite trouvée pour l'identifiant. " );
+        ActCategory speciality = specialityService.findById(admissionCreate.getSpeciality()).orElse(null);
+        if(speciality == null) throw new ResourceNotFoundByIdException("Aucune Specialité trouvée pour l'identifiant. " );
 		
-	    Act act = actService.findActById(admissionDto.getAct()).orElse(null);
+	    Act act = actService.findActById(admissionCreate.getAct()).orElse(null);
 		if (act == null) throw new ResourceNotFoundByIdException("Aucun act trouvé pour l'identifiant. " );
 	
-		if (admissionDto.getPractician() != null) pratician = practicianService.findPracticianById(admissionDto.getPractician()).orElse(null);
+		if (admissionCreate.getPractician() != null) pratician = practicianService.findPracticianById(admissionCreate.getPractician()).orElse(null);
 			
 		Admission admission = new Admission();
 	
-		BeanUtils.copyProperties(admissionDto, admission, "id");
+		BeanUtils.copyProperties(admissionCreate, admission, "id");
 		admission.setTakeCare(false);
 		admission.setAdmissionNumber(getAdmissionNumber());
 		admission.setPatient(patient);
@@ -102,7 +102,7 @@ public class AdmissionServiceImpl implements AdmissionService{
 		admission.setAdmissionStartDate(new Date());
         admission.setAdmissionStatus("R");
         admission.setFacilityId(this.getCurrentUserId().getFacilityId());;
-        admission.setCreatedAt(admissionDto.getCreatedAt());
+        admission.setCreatedAt(admissionCreate.getCreatedAt());
 		admission.setCreatedBy(getCurrentUserId().getId());
 		return repo.save(admission);
 		
@@ -111,11 +111,9 @@ public class AdmissionServiceImpl implements AdmissionService{
 	
 	
 	@Override
-	public Admission updateAdmission(Long id, AdmissionDTO aDto)throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException{
+	public Admission update(Long id, AdmissionCreate aDto)throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException{
 		Admission updateAdmission = repo.findById(id).orElse(null);
-		
-		log.info("dmissionID {}" , aDto.getAct());
-		
+
 		Patient patient = patientService.findById(aDto.getPatient());
 		if (patient == null) throw new ResourceNotFoundByIdException("Aucun patient trouvé pour l'identifiant. " );
 
@@ -147,7 +145,7 @@ public class AdmissionServiceImpl implements AdmissionService{
 	}
 	
 	@Override
-	public Optional<Admission> findAdmissionById(Long id){
+	public Optional<Admission> retrieve(Long id){
 		return repo.findById(id);
 	}
 	
@@ -174,38 +172,38 @@ public class AdmissionServiceImpl implements AdmissionService{
 	}
 	
 	@Override
-	public void deleteById(Long id) {
+	public void delete(Long id) {
 		repo.deleteById(id);
 	}
 	
 	@Override
-	public Page<Admission> findAdmissionsByPatientName (String firstName, String lastName, String admissionStatus,String facilityId, Pageable pageable){
+	public Page<Admission> findByPatientName(String firstName, String lastName, String admissionStatus, String facilityId, Pageable pageable){
 		return repo.findAdmissionsByPatientName(firstName, lastName, admissionStatus ,facilityId, pageable);
 	}
 
 	@Override
-    public Page<Admission> findAdmissionsByAdmissionNumber(String admissionNumber, String admissionStatus,String facilityId, Pageable pageable){
-		return repo.findAdmissionsByAdmissionNumber(admissionNumber, admissionStatus,facilityId, pageable);
+    public Page<Admission> findAdmissionsByAdmissionNumber(String admissionNumber, String admissionStatus, String facilityId, Pageable pageable){
+		return repo.findAdmissionsByAdmissionNumber(admissionNumber, admissionStatus, facilityId, pageable);
 	}
 	
 	@Override
-	public Page<Admission> findAdmissionsByPatientExternalId(String patientExternalId, String admissionStatus,String facilityId, Pageable pageable){
-		return repo.findAdmissionsByPatientExternalId(patientExternalId, admissionStatus,facilityId, pageable);
+	public Page<Admission> findAdmissionsByPatientExternalId(String patientExternalId, String admissionStatus, String facilityId, Pageable pageable){
+		return repo.findAdmissionsByPatientExternalId(patientExternalId, admissionStatus, facilityId, pageable);
 	}
 	
 	@Override
-	public Page<Admission> findAdmissionsByCellPhone(String cellPhone, String admissionStatus,String facilityId,  Pageable pageable){
-		return repo.findAdmissionsByCellPhone(cellPhone, admissionStatus,facilityId, pageable);
+	public Page<Admission> findAdmissionsByCellPhone(String cellPhone, String admissionStatus, String facilityId,  Pageable pageable){
+		return repo.findAdmissionsByCellPhone(cellPhone, admissionStatus, facilityId, pageable);
 	}
 	
 	@Override
-	public Page<Admission> findAdmissionsByCnamNumber(String cnamNumber, String admissionStatus,String facilityId, Pageable pageable){
-		return repo.findAdmissionsByCnamNumber(cnamNumber, admissionStatus,facilityId, pageable);
+	public Page<Admission> findAdmissionsByCnamNumber(String cnamNumber, String admissionStatus, String facilityId, Pageable pageable){
+		return repo.findAdmissionsByCnamNumber(cnamNumber, admissionStatus, facilityId, pageable);
 	}
 	
 	@Override
 	public Page<Admission> findAdmissionsByIdCardNumber(String idCardNumber, String admissionStatus,String facilityId, Pageable pageable){
-		return repo.findAdmissionsByIdCardNumber(idCardNumber, admissionStatus,facilityId, pageable);
+		return repo.findAdmissionsByIdCardNumber(idCardNumber, admissionStatus, facilityId, pageable);
 	}
 	
 	@Override
@@ -217,7 +215,11 @@ public class AdmissionServiceImpl implements AdmissionService{
 	public Page<Admission> findAdmissionsByAct(Long act, String admissionStatus,String facilityId, Pageable pageable){
 		return repo.findAdmissionsByAct(act, admissionStatus,facilityId, pageable);
 	}
-	
+
+
+	public Page<Admission> findByType(String type, String admissionStatus,String facilityId, Pageable pageable){
+		return repo.findByType(type, admissionStatus,facilityId, pageable);
+	}
 	@Override
 	public Page<Admission> findAdmissionsByService(Long service, String admissionStatus,String facilityId, Pageable pageable){
 		return repo.findAdmissionsByService(service, admissionStatus,facilityId, pageable);
@@ -226,11 +228,6 @@ public class AdmissionServiceImpl implements AdmissionService{
 	@Override
 	public Page<Admission> findAdmissionsByDate (Date fromDate, Date toDate, String admissionStatus,String facilityId, Pageable pageable){
 		return repo.findAdmissionByDate(fromDate, toDate, admissionStatus,facilityId, pageable);
-	}
-	
-	@Override
-	public Page<Admission> findAdmissions(String admissionStatus,String facilityId, Pageable pageable){
-		return repo.findAdmissions(admissionStatus,facilityId, pageable);
 	}
 	
 	@Override
@@ -288,14 +285,13 @@ public class AdmissionServiceImpl implements AdmissionService{
 		return repo.findByDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dates[0]+" 00:00:00"),
 				new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dates[1]+" 23:59:59"),facilityId, pageable);
 	}
-
 	@Override
 	public Page<Admission> findAdmissionsByFacility(String facilityId, String admissionStatus, Pageable pageable) {
 		return repo.findAdmissionsByFacility( admissionStatus, facilityId, pageable);
 	}
 
 	@Override
-	public Admission updatetakeCare(Long admissionID, Boolean takeCare) throws NotFoundException {
+	public Admission updateTakeCare(Long admissionID, Boolean takeCare) throws NotFoundException {
 		Admission admission = repo.findById(admissionID).orElse(null);
 		if(admission == null) throw new NotFoundException("Admission non trouvée");
 

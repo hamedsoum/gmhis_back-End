@@ -2,7 +2,6 @@ package com.gmhis_backk.domain;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,7 +14,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.annotations.Where;
+import com.gmhis_backk.domain.admission.Admission;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

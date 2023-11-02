@@ -4,10 +4,9 @@ package com.gmhis_backk.domain;
 import java.io.Serializable;
 import javax.persistence.*;
 
+import com.gmhis_backk.domain.admission.Admission;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
-
-import com.fasterxml.jackson.annotation.JsonRawValue;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -36,11 +35,9 @@ public class AnalysisRequest implements Serializable {
    @Type(type = "uuid-char")
 	private UUID id;
 
-	
 	@Column(name="analysis_number")
 	private String analysisNumber;
-	
-	
+
 	@ManyToOne
 	@JoinColumn(name="admission_id")
 	private Admission admission;

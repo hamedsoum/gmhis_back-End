@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gmhis_backk.AppUtils;
 import com.gmhis_backk.domain.Act;
-import com.gmhis_backk.domain.Admission;
+import com.gmhis_backk.domain.admission.Admission;
 import com.gmhis_backk.domain.AnalysisRequest;
 import com.gmhis_backk.domain.AnalysisRequestItem;
 import com.gmhis_backk.domain.User;
@@ -57,7 +57,7 @@ public class AnalysisRequestServiceImpl implements AnalysisRequestService {
 	
 	@Override
 	public AnalysisRequest saveAnalysisRequest(AnalysisRequestDTO analysDto)  throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException {
-		Admission admission =  admissionService.findAdmissionById(analysDto.getAdmission()).orElse(null);
+		Admission admission =  admissionService.retrieve(analysDto.getAdmission()).orElse(null);
 		
 		if (admission == null) {
 			throw new ResourceNotFoundByIdException("aucune admission trouvée pour l'identifiant " );

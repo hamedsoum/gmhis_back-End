@@ -3,6 +3,7 @@ package com.gmhis_backk.domain;
 import java.io.Serializable;
 import javax.persistence.*;
 
+import com.gmhis_backk.domain.admission.Admission;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

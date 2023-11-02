@@ -1,4 +1,4 @@
-package com.gmhis_backk.domain;
+package com.gmhis_backk.domain.hospitalization.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,6 +19,8 @@ public class GMHISHospitalizationRequestCreate {
     private Long patientID;
 
     private String reason;
+
+    private String protocole;
 
     private int dayNumber;
 

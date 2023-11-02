@@ -5,11 +5,11 @@ import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import com.gmhis_backk.domain.admission.Admission;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 import java.util.List;
@@ -89,18 +89,13 @@ public class Bill implements Serializable {
 	@JoinColumn(name="insured_id")
 	private Insured insured;
 
-
 	@ManyToOne
 	@JoinColumn(name="admission_id")
 	private Admission admission;
-	
-	
 
 	@OneToMany(mappedBy="bill")
 	private List<Payment> payments;
-	
-	
-	
+
 	@JsonBackReference
 	@OneToMany(mappedBy="bill")
 	private List<AdmissionHasAct> acts;

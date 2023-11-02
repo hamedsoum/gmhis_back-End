@@ -20,6 +20,7 @@ public class BillDTO {
 	private String patientType;
 	private int discountInCfa;
 	private int patientPart;
+	private int total;
 	private int partTakenCareOf;
 	private int discountInPercentage;
 	private Long convention;

@@ -1,11 +1,18 @@
-package com.gmhis_backk.domain;
+package com.gmhis_backk.domain.hospitalization;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import lombok.*;
+import com.gmhis_backk.domain.Patient;
+import com.gmhis_backk.domain.Pratician;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
 
@@ -14,8 +21,8 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name= "hospitalization_request")
-public class GMHISHospitalizationRequest {
+@Table(name= "hospitalization")
+public class GMHISHospitalization {
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
@@ -27,28 +34,27 @@ public class GMHISHospitalizationRequest {
 
     @JsonBackReference
     @ManyToOne
-    @JoinColumn(name="practician_id")
-    private Pratician practician;
-
-    @JsonBackReference
-    @ManyToOne
     @JoinColumn(name="patient_id")
     private Patient patient;
 
-    @JoinColumn(name="examination_id")
-    private Long examination_id;
-
-    @JoinColumn(name="admission_id")
-    private Long admission_id;
+    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name="practician_id")
+    private Pratician practician;
 
     private String reason;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="start_Date")
-    private Date startDate;
+    private String bedroom;
 
-    @Column(name="day_number")
-    private int dayNumber;
+    private Date start;
+
+    private Date end;
+
+    private  String protocole;
+
+    private  String conclusion;
+
+    private  String status;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name="created_at")

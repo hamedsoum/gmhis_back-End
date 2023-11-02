@@ -2,9 +2,11 @@ package com.gmhis_backk.service;
 
 import com.gmhis_backk.AppUtils;
 import com.gmhis_backk.domain.*;
+import com.gmhis_backk.domain.hospitalization.request.GMHISHospitalizationRequest;
+import com.gmhis_backk.domain.hospitalization.request.GMHISHospitalizationRequestCreate;
+import com.gmhis_backk.domain.hospitalization.request.GMHISHospitalizationRequestPartial;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
 import com.gmhis_backk.repository.GMHISHospitalizationRequestRepository;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -42,6 +44,12 @@ public class GMHISHospitalizationRequestService {
         this.examinationService = examinationService;
     }
 
+    protected String generateHospitalizationRequestNumber() {
+        Random rnd = new Random();
+        int n = 100000 + rnd.nextInt(900000);
+        //Facture Hospi
+        return "GMHIS-HOR-" + n;
+    }
 
     protected User getCurrentUser() {
         return this.userService.findUserByUsername(AppUtils.getUsername());
@@ -55,7 +63,9 @@ public class GMHISHospitalizationRequestService {
         hospitalizationRequestPartial.setPatientID(hospitalizationRequest.getPatient().getId());
         hospitalizationRequestPartial.setPatientName(new GMHISName(hospitalizationRequest.getPatient().getFirstName(), hospitalizationRequest.getPatient().getLastName()));
         hospitalizationRequestPartial.setPraticianName(new GMHISName(hospitalizationRequest.getPractician().getPrenoms(), hospitalizationRequest.getPractician().getNom()));
+        hospitalizationRequestPartial.setPraticianID(hospitalizationRequest.getPractician().getId());
         hospitalizationRequestPartial.setReason(hospitalizationRequest.getReason());
+        hospitalizationRequestPartial.setProtocole(hospitalizationRequest.getProtocole());
         hospitalizationRequestPartial.setDayNumber(hospitalizationRequest.getDayNumber());
         hospitalizationRequestPartial.setDate(hospitalizationRequest.getCreatedAt());
         hospitalizationRequestPartial.setExaminationID(hospitalizationRequest.getExamination_id());
@@ -80,7 +90,7 @@ public class GMHISHospitalizationRequestService {
         Patient patient = patientService.findById(hospitalizationRequestCreate.getPatientID());
         if (patient == null) throw new ResourceNotFoundByIdException("Patient Inexistant");
 
-        Pratician practician = practicianService.findPracticianById(1L)
+        Pratician practician = practicianService.findPracticianById(6L)
                 .orElseThrow(() -> new ResourceNotFoundByIdException(" Practien inexistant"));
 
         GMHISHospitalizationRequest hospitalizationRequest = new GMHISHospitalizationRequest();
@@ -88,7 +98,7 @@ public class GMHISHospitalizationRequestService {
         hospitalizationRequest.setExamination_id(hospitalizationRequestCreate.getExaminationID());
         hospitalizationRequest.setAdmission_id(hospitalizationRequestCreate.getAdmissionID());
         hospitalizationRequest.setPractician(practician);
-        hospitalizationRequest.setCode("GMHIS-HOR-1233459");
+        hospitalizationRequest.setCode(generateHospitalizationRequestNumber());
         hospitalizationRequest.setStartDate(hospitalizationRequestCreate.getStartDate());
         BeanUtils.copyProperties(hospitalizationRequestCreate,hospitalizationRequest,"id");
         hospitalizationRequest.setCreatedBy(getCurrentUser().getId());
@@ -101,7 +111,6 @@ public class GMHISHospitalizationRequestService {
                 .orElseThrow(() -> new ResourceNotFoundByIdException(" la demande d'hospitalisation est  inexistante"));
         return toPartial(hospitalizationRequest);
     }
-
 
     public GMHISHospitalizationRequestPartial update(UUID hospitalizationRequestID, GMHISHospitalizationRequestCreate hospitalizationRequestCreate) throws ResourceNotFoundByIdException{
         GMHISHospitalizationRequest hospitalizationRequest = hospitalizationRequestRepository.findById(hospitalizationRequestID)

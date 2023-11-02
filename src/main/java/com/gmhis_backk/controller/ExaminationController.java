@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gmhis_backk.AppUtils;
-import com.gmhis_backk.domain.Admission;
+import com.gmhis_backk.domain.admission.Admission;
 import com.gmhis_backk.domain.Examination;
 import com.gmhis_backk.domain.Pratician;
 import com.gmhis_backk.domain.User;
@@ -73,7 +73,7 @@ public class ExaminationController {
 	public ResponseEntity<Examination> addExaminations(@Validated @RequestBody ExaminationDTO examinationDto) throws ResourceNameAlreadyExistException,
 	ResourceNotFoundByIdException{
 	    
-		 Admission admission = admissionService.findAdmissionById(examinationDto.getAdmission())
+		 Admission admission = admissionService.retrieve(examinationDto.getAdmission())
 				 .orElseThrow(() -> new ResourceNotFoundByIdException("aucune admission d'acte trouvé pour l'identifiant " ));
 			
 			 Pratician practician = practicianService.findPracticianByUser(this.getCurrentUserId().getId()).orElse(null);

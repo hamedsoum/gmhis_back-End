@@ -1,5 +1,7 @@
-package com.gmhis_backk.domain;
+package com.gmhis_backk.domain.hospitalization.request;
 
+import com.gmhis_backk.domain.Examination;
+import com.gmhis_backk.domain.GMHISName;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,6 +20,7 @@ public class GMHISHospitalizationRequestPartial {
     private String code;
 
     private GMHISName praticianName;
+    private long  praticianID;
 
     private GMHISName patientName;
     private Long patientID;
@@ -26,10 +29,12 @@ public class GMHISHospitalizationRequestPartial {
 
     private String reason;
 
+    private String protocole;
+
     private int dayNumber;
 
     private Long ExaminationID;
-    private Examination Examination;
+    private com.gmhis_backk.domain.Examination Examination;
 
     private Long admissionID;
 

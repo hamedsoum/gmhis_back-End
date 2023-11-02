@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,7 +20,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -29,11 +29,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gmhis_backk.AppUtils;
-import com.gmhis_backk.domain.Admission;
-import com.gmhis_backk.domain.Examination;
-import com.gmhis_backk.domain.Pratician;
+import com.gmhis_backk.domain.admission.Admission;
 import com.gmhis_backk.domain.User;
-import com.gmhis_backk.dto.AdmissionDTO;
+import com.gmhis_backk.dto.AdmissionCreate;
 import com.gmhis_backk.dto.admissionTakeCareDTO;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
@@ -44,6 +42,7 @@ import com.gmhis_backk.service.WaitingRoomService;
 import io.swagger.annotations.ApiOperation;
 import javassist.NotFoundException;
 
+@Log4j2
 @RestController
 @RequestMapping("/admission")
 public class AdmissionController {
@@ -69,23 +68,23 @@ public class AdmissionController {
 	@ApiOperation("Update takeCare")
 	public ResponseEntity<Admission> updatetakeCareStatus(@PathVariable Long admissionID,@RequestBody admissionTakeCareDTO takeCareDTO) throws NotFoundException{
 		
-		Admission admission = admissionService.updatetakeCare(admissionID,takeCareDTO.getTakeCare());
+		Admission admission = admissionService.updateTakeCare(admissionID,takeCareDTO.getTakeCare());
 		return ResponseEntity.accepted().body(admission);
 	}
 	
 	@PostMapping("")
 	@ApiOperation("/Ajouter une admission")
-	public ResponseEntity<Admission> addAdmission(@RequestBody AdmissionDTO admissionDto) throws ResourceNameAlreadyExistException,
+	public ResponseEntity<Admission> addAdmission(@RequestBody AdmissionCreate admissionCreate) throws ResourceNameAlreadyExistException,
 	ResourceNotFoundByIdException{
-		Admission admission = admissionService.saveAdmission(admissionDto);
+		Admission admission = admissionService.create(admissionCreate);
 		return new ResponseEntity<Admission>(admission, HttpStatus.OK);
 	}
 	
 	@PutMapping("{admissionID}")
 	@ApiOperation("/Update a admission given by his id")
-	public ResponseEntity<Admission> updateAdmission(@PathVariable("admissionID") Long id,  @RequestBody AdmissionDTO admissionDto) throws ResourceNameAlreadyExistException,
+	public ResponseEntity<Admission> updateAdmission(@PathVariable("admissionID") Long id,  @RequestBody AdmissionCreate admissionCreate) throws ResourceNameAlreadyExistException,
 	ResourceNotFoundByIdException{
-		Admission admission = admissionService.updateAdmission(id, admissionDto);
+		Admission admission = admissionService.update(id, admissionCreate);
 		return new ResponseEntity<Admission>(admission, HttpStatus.OK);
 	}
 	
@@ -94,6 +93,7 @@ public class AdmissionController {
 	@GetMapping("/p_list")
 	public ResponseEntity<Map<String, Object>> paginatedList(
 			@RequestParam(required = false, defaultValue = "") String admissionNumber,
+			@RequestParam(required = false, defaultValue = "") String type,
 			@RequestParam(required = false, defaultValue = "") String firstName,
 			@RequestParam(required = false, defaultValue = "") String lastName,
 			@RequestParam(required = false, defaultValue = "") String patientExternalId,
@@ -117,9 +117,10 @@ public class AdmissionController {
 
 		Page<Admission> pAdmissions = null;
 			
-		pAdmissions = admissionService.findAdmissionsByFacility(this.getCurrentUserId().getFacilityId(),admissionStatus, paging); 	
+		pAdmissions = admissionService.findAdmissionsByFacility(this.getCurrentUserId().getFacilityId(),admissionStatus, paging);
+
 		if( ObjectUtils.isNotEmpty(firstName) ||  ObjectUtils.isNotEmpty(lastName) ) {
-			pAdmissions = admissionService.findAdmissionsByPatientName(firstName, lastName, admissionStatus,this.getCurrentUserId().getFacilityId(), paging);
+			pAdmissions = admissionService.findByPatientName(firstName, lastName, admissionStatus,this.getCurrentUserId().getFacilityId(), paging);
 		}
 		
 		if( ObjectUtils.isNotEmpty(admissionNumber) ) {
@@ -144,7 +145,12 @@ public class AdmissionController {
 		
 		if( ObjectUtils.isNotEmpty(act) ) {
 			pAdmissions = admissionService.findAdmissionsByAct(act, admissionStatus,this.getCurrentUserId().getFacilityId(), paging);
-		} 
+		}
+
+		if( ObjectUtils.isNotEmpty(type) ) {
+			log.info("type {}", type);
+			pAdmissions = admissionService.findByType(type, admissionStatus,this.getCurrentUserId().getFacilityId(), paging);
+		}
 //		
 		if( ObjectUtils.isNotEmpty(service) ) {
 			pAdmissions = admissionService.findAdmissionsByService(service, admissionStatus,this.getCurrentUserId().getFacilityId(), paging);
@@ -173,11 +179,13 @@ public class AdmissionController {
 	
 	protected List<Map<String, Object>> getMapFromAdmissionList(List<Admission> admissions) {
 		List<Map<String, Object>> admissionList = new ArrayList<>();
-		admissions.stream().forEach(admissionDto -> {
+		admissions.forEach(admissionDto -> {
 			Map<String, Object> admissionsMap = new HashMap<>();
 			User createdBy = ObjectUtils.isEmpty(admissionDto.getCreatedBy()) ? new User() : userRepository.findById(admissionDto.getCreatedBy()).orElse(null);
 			User updatedBy = ObjectUtils.isEmpty(admissionDto.getUpdatedBy()) ? new User() : userRepository.findById(admissionDto.getUpdatedBy()).orElse(null);
 			admissionsMap.put("id", admissionDto.getId());
+			admissionsMap.put("type", admissionDto.getType());
+
 			admissionsMap.put("takeCare", admissionDto.getTakeCare());
 			admissionsMap.put("admissionNumber", admissionDto.getAdmissionNumber());
 			admissionsMap.put("facilityName", admissionDto.getFacility().getName());
@@ -218,7 +226,7 @@ public class AdmissionController {
 	public  ResponseEntity<Map<String, Object>> getDetail(@PathVariable Long id){
 		Map<String, Object> response = new HashMap<>();
 
-		Admission admission= admissionService.findAdmissionById(id).orElse(null);
+		Admission admission= admissionService.retrieve(id).orElse(null);
 		response.put("id", admission.getId());
 		response.put("takeCare", admission.getTakeCare());
 		response.put("caution", admission.getCaution());
@@ -315,7 +323,7 @@ public class AdmissionController {
 	@ApiOperation(value = "revocation d'une admission")
 	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<?> revokeAdmission(@PathVariable() Long id){
-		admissionService.deleteById(id);
+		admissionService.delete(id);
 		return ResponseEntity.noContent().build();
 	}
 	

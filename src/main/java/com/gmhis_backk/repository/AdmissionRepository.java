@@ -2,7 +2,6 @@ package com.gmhis_backk.repository;
 
 
 import java.util.Date;
-import java.util.List;
 
 import javax.transaction.Transactional;
 
@@ -14,8 +13,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.gmhis_backk.domain.Admission;
-import com.gmhis_backk.domain.Examination;
+import com.gmhis_backk.domain.admission.Admission;
 
 
 /**
@@ -52,7 +50,7 @@ public interface AdmissionRepository extends JpaRepository<Admission, Long> {
 
 	// admissions
 	/****************************************************************************/
-	@Query(value = "SELECT a FROM Admission a WHERE a.patient.firstName like %:firstName% and  (a.patient.lastName like %:lastName% ) and a.admissionStatus= :admissionStatus  AND a.facilityId =:facilityId")
+	@Query(value = "SELECT a FROM Admission a WHERE a.patient.firstName like %:firstName% and  (a.patient.lastName like %:lastName% ) and a.admissionStatus= :admissionStatus AND a.facilityId =:facilityId")
 	public Page<Admission> findAdmissionsByPatientName(@Param("firstName") String firstName,
 			@Param("lastName") String lastName, @Param("admissionStatus") String admissionStatus, @Param("facilityId") String facilityId, Pageable pageable);
 
@@ -70,11 +68,11 @@ public interface AdmissionRepository extends JpaRepository<Admission, Long> {
 
 	@Query(value = "SELECT a FROM Admission a WHERE a.patient.cnamNumber like %:cnamNumber% and a.admissionStatus= :admissionStatus AND a.facilityId =:facilityId")
 	public Page<Admission> findAdmissionsByCnamNumber(@Param("cnamNumber") String cnamNumber,
-			@Param("admissionStatus") String admissionStatus,@Param("facilityId") String facilityId, Pageable pageable);
+			@Param("admissionStatus") String admissionStatus, @Param("facilityId") String facilityId, Pageable pageable);
 
-	@Query(value = "SELECT a FROM Admission a WHERE a.patient.idCardNumber like %:idCardNumber% and a.admissionStatus= :admissionStatus AND a.facilityId =:facilityId")
+	@Query(value = "SELECT a FROM Admission a WHERE a.patient.idCardNumber like %:idCardNumber% and a.admissionStatus= :admissionStatus  AND a.facilityId =:facilityId")
 	public Page<Admission> findAdmissionsByIdCardNumber(@Param("idCardNumber") String idCardNumber,
-			@Param("admissionStatus") String admissionStatus,@Param("facilityId") String facilityId, Pageable pageable);
+			@Param("admissionStatus") String admissionStatus, @Param("facilityId") String facilityId, Pageable pageable);
 
 	public Page<Admission> findAdmissionsByPractician(@Param("practician") Long practician,
 			@Param("admissionStatus") String admissionStatus,@Param("facilityId") String facilityId, Pageable pageable);
@@ -82,17 +80,20 @@ public interface AdmissionRepository extends JpaRepository<Admission, Long> {
 	@Query(value = "SELECT a FROM Admission a WHERE a.act.id = :act  and a.admissionStatus= :admissionStatus AND a.facilityId =:facilityId")
 	public Page<Admission> findAdmissionsByAct(@Param("act") Long act, @Param("admissionStatus") String admissionStatus,@Param("facilityId") String facilityId,
 			Pageable pageable);
+	@Query(value = "SELECT a FROM Admission a WHERE a.type = :type and a.admissionStatus= :admissionStatus AND a.facilityId =:facilityId")
+	public Page<Admission> findByType(@Param("type") String type,
+												   @Param("admissionStatus") String admissionStatus, @Param("facilityId") String facilityId, Pageable pageable);
 
 	@Query(value = "SELECT a FROM Admission a WHERE a.service.id = :service and a.admissionStatus= :admissionStatus AND a.facilityId =:facilityId")
 	public Page<Admission> findAdmissionsByService(@Param("service") Long service,
-			@Param("admissionStatus") String admissionStatus,@Param("facilityId") String facilityId, Pageable pageable);
+			@Param("admissionStatus") String admissionStatus, @Param("facilityId") String facilityId, Pageable pageable);
 
 	@Query(value = "SELECT a FROM Admission a WHERE a.createdAt between :fromDate and :toDate and a.admissionStatus= :admissionStatus AND a.facilityId =:facilityId")
 	public Page<Admission> findAdmissionByDate(@Param("fromDate") Date fromDate, @Param("toDate") Date toDate,
 			@Param("admissionStatus") String admissionStatus,@Param("facilityId") String facilityId, Pageable pageable);
 
 	@Query(value = "SELECT a FROM Admission a WHERE a.admissionStatus= :admissionStatus AND a.facilityId =:facilityId")
-	public Page<Admission> findAdmissions(@Param("admissionStatus") String admissionStatus,@Param("facilityId") String facilityId, Pageable pageable);
+	public Page<Admission> findAdmissions(@Param("admissionStatus") String admissionStatus, @Param("facilityId") String facilityId, Pageable pageable);
 	
 	@Query(value = "SELECT a FROM Admission a WHERE a.admissionStatus= :admissionStatus AND a.facilityId =:facilityId")
 	public Page<Admission> findAdmissionsByFacility(@Param("admissionStatus") String admissionStatus, @Param("facilityId") String facilityId, Pageable pageable);

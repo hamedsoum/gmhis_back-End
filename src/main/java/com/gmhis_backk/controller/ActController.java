@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.gmhis_backk.domain.Act;
 import com.gmhis_backk.domain.ActCategory;
 import com.gmhis_backk.domain.Bill;
-import com.gmhis_backk.domain.User;
 import com.gmhis_backk.dto.ActDTO;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
@@ -107,7 +106,7 @@ public class ActController {
 	
 	protected List<Map<String, Object>> getMapFromActList(List<Act> acts) {
 		List<Map<String, Object>> actList = new ArrayList<>();
-		acts.stream().forEach(actDto -> {
+		acts.forEach(actDto -> {
 			Map<String, Object> actsMap = new HashMap<>();
 
 			actsMap.put("id", actDto.getId());
@@ -147,7 +146,8 @@ public class ActController {
 		Map<String, Object> response = new HashMap<>();
 
 		Act act= actService.findActById(id).orElse(null);
-		response.put("id", act.getId());
+        assert act != null;
+        response.put("id", act.getId());
 		response.put("name", act.getName());
 		response.put("codification", act.getCodification());
 		response.put("coefficient", act.getCoefficient());
@@ -167,7 +167,7 @@ public class ActController {
 	public ResponseEntity<List<Map<String, Object>>> activeActName() {
 		List<Map<String, Object>> actList = new ArrayList<>();
 
-		actService.findActiveActs().stream().forEach(actDto -> {
+		actService.findActiveActs().forEach(actDto -> {
 			Map<String, Object> actMap = new HashMap<>();
 			actMap.put("id", actDto.getId());
 			actMap.put("name", actDto.getName());
@@ -187,7 +187,7 @@ public class ActController {
 			}
 		List<Map<String, Object>> actList = new ArrayList<>();
 
-		actService.findActiveNamesAndIdsActsByCategory(categoryId).stream().forEach(actDto -> {
+		actService.findActiveNamesAndIdsActsByCategory(categoryId).forEach(actDto -> {
 			Map<String, Object> actMap = new HashMap<>();
 			actMap.put("id", actDto.getId());
 			actMap.put("name", actDto.getName());
@@ -206,15 +206,15 @@ public class ActController {
 	  
 	  if(bill != null ) {
 
-			actService.findActsByBill(bill.getId()).stream().forEach(actDto -> {
+			actService.findActsByBill(bill.getId()).forEach(act -> {
 				Map<String, Object> actMap = new HashMap<>();
-				actMap.put("id", actDto.getId());
-				actMap.put("practicianName", actDto.getPractician().getUser().getFirstName() + "" + actDto.getPractician().getUser().getLastName());
-				actMap.put("actName", actDto.getAct().getName());
-				actMap.put("actCodification", actDto.getAct().getCodification());
-				actMap.put("actCoefficient", actDto.getAct().getCoefficient());
-				actMap.put("actCode", actDto.getAct().getActCode().getValue());
-				actMap.put("actCost", actDto.getAct().getActCode().getValue() * actDto.getAct().getCoefficient());
+				actMap.put("id", act.getId());
+				if(act.getPractician() != null)	actMap.put("practicianName", act.getPractician().getUser().getFirstName() + " " + act.getPractician().getUser().getLastName());
+				actMap.put("actName", act.getAct().getName());
+				actMap.put("actCodification", act.getAct().getCodification());
+				actMap.put("actCoefficient", act.getAct().getCoefficient());
+				actMap.put("actCode", act.getAct().getActCode().getValue());
+				actMap.put("actCost", act.getAct().getActCode().getValue() * act.getAct().getCoefficient());
 				actList.add(actMap);
 			});
 	  }
@@ -228,7 +228,7 @@ public class ActController {
 	public ResponseEntity<List<Map<String,Object>>> findNamesAndIdsByMedicalAnalysisSpeciality(){
 		List<Map<String, Object>> actList = new ArrayList<>();
 
-		actService.findNamesAndIdsByMedicalAnalysisSpeciality().stream().forEach(actDto -> {
+		actService.findNamesAndIdsByMedicalAnalysisSpeciality().forEach(actDto -> {
 			Map<String, Object> actMap = new HashMap<>();
 			actMap.put("id", actDto.getId());
 			actMap.put("name", actDto.getName());

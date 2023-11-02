@@ -1,11 +1,10 @@
 package com.gmhis_backk.controller;
 
-import com.gmhis_backk.domain.GMHISHospitalizationRequestCreate;
-import com.gmhis_backk.domain.GMHISHospitalizationRequestPartial;
+import com.gmhis_backk.domain.hospitalization.request.GMHISHospitalizationRequestCreate;
+import com.gmhis_backk.domain.hospitalization.request.GMHISHospitalizationRequestPartial;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
 import com.gmhis_backk.service.GMHISHospitalizationRequestService;
 import io.swagger.annotations.ApiOperation;
-import lombok.extern.log4j.Log4j;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

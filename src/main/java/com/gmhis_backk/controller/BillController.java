@@ -36,7 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.gmhis_backk.AppUtils;
 import com.gmhis_backk.domain.Act;
-import com.gmhis_backk.domain.Admission;
+import com.gmhis_backk.domain.admission.Admission;
 import com.gmhis_backk.domain.Bill;
 import com.gmhis_backk.domain.BillHasInsured;
 import com.gmhis_backk.domain.CashRegister;
@@ -90,8 +90,6 @@ import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 public class BillController {
-
-	
 	@Autowired
 	private BillService billService;
 
@@ -159,7 +157,7 @@ public class BillController {
 	@Transactional
 	public ResponseEntity<Bill> addBill(@RequestBody BillDTO billDto) throws ResourceNotFoundByIdException, ParseException {
 //
-		admission = admissionService.findAdmissionById(billDto.getAdmission()).orElse(null);
+		admission = admissionService.retrieve(billDto.getAdmission()).orElse(null);
 			if (admission == null) {
 				throw new ResourceNotFoundByIdException("L'admission n'existe pas en base !");
 			}	
@@ -177,24 +175,27 @@ public class BillController {
 		bill.setCreatedAt(new Date());
 		bill.setCreatedBy(this.getCurrentUserId().getId());
 		bill = billService.saveBill(bill);
-		
-		billDto.getInsuredList().forEach(billHasInsuredDto -> {
-			Admission admission = admissionService.findAdmissionById(billHasInsuredDto.getAdmission()).orElse(null);
-			Insured Insured = insuredService.findInsuredById(billHasInsuredDto.getInsured()).orElse(null);
-			Insurance insurance = insuranceService.findInsuranceById(billHasInsuredDto.getInsurrance()).orElse(null);
-			BillHasInsured billHasInsured = new BillHasInsured();
-			billHasInsured.setAdmission(admission);
-			billHasInsured.setInsured(Insured);
-			billHasInsured.setInsuredCoverage(billHasInsuredDto.getInsuredCoverage());
-			billHasInsured.setInsuredPart(billHasInsuredDto.getInsuredPart());
-			billHasInsured.setBill(bill);
-			billHasInsured.setInsurance(insurance);
-			billHasInsured.setCreatedAt(new Date());
-			billHasInsured.setCreatedBy(this.getCurrentUserId().getId());
-			
-			billHasInsuredRepository.save(billHasInsured);
 
-		});
+		if(billDto.getInsuredList() != null) {
+			billDto.getInsuredList().forEach(billHasInsuredDto -> {
+				Admission admission = admissionService.retrieve(billHasInsuredDto.getAdmission()).orElse(null);
+				Insured Insured = insuredService.findInsuredById(billHasInsuredDto.getInsured()).orElse(null);
+				Insurance insurance = insuranceService.findInsuranceById(billHasInsuredDto.getInsurrance()).orElse(null);
+				BillHasInsured billHasInsured = new BillHasInsured();
+				billHasInsured.setAdmission(admission);
+				billHasInsured.setInsured(Insured);
+				billHasInsured.setInsuredCoverage(billHasInsuredDto.getInsuredCoverage());
+				billHasInsured.setInsuredPart(billHasInsuredDto.getInsuredPart());
+				billHasInsured.setBill(bill);
+				billHasInsured.setInsurance(insurance);
+				billHasInsured.setCreatedAt(new Date());
+				billHasInsured.setCreatedBy(this.getCurrentUserId().getId());
+
+				billHasInsuredRepository.save(billHasInsured);
+
+			});
+		}
+
         
 		billDto.getActs().forEach(admissionHasAct -> {
 			 practicianService.findPracticianById(admissionHasAct.getPratician()).orElse(null);
@@ -544,7 +545,7 @@ public class BillController {
 
 	protected List<Map<String, Object>> getMapFromBillList(List<Bill> bills) {
 		List<Map<String, Object>> billList = new ArrayList<>();
-		bills.stream().forEach(billDto -> {
+		bills.forEach(billDto -> {
 			Map<String, Object> billsMap = new HashMap<>();
 			User createdBy = ObjectUtils.isEmpty(billDto.getCreatedBy()) ? new User()
 					: userRepository.findById(billDto.getCreatedBy()).orElse(null);
@@ -556,14 +557,16 @@ public class BillController {
 			billsMap.put("patient", billDto.getAdmission().getPatient());
 			billsMap.put("billDate", billDto.getCreatedAt());
 			billsMap.put("accountNumber", billDto.getAccountNumber());
+			billsMap.put("practicianName", billDto.getAdmission().getPractician().getNom() + " " + billDto.getAdmission().getPractician().getPrenoms());
+
 			billsMap.put("admission", billDto.getAdmission());
-			billsMap.put("admissionAct", billDto.getAdmission().getAct());
+			billsMap.put("admissionActName", billDto.getAdmission().getAct().getName());
 			
 			if(ObjectUtils.isNotEmpty(billDto.getActs())) {
 				
 				List<Map<String, Object>> actList = new ArrayList<>();
 
-				billDto.getActs().stream().forEach(act -> {
+				billDto.getActs().forEach(act -> {
 					Map<String, Object> actsMap = new HashMap<>();
 					actsMap.put("id", act.getAct().getId());
 					actsMap.put("act", act.getAct().getName());
@@ -573,12 +576,8 @@ public class BillController {
 					actList.add(actsMap);
 				});
 					
-			 billsMap.put("billActs", actList); 	
-			 
-			} else {
-				billsMap.put("billActs", null);
+			 billsMap.put("billActs", actList);
 			}
-			
 			billsMap.put("billType", billDto.getBillType());
 			billsMap.put("discountInCfa", billDto.getDiscountInCfa());
 			billsMap.put("discountInPercentage", billDto.getDiscountInPercentage());
@@ -639,54 +638,19 @@ public class BillController {
 	@PutMapping("/update/{id}")
 	public Bill updateBill(@RequestBody BillDTO billDto, @PathVariable Long id) throws ResourceNotFoundByIdException {
 
-		admission = admissionService.findAdmissionById(billDto.getAdmission()).orElse(null);
+		admission = admissionService.retrieve(billDto.getAdmission()).orElse(null);
 			if (admission == null) {
 				throw new ResourceNotFoundByIdException("L'admission n'existe pas en base !");
-			}	
-	
-
-		if (billDto.getConvention() != null) {
-			this.convention = conventionService.findConventionById(billDto.getConvention()).orElse(null);
-					
-			if (this.convention == null) {
-				throw new ResourceNotFoundByIdException("La convention n'existe pas en base !");
 			}
-
-			int costWithConvention = this.getActWithConvention(billDto.getActs(), convention);
-			this.patientPart = costWithConvention;
-
-		} else {
-
-			int costWhithoutConvention = this.getActCostWhithoutConvention(billDto.getActs());
-			this.patientPart = costWhithoutConvention;
-
-		}
 
 		if (billDto.getInsured() != null) {
 			this.insured = insuredService.findInsuredById(billDto.getInsured()).orElse(null);
 			if (this.insured == null) {
 				throw new ResourceNotFoundByIdException("La convention n'existe pas en base !");
-			}		
-					
-			int cost = this.getActCostWhithoutConvention(billDto.getActs());
-			this.patientPart = this.getPatientPart(cost, insured);
-			this.partTakenCareOf = this.getPartTakenCareOf(cost, insured);
+			}
 
 		}
 
-		if (billDto.getDiscountInCfa() != 0) {
-			this.discount = billDto.getDiscountInCfa();
-			this.patientPart = this.patientPart - this.discount;
-		}
-
-		if (billDto.getDiscountInPercentage() != 0) {
-			int cost = this.getActCostWhithoutConvention(billDto.getActs());
-			this.discount = cost * billDto.getDiscountInPercentage() / 100;
-			this.patientPart = this.patientPart - this.discount;
-		}
-
-		this.totalAmount = this.patientPart + this.partTakenCareOf + this.discount;
-		
 		Bill updateBill = billService.findBillById(id).orElse(null);
 		if (updateBill == null) {
 			 throw new ResourceNotFoundByIdException("Aucune facture trouvée pour l'identifiant");
@@ -707,16 +671,16 @@ public class BillController {
 				updateBill.setDiscountInPercentage(billDto.getDiscountInPercentage());
 				if (this.insured != null)
 					bill.setInsured(insured);
-				updateBill.setPartTakenCareOf(this.partTakenCareOf);
-				updateBill.setPatientPart(this.patientPart);
+				updateBill.setPartTakenCareOf(billDto.getPartTakenCareOf());
+				updateBill.setPatientPart(billDto.getPatientPart());
 				updateBill.setPatientType(billDto.getPatientType());
-				updateBill.setTotalAmount(this.totalAmount);
+				updateBill.setTotalAmount(billDto.getTotal());
 				updateBill.setLastUpdatedAt(new Date());
 				updateBill.setLastUpdatedBy(this.getCurrentUserId().getId());
 				bill = billService.saveBill(updateBill);
 				
 				billDto.getActs().forEach(admissionHasAct -> {
-					Admission admission = admissionService.findAdmissionById(admissionHasAct.getAdmission()).orElse(null);
+					Admission admission = admissionService.retrieve(admissionHasAct.getAdmission()).orElse(null);
 					
 					Act act = actService.findActById(admissionHasAct.getAct()).orElse(null);
 					
@@ -816,7 +780,7 @@ public class BillController {
 	@ApiOperation(value = "Liste des facture non encaisseés d'une admission ")
 	@GetMapping("/non-collected/{admission_id}")
 	public List<Map<String, Object>> fillBillByAdmission (@PathVariable("admission_id") Long admission_id) throws ResourceNotFoundByIdException {
-		  admission =  this.admissionService.findAdmissionById(admission_id).orElse(null);
+		  admission =  this.admissionService.retrieve(admission_id).orElse(null);
 			if (admission == null) {
 				 throw new ResourceNotFoundByIdException(
 							"L'admision n'existe pas en base !");

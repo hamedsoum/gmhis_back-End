@@ -1,7 +1,5 @@
 package com.gmhis_backk.controller;
 
-import com.gmhis_backk.domain.GMHISHospitalizationRequestCreate;
-import com.gmhis_backk.domain.GMHISHospitalizationRequestPartial;
 import com.gmhis_backk.domain.quotation.GMHISQuotationCreate;
 import com.gmhis_backk.domain.quotation.GMHISQuotationPartial;
 import com.gmhis_backk.domain.quotation.item.GMHISQuotationItemPartial;
