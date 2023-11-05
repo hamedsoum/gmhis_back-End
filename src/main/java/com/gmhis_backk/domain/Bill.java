@@ -37,7 +37,9 @@ public class Bill implements Serializable {
 	
 	@Column(name = "bill_number")
 	private String billNumber;
-	
+
+	private Boolean toFinalize;
+
 	@Column(name = "total_amount")
 	private int totalAmount;
 	

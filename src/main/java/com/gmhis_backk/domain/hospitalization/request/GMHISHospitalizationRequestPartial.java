@@ -25,6 +25,10 @@ public class GMHISHospitalizationRequestPartial {
     private GMHISName patientName;
     private Long patientID;
 
+    private String insuranceMatricule;
+    private String insuranceName;
+    private Long insuranceID;
+
     private Date date;
 
     private String reason;
@@ -33,8 +37,7 @@ public class GMHISHospitalizationRequestPartial {
 
     private int dayNumber;
 
-    private Long ExaminationID;
-    private com.gmhis_backk.domain.Examination Examination;
+    private Examination Examination;
 
     private Long admissionID;
 

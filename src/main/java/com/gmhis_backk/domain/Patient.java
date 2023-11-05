@@ -164,12 +164,10 @@ public class Patient implements Serializable {
 	
 	@Column
 	private int age;
-	
-	
+
 	@Column
 	private Double height;
-	
-	
+
 	@Column
 	private Double weight;
 	

@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@Log4j2
 @RequestMapping("/hospitalizations")
 public class GMHISHospitalizationController {
 

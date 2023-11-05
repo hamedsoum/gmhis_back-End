@@ -7,6 +7,7 @@ import com.gmhis_backk.domain.hospitalization.request.GMHISHospitalizationReques
 import com.gmhis_backk.domain.hospitalization.request.GMHISHospitalizationRequestPartial;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
 import com.gmhis_backk.repository.GMHISHospitalizationRequestRepository;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 @Transactional
 @Service
+@Log4j2
 public class GMHISHospitalizationRequestService {
 
     private final PatientService patientService;
@@ -29,19 +31,22 @@ public class GMHISHospitalizationRequestService {
 
     private final GMHISHospitalizationRequestRepository hospitalizationRequestRepository;
 
+    private final InsuredService insuredService;
+
     private final UserService userService;
     public GMHISHospitalizationRequestService(
             final PatientService patientService,
             final PracticianService practicianService,
             final UserService userService,
             final GMHISHospitalizationRequestRepository hospitalizationRequestRepository,
-            final ExaminationService examinationService
-        ) {
+            final ExaminationService examinationService,
+            final InsuredService insuredService) {
         this.patientService = patientService;
         this.practicianService = practicianService;
         this.userService = userService;
         this.hospitalizationRequestRepository = hospitalizationRequestRepository;
         this.examinationService = examinationService;
+        this.insuredService = insuredService;
     }
 
     protected String generateHospitalizationRequestNumber() {
@@ -68,11 +73,12 @@ public class GMHISHospitalizationRequestService {
         hospitalizationRequestPartial.setProtocole(hospitalizationRequest.getProtocole());
         hospitalizationRequestPartial.setDayNumber(hospitalizationRequest.getDayNumber());
         hospitalizationRequestPartial.setDate(hospitalizationRequest.getCreatedAt());
-        hospitalizationRequestPartial.setExaminationID(hospitalizationRequest.getExamination_id());
+        hospitalizationRequestPartial.setExamination(hospitalizationRequest.getExamination());
         hospitalizationRequestPartial.setAdmissionID(hospitalizationRequest.getAdmission_id());
-        Examination examination = examinationService.findExaminationById(hospitalizationRequest.getExamination_id()).orElse(null);
-        if(examination != null) hospitalizationRequestPartial.setExamination(examination);
         hospitalizationRequestPartial.setStartDate(hospitalizationRequest.getStartDate());
+        hospitalizationRequestPartial.setInsuranceName(hospitalizationRequest.getInsured().getInsurance().getName());
+        hospitalizationRequestPartial.setInsuranceID(hospitalizationRequest.getInsured().getInsurance().getId());
+        hospitalizationRequestPartial.setInsuranceMatricule(hospitalizationRequest.getInsured().getCardNumber());
         return hospitalizationRequestPartial;
     }
 
@@ -95,9 +101,10 @@ public class GMHISHospitalizationRequestService {
 
         GMHISHospitalizationRequest hospitalizationRequest = new GMHISHospitalizationRequest();
         hospitalizationRequest.setPatient(patient);
-        hospitalizationRequest.setExamination_id(hospitalizationRequestCreate.getExaminationID());
         hospitalizationRequest.setAdmission_id(hospitalizationRequestCreate.getAdmissionID());
         hospitalizationRequest.setPractician(practician);
+        examinationService.findExaminationById(hospitalizationRequestCreate.getExaminationID()).ifPresent(hospitalizationRequest::setExamination);
+        insuredService.findInsuredById(hospitalizationRequestCreate.getInsuredID()).ifPresent(hospitalizationRequest::setInsured);
         hospitalizationRequest.setCode(generateHospitalizationRequestNumber());
         hospitalizationRequest.setStartDate(hospitalizationRequestCreate.getStartDate());
         BeanUtils.copyProperties(hospitalizationRequestCreate,hospitalizationRequest,"id");

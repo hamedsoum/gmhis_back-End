@@ -167,7 +167,7 @@ public class BillController {
 		bill.setBillNumber(billNumber);
 		bill.setBillStatus("R");
 		bill.setBillType(billDto.getBillType());
-
+		bill.setToFinalize(billDto.getToFinalize());
 		bill.setPartTakenCareOf(billDto.getPartTakenCareOf());
 		bill.setPatientPart(billDto.getPatientPart());
 		bill.setPatientType(billDto.getPatientType());
@@ -552,18 +552,19 @@ public class BillController {
 			User updatedBy = ObjectUtils.isEmpty(billDto.getLastUpdatedBy()) ? new User()
 					: userRepository.findById(billDto.getLastUpdatedBy()).orElse(null);
 			billsMap.put("id", billDto.getId());
+			billsMap.put("toFinalize", billDto.getToFinalize());
 			billsMap.put("billNumber", billDto.getBillNumber());
 			billsMap.put("billStatus", billDto.getBillStatus());
 			billsMap.put("patient", billDto.getAdmission().getPatient());
 			billsMap.put("billDate", billDto.getCreatedAt());
 			billsMap.put("accountNumber", billDto.getAccountNumber());
-			billsMap.put("practicianName", billDto.getAdmission().getPractician().getNom() + " " + billDto.getAdmission().getPractician().getPrenoms());
+		if(billDto.getAdmission().getPractician() != null) billsMap.put("practicianName", billDto.getAdmission().getPractician().getNom() + " " + billDto.getAdmission().getPractician().getPrenoms());
 
 			billsMap.put("admission", billDto.getAdmission());
 			billsMap.put("admissionActName", billDto.getAdmission().getAct().getName());
-			
+
 			if(ObjectUtils.isNotEmpty(billDto.getActs())) {
-				
+
 				List<Map<String, Object>> actList = new ArrayList<>();
 
 				billDto.getActs().forEach(act -> {
@@ -571,11 +572,11 @@ public class BillController {
 					actsMap.put("id", act.getAct().getId());
 					actsMap.put("act", act.getAct().getName());
 					actsMap.put("actCost", act.getActCost());
-					actsMap.put("actGroup", act.getAct());	
-				if(act.getPractician() != null)	actsMap.put("practician", act.getPractician().getNom());	
+					actsMap.put("actGroup", act.getAct());
+				if(act.getPractician() != null)	actsMap.put("practician", act.getPractician().getNom());
 					actList.add(actsMap);
 				});
-					
+
 			 billsMap.put("billActs", actList);
 			}
 			billsMap.put("billType", billDto.getBillType());
@@ -596,8 +597,6 @@ public class BillController {
 			billsMap.put("patientPart", billDto.getPatientPart());
 			billsMap.put("patientType", billDto.getPatientType());
 			billsMap.put("totalAmount", billDto.getTotalAmount());
-			billsMap.put("createdAt", billDto.getCreatedAt());
-			billsMap.put("updatedAt", billDto.getLastUpdatedAt());
 			billsMap.put("createdByFirstName", ObjectUtils.isEmpty(createdBy) ? "--" : createdBy.getFirstName());
 			billsMap.put("createdByLastName", ObjectUtils.isEmpty(createdBy) ? "--" : createdBy.getLastName());
 			billsMap.put("UpdatedByFirstName", ObjectUtils.isEmpty(updatedBy) ? "--" : updatedBy.getFirstName());
@@ -677,6 +676,8 @@ public class BillController {
 				updateBill.setTotalAmount(billDto.getTotal());
 				updateBill.setLastUpdatedAt(new Date());
 				updateBill.setLastUpdatedBy(this.getCurrentUserId().getId());
+				updateBill.setToFinalize(billDto.getToFinalize());
+
 				bill = billService.saveBill(updateBill);
 				
 				billDto.getActs().forEach(admissionHasAct -> {
@@ -804,7 +805,6 @@ public class BillController {
 					billsMap.put("patientContact", patient.getCellPhone1());
 					billsMap.put("clientType", bill.getPatientType());
 					billsMap.put("billDate", bill.getCreatedAt());
-					
 					if(insured != null ) {
 						billsMap.put("insuranceSuscriber", insured.getInsuranceSuscriber().getName());
 						billsMap.put("insurance", insured.getInsurance().getName());

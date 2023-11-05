@@ -16,6 +16,8 @@ public class GMHISHospitalizationRequestCreate {
 
     private Long admissionID;
 
+    private Long insuredID;
+
     private Long patientID;
 
     private String reason;

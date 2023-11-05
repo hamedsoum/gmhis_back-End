@@ -234,22 +234,18 @@ public class PatientServiceImpl implements PatientService {
 	@Override
 	public Patient update(Long id,PatientDTO patientdto)
 			throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException {
-		 
-		
 		
 			Patient updatePatient = patientRepository.findById(id).orElse(null);
-			System.out.print(updatePatient.getFirstName());
 		    Patient patient = new Patient();
 		    
 		    if (updatePatient != null) {
 				BeanUtils.copyProperties(patientdto, updatePatient, "id", "cityId");
 				
-				if (patientdto.getInsurances().size() != 0) {
+				if (!patientdto.getInsurances().isEmpty()) {
 					updatePatient.setIsAssured(true);
 				} else {
 					updatePatient.setIsAssured(false);
 				}
-
 				if (patientdto.getCountry() != null) {
 					updatePatient.setCountry(countryRepository.getOne(patientdto.getCountry()));
 				}
@@ -315,7 +311,12 @@ public class PatientServiceImpl implements PatientService {
 		
 		return patient;
 	}
-	
+
+	@Override
+	public void updateSolde(Long PatientID, Double solde) {
+        patientRepository.findById(PatientID).ifPresent(patientToUpdate -> patientToUpdate.setSolde(solde));
+    }
+
 	public String getPatientNumber() {
 		
 		Patient lPatient = patientRepository.findLastPatient();

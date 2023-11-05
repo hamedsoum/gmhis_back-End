@@ -62,14 +62,14 @@ public class PatientController {
 	@ApiOperation("Ajouter un Patient")
 	public  ResponseEntity<Patient>addPatient(@RequestBody PatientDTO patienDto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException,EmailExistException {
 		Patient patient = patientService.save(patienDto);
-		return new ResponseEntity<Patient>(patient,HttpStatus.OK);
+		return new ResponseEntity<>(patient,HttpStatus.OK);
 	}
 	
 	@PutMapping("/update/{id}")
 	@ApiOperation("Modifier un Patient")
 	public  ResponseEntity<Patient>updatePatient(@PathVariable("id") Long id,@RequestBody PatientDTO patienDto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException,EmailExistException {
 		Patient patient = patientService.update(id,patienDto);
-		return new ResponseEntity<Patient>(patient,HttpStatus.OK);
+		return new ResponseEntity<>(patient,HttpStatus.OK);
 	}
 
 	@ApiOperation(value = "retrieve all patients")

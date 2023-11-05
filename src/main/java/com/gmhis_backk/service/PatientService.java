@@ -35,6 +35,7 @@ public interface PatientService {
 	
 	public Patient update(Long id,PatientDTO patientDto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException;
 
+	public void updateSolde(Long PatientID, Double amount) throws ResourceNameAlreadyExistException;
 	public Patient findById(Long id);
 
 	public List<Patient> findAll();

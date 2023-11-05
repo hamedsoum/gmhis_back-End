@@ -15,7 +15,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BillDTO {
-	private Long Id;
     private Long insured;
 	private String patientType;
 	private int discountInCfa;
@@ -28,4 +27,5 @@ public class BillDTO {
 	private Long admission;
 	private List<AdmisionHasActDTO> acts;
 	private List <BillHasInsuredDto> insuredList;
+	private Boolean toFinalize;
 }

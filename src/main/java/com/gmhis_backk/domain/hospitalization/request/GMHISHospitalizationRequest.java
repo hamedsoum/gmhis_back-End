@@ -1,8 +1,7 @@
 package com.gmhis_backk.domain.hospitalization.request;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.gmhis_backk.domain.Patient;
-import com.gmhis_backk.domain.Pratician;
+import com.gmhis_backk.domain.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
@@ -37,11 +36,19 @@ public class GMHISHospitalizationRequest {
     @JoinColumn(name="patient_id")
     private Patient patient;
 
+
+    @JsonBackReference
+    @ManyToOne
     @JoinColumn(name="examination_id")
-    private Long examination_id;
+    private Examination examination;
 
     @JoinColumn(name="admission_id")
     private Long admission_id;
+
+    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name="insured_id")
+    private Insured insured;
 
     private String reason;
 
