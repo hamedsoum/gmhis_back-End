@@ -67,6 +67,7 @@ public class GMHISHospitalizationService {
         hospitalizationPartial.setCode(hospitalization.getCode());
         hospitalizationPartial.setPatientName(new GMHISName(hospitalization.getPatient().getFirstName(), hospitalization.getPatient().getLastName()));
         hospitalizationPartial.setPracticianName(new GMHISName(hospitalization.getPractician().getPrenoms(), hospitalization.getPractician().getNom()));
+       if(hospitalization.getNurse() != null) hospitalizationPartial.setNurseName(new GMHISName(hospitalization.getNurse().getFirstName(), hospitalization.getNurse().getLastName()));
         hospitalizationPartial.setBedroom(hospitalization.getBedroom());
         hospitalizationPartial.setReason(hospitalization.getReason());
         hospitalizationPartial.setProtocole(hospitalization.getProtocole());
@@ -124,16 +125,20 @@ public class GMHISHospitalizationService {
 
     public GMHISHospitalizationPartial update(UUID hospitalizationID, GMHISHospitalizationCreate hospitalizationCreate) throws ResourceNotFoundByIdException{
         GMHISHospitalization hospitalization = hospitalizationRepository.findById(hospitalizationID)
-                .orElseThrow(() -> new ResourceNotFoundByIdException(" l'hospitalisation est  inexistante"));
+                .orElseThrow(() -> new ResourceNotFoundByIdException(" Hospitalisation inexistante"));
 
         Patient patient = patientService.findById(hospitalizationCreate.getPatientID());
-        if (patient == null) throw new ResourceNotFoundByIdException("Patient Inexistant");
+        if (patient == null) throw new ResourceNotFoundByIdException("Patient inexistant");
 
         Pratician practician = practicianService.findPracticianById(1L)
                 .orElseThrow(() -> new ResourceNotFoundByIdException(" Practien inexistant"));
 
+        User nurse = userService.findUserById(hospitalizationCreate.getNurse());
+        if (nurse == null) throw new ResourceNotFoundByIdException("Infirmier(e) inexistant");
+
         hospitalization.setPatient(patient);
         hospitalization.setPractician(practician);
+        hospitalization.setNurse(nurse);
         BeanUtils.copyProperties(hospitalizationCreate,hospitalization,"id");
         hospitalization.setUpdatedBy(getCurrentUser().getId());
         hospitalization.setUpdatededAt(new Date());
@@ -141,6 +146,20 @@ public class GMHISHospitalizationService {
         return toPartial(hospitalizationRepository.save(hospitalization));
     }
 
+
+    public GMHISHospitalizationPartial addNurse(UUID hospitalizationID, Long nurseID) throws ResourceNotFoundByIdException{
+        GMHISHospitalization hospitalization = hospitalizationRepository.findById(hospitalizationID)
+                .orElseThrow(() -> new ResourceNotFoundByIdException(" Hospitalisation inexistante"));
+
+        User nurse = userService.findUserById(nurseID);
+        if (nurse == null) throw new ResourceNotFoundByIdException("Infirmier(e) inexistant");
+
+        hospitalization.setNurse(nurse);
+        hospitalization.setUpdatedBy(getCurrentUser().getId());
+        hospitalization.setUpdatededAt(new Date());
+
+        return toPartial(hospitalizationRepository.save(hospitalization));
+    }
 
     public ResponseEntity<Map<String, Object>> search(Map<String, ?> hospitalizationSearch) {
 

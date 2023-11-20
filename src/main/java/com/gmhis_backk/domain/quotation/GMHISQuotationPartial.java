@@ -39,6 +39,10 @@ public class GMHISQuotationPartial {
 
     private Double moderatorTicket;
 
+    private Double discount;
+
+    private Double netToPay;
+
     private String status;
 
     private List<GMHISQuotationItemCreate> quotationItems;

@@ -53,6 +53,7 @@ public class GMHISQuotationItemService {
 
     private GMHISQuotationItemPartial toPartial(GMHISQuotationItem quotationItem) {
         GMHISQuotationItemPartial quotationItemPartial = new GMHISQuotationItemPartial();
+        quotationItemPartial.setId(quotationItem.getId());
         quotationItemPartial.setActCode(quotationItem.getActCode());
         quotationItemPartial.setDateOp(quotationItem.getCreatedAt());
         quotationItemPartial.setActCodeValue(quotationItem.getActCodeValue());
@@ -109,11 +110,16 @@ public class GMHISQuotationItemService {
     public List<GMHISQuotationItemPartial> findByQuotationID(UUID quotationID) {
         List<GMHISQuotationItemPartial> quotationItemsPartial =  new ArrayList<>();;
         List<GMHISQuotationItem> quotationItems = quotationItemRepository.quotationItemsByQuotation(quotationID);
-
         for (GMHISQuotationItem quotationItem : quotationItems) {
             quotationItemsPartial.add(toPartial(quotationItem));
         }
 
         return quotationItemsPartial;
+    }
+
+    public void deleteAll(List<GMHISQuotationItemPartial> quotationItem) {
+        quotationItem.forEach( item -> {
+            quotationItemRepository.deleteById(item.getId());
+        });
     }
 }

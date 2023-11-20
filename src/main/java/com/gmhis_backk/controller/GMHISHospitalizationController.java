@@ -36,6 +36,13 @@ public class GMHISHospitalizationController {
         return hospitalizationService.update(hospitalizationID, hospitalizationCreate);
     }
 
+    @ApiOperation(value = "allocation of Hospitalization to nurse")
+    @PutMapping("/{hospitalizationID}/nurse")
+    public ResponseEntity<GMHISHospitalizationPartial>  addNurse(@PathVariable UUID hospitalizationID, @RequestBody Long nurseID) throws ResourceNotFoundByIdException {
+        GMHISHospitalizationPartial hospitalizationPartial =  hospitalizationService.addNurse(hospitalizationID, nurseID);
+        return new ResponseEntity<>(hospitalizationPartial, HttpStatus.OK);
+    }
+
     @ApiOperation(value = "Create a new Hospitalization in the system")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

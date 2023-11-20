@@ -36,4 +36,6 @@ public class GMHISHospitalizationPartial {
 
     private  String status;
 
+    private GMHISName nurseName;
+
 }

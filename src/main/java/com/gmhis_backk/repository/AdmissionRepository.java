@@ -62,7 +62,11 @@ public interface AdmissionRepository extends JpaRepository<Admission, Long> {
 	public Page<Admission> findAdmissionsByPatientExternalId(@Param("patientExternalId") String patientExternalId,
 			@Param("admissionStatus") String admissionStatus, @Param("facilityId") String facilityId, Pageable pageable);
 
-	@Query(value = "SELECT a FROM Admission a WHERE a.patient.cellPhone1 like %:cellPhone% and a.admissionStatus= :admissionStatus AND a.facilityId =:facilityId")
+	@Query(
+			value = "SELECT a FROM Admission a " +
+			"WHERE a.patient.cellPhone1 like %:cellPhone%" +
+			" and a.admissionStatus= :admissionStatus" +
+			" AND a.facilityId =:facilityId")
 	public Page<Admission> findAdmissionsByCellPhone(@Param("cellPhone") String cellPhone,
 			@Param("admissionStatus") String admissionStatus, @Param("facilityId") String facilityId, Pageable pageable);
 
@@ -101,14 +105,14 @@ public interface AdmissionRepository extends JpaRepository<Admission, Long> {
 	@Query(value = "SELECT a FROM Admission a WHERE a.createdAt BETWEEN :start AND :end AND a.facilityId =:facilityId")
 	Page<Admission> findByDate(Date start, Date end,@Param("facilityId") String facilityId, Pageable pageable);
 
-	// admissions queuesi(waiting room)
-	/*******************************************************************************/
+	/**********************************  WAITING ROOM *********************************************/
 
-	@Query(value = "SELECT * FROM admission a, bill b WHERE a.id = b.admission_id AND a.facility_id =:facilityId AND a.admission_status = 'B' AND  b.bill_status = 'C' AND a.take_care =:takeCare AND a.act_category_id =:specialityId GROUP by a.id", nativeQuery = true)
-	public Page<Admission> findAdmissionsInQueue(@Param("takeCare") Boolean takeCare, @Param("facilityId") String facilityId,@Param("specialityId") Long specialityId, Pageable pageable);
+//	@Query(value = "SELECT * FROM admission a, bill b WHERE a.id = b.admission_id AND a.facility_id =:facilityId AND a.admission_status = 'B' AND  b.bill_status = 'C' AND a.pratician_id =:practicianID OR a.type = 'emergency' AND a.take_care =:takeCare GROUP by a.id", nativeQuery = true)
+	@Query(value = "SELECT * FROM admission a, bill b WHERE a.facility_id =:facilityId AND a.pratician_id =:practicianID AND a.take_care =:takeCare AND (( a.id = b.admission_id AND a.admission_status = 'B' AND  b.bill_status = 'C') OR a.type = 'emergency') GROUP by a.id", nativeQuery = true)
+	public Page<Admission> findAdmissionsInQueue(@Param("takeCare") Boolean takeCare, @Param("facilityId") String facilityId,@Param("practicianID") Long practicianID, Pageable pageable);
 	
 	@Query(value = "SELECT * FROM admission a, bill b WHERE a.id = b.admission_id AND a.facility_id =:facilityId AND a.admission_status = 'B' AND  b.bill_status = 'C' AND a.take_care =:takeCare GROUP by a.id", nativeQuery = true)
-	public Page<Admission> findAllAdmissionsInQueue(@Param("takeCare") Boolean takeCare, @Param("facilityId") String facilityId, Pageable pageable);
+	public Page<Admission> findAllAdmissionsInQueue(@Param("facilityId") String facilityId, Pageable pageable);
 	
 
 	@Query(value = "SELECT * FROM admission a, bill b, payment p, pratician pr, service s  WHERE a.id= b.admission_id AND a.take_care =:takeCare and b.id = p.bill_id and a.service_id = pr.speciality_id and s.waiting_room_id = :waiting_room and a.admission_status = 'B' and b.bill_status = 'C' and a.created_at between :fromDate and :toDate and admission_end_date is null GROUP by a.id ", nativeQuery = true)

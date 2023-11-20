@@ -15,6 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GMHISQuotationItemPartial {
+    private UUID id;
 
     private Long actID;
 

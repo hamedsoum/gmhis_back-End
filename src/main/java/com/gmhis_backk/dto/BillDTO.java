@@ -27,5 +27,5 @@ public class BillDTO {
 	private Long admission;
 	private List<AdmisionHasActDTO> acts;
 	private List <BillHasInsuredDto> insuredList;
-	private Boolean toFinalize;
+	private Boolean toFinalize = false;
 }

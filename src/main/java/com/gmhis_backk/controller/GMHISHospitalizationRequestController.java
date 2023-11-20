@@ -1,5 +1,6 @@
 package com.gmhis_backk.controller;
 
+import com.gmhis_backk.domain.admission.Admission;
 import com.gmhis_backk.domain.hospitalization.request.GMHISHospitalizationRequestCreate;
 import com.gmhis_backk.domain.hospitalization.request.GMHISHospitalizationRequestPartial;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
@@ -27,22 +28,24 @@ public class GMHISHospitalizationRequestController {
 
     @ApiOperation(value = "update existing Hospitalization request in the system")
     @PutMapping("/{hospitalizationRequestID}")
-    public GMHISHospitalizationRequestPartial update(@PathVariable UUID hospitalizationRequestID, @RequestBody GMHISHospitalizationRequestCreate hospitalizationRequestCreate) throws ResourceNotFoundByIdException {
-        return hospitalizationRequestService.update(hospitalizationRequestID, hospitalizationRequestCreate);
+    public ResponseEntity<GMHISHospitalizationRequestPartial>  update(@PathVariable UUID hospitalizationRequestID, @RequestBody GMHISHospitalizationRequestCreate hospitalizationRequestCreate) throws ResourceNotFoundByIdException {
+        GMHISHospitalizationRequestPartial hospitalizationRequestPartial = hospitalizationRequestService.update(hospitalizationRequestID, hospitalizationRequestCreate);
+        return new ResponseEntity<>(hospitalizationRequestPartial, HttpStatus.OK);
     }
 
     @ApiOperation(value = "Create a new Hospitalization Request in the system")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public GMHISHospitalizationRequestPartial create( @RequestBody GMHISHospitalizationRequestCreate hospitalizationRequestCreate) throws ResourceNotFoundByIdException {
-
-        return hospitalizationRequestService.create(hospitalizationRequestCreate);
+    public ResponseEntity<GMHISHospitalizationRequestPartial> create( @RequestBody GMHISHospitalizationRequestCreate hospitalizationRequestCreate) throws ResourceNotFoundByIdException {
+        GMHISHospitalizationRequestPartial hospitalizationRequestPartial = hospitalizationRequestService.create(hospitalizationRequestCreate);
+        return new ResponseEntity<>(hospitalizationRequestPartial, HttpStatus.CREATED);
     }
 
     @ApiOperation(value = "Retrieve existing Hospitalization Request in the system")
     @GetMapping("/{hospitalizationRequestID}")
-    public GMHISHospitalizationRequestPartial retrieve(@PathVariable UUID hospitalizationRequestID) throws ResourceNotFoundByIdException {
-        return hospitalizationRequestService.retrieve(hospitalizationRequestID);
+    public ResponseEntity<GMHISHospitalizationRequestPartial>  retrieve(@PathVariable UUID hospitalizationRequestID) throws ResourceNotFoundByIdException {
+        GMHISHospitalizationRequestPartial hospitalizationRequestPartial = hospitalizationRequestService.retrieve(hospitalizationRequestID);
+        return new ResponseEntity<>(hospitalizationRequestPartial, HttpStatus.OK);
     }
 
     @ApiOperation(value = "find All Hospitalization Request in the system")

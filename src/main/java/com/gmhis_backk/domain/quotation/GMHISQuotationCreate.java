@@ -27,10 +27,14 @@ public class GMHISQuotationCreate {
 
     private Double moderatorTicket;
 
+    private Double discount;
+
     private List<GMHISQuotationItemCreate> quotationItems;
 
     private Double cmuPart;
 
     private Double insurancePart;
+
+    private Double netToPay;
 
 }

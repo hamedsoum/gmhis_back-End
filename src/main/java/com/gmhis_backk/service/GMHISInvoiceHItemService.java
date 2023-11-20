@@ -8,6 +8,7 @@ import com.gmhis_backk.domain.User;
 import com.gmhis_backk.domain.invoiceH.item.GMHISInvoiceHItem;
 import com.gmhis_backk.domain.invoiceH.item.GMHISInvoiceHItemPartial;
 import com.gmhis_backk.domain.invoiceH.item.GMHISinvoiceHItemCreate;
+import com.gmhis_backk.domain.quotation.item.GMHISQuotationItemPartial;
 import com.gmhis_backk.repository.GMHISInvoiceHItemRepository;
 import com.gmhis_backk.repository.GMHISInvoiceHRepository;
 import lombok.extern.log4j.Log4j2;
@@ -113,5 +114,11 @@ public class GMHISInvoiceHItemService {
         }
 
         return invoiceHItemsPartial;
+    }
+
+    public void deleteAll(List<GMHISInvoiceHItemPartial> invoiceItems) {
+        invoiceItems.forEach( item -> {
+            invoiceHItemRepository.deleteById(item.getId());
+        });
     }
 }

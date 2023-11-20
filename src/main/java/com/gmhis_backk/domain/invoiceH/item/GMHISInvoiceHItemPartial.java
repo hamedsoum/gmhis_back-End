@@ -15,6 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GMHISInvoiceHItemPartial {
+    private UUID id;
 
     private Long actID;
 

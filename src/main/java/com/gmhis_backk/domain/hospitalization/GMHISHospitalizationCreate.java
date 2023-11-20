@@ -28,5 +28,5 @@ public class GMHISHospitalizationCreate {
 
     private  String conclusion;
 
-
+    private Long nurse;
 }

@@ -147,10 +147,6 @@ public class BillController {
 	private Bill bill = null;
 	private Insured insured = null;
 	private int actCosts = 0;
-	private int patientPart = 0;
-	private int partTakenCareOf = 0;
-	private int discount = 0;
-	private int totalAmount = 0;
 
 	@ApiOperation(value = "Ajouter une facture ")
 	@PostMapping("/add")

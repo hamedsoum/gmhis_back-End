@@ -3,6 +3,7 @@ package com.gmhis_backk.domain.hospitalization;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.gmhis_backk.domain.Patient;
 import com.gmhis_backk.domain.Pratician;
+import com.gmhis_backk.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -41,6 +42,11 @@ public class GMHISHospitalization {
     @ManyToOne
     @JoinColumn(name="practician_id")
     private Pratician practician;
+
+    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name="nurse")
+    private User nurse;
 
     private String reason;
 

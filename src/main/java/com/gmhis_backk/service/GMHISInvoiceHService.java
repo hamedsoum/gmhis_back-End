@@ -8,9 +8,12 @@ import com.gmhis_backk.domain.User;
 import com.gmhis_backk.domain.invoiceH.GMHISInvoiceH;
 import com.gmhis_backk.domain.invoiceH.GMHISInvoiceHCreate;
 import com.gmhis_backk.domain.invoiceH.GMHISInvoiceHPartial;
+import com.gmhis_backk.domain.invoiceH.item.GMHISInvoiceHItemPartial;
+import com.gmhis_backk.domain.quotation.item.GMHISQuotationItemPartial;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
 import com.gmhis_backk.repository.GMHISInvoiceHRepository;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -103,8 +106,6 @@ public class GMHISInvoiceHService {
         if (invoiceCreate.getInsuranceID() != null){
             Insurance insurance = insuranceService.findInsuranceById(invoiceCreate.getInsuranceID()).orElse(null);
             if (insurance != null) {
-                log.info("insuranceName {}", insurance.getName());
-
                 invoiceH.setInsuranceId(insurance.getId());
                 invoiceH.setInsuranceName(insurance.getName());
             } ;
@@ -141,6 +142,25 @@ public class GMHISInvoiceHService {
     public GMHISInvoiceHPartial update (UUID invoiceID, GMHISInvoiceHCreate invoiceCreate) throws ResourceNotFoundByIdException {
         GMHISInvoiceH invoiceUpdate = invoiceHRepository.findById(invoiceID)
                 .orElseThrow(() -> new ResourceNotFoundByIdException(" la devis est inexistante"));
+
+        if (invoiceCreate.getInsuranceID() != null){
+            Insurance insurance = insuranceService.findInsuranceById(invoiceCreate.getInsuranceID()).orElse(null);
+            if (insurance != null) {
+                invoiceUpdate.setInsuranceId(insurance.getId());
+                invoiceUpdate.setInsuranceName(insurance.getName());
+            } ;
+        }
+        BeanUtils.copyProperties(invoiceCreate,invoiceUpdate,"id");
+        invoiceUpdate.setUpdatededAt(new Date());
+        invoiceUpdate.setUpdatedBy(getCurrentUser().getId());
+
+        GMHISInvoiceH invoiceHSaved = invoiceHRepository.save(invoiceUpdate);
+
+        List<GMHISInvoiceHItemPartial> invoiceItemsExisting = invoiceHItemService.findByQuotationID(invoiceID);
+        invoiceHItemService.deleteAll(invoiceItemsExisting);
+        invoiceCreate.getInvoiceHItems().forEach(item -> {
+            invoiceHItemService.create(item, invoiceHSaved.getId());
+        });
 
         return toPartial(invoiceUpdate);
     }

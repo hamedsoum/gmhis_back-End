@@ -115,16 +115,16 @@ public class AdmissionServiceImpl implements AdmissionService{
 		Admission updateAdmission = repo.findById(id).orElse(null);
 
 		Patient patient = patientService.findById(aDto.getPatient());
-		if (patient == null) throw new ResourceNotFoundByIdException("Aucun patient trouvé pour l'identifiant. " );
+		if (patient == null) throw new ResourceNotFoundByIdException("Aucun patient trouvé pour l'identifiant." );
 
         ActCategory speciality = specialityService.findById(aDto.getSpeciality()).orElse(null);
-        if(speciality == null) throw new ResourceNotFoundByIdException("Aucun Specialite trouvée pour l'identifiant. " );
+        if(speciality == null) throw new ResourceNotFoundByIdException("Aucune Specialite trouvée pour l'identifiant." );
 		
 	    Act act = actService.findActById(aDto.getAct()).orElse(null);
 		if (act == null) throw new ResourceNotFoundByIdException("Aucun act trouvé pour l'identifiant. " );
 	
 		Pratician pratician = practicianService.findPracticianById(aDto.getPractician()).orElse(null);
-		if (pratician == null) throw new ResourceNotFoundByIdException("Aucun Practicien trouvé pour l'identifiant. " );
+		if (pratician == null) throw new ResourceNotFoundByIdException("Aucun Practicien trouvé pour l'identifiant." );
 
 		if (updateAdmission == null) throw new ResourceNotFoundByIdException("Aucune admission trouvée pour l'identifiant"); 
 		
@@ -237,12 +237,11 @@ public class AdmissionServiceImpl implements AdmissionService{
 	
 	@Override
 	public Page<Admission> findAdmissionsInQueue(Boolean takeCare, String facilityId, Pageable pageable){
-		Pratician practican = practicianService.findPracticianByUser(getCurrentUserId().getId()).orElse(null);
+		Pratician practician = practicianService.findPracticianByUser(getCurrentUserId().getId()).orElse(null);
 		
-		if (practican == null) return repo.findAllAdmissionsInQueue(takeCare,facilityId,pageable);
-			
-		System.out.println(practican.getActCategory().getId());
-		return repo.findAdmissionsInQueue(takeCare,facilityId,practican.getActCategory().getId(),pageable);
+		if (practician == null) return repo.findAllAdmissionsInQueue(facilityId,pageable);
+		log.info("practicianID {}",  practician.getId());
+		return repo.findAdmissionsInQueue(takeCare,facilityId,practician.getId(),pageable);
 	}
 		
 	@Override

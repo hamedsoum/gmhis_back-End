@@ -59,7 +59,6 @@ public class AdmissionController {
 	@PutMapping("/supervisory/{admissionID}")
 	@ApiOperation("new admission supervisory")
 	public ResponseEntity<Admission> supervisory(@PathVariable Long admissionID) throws NotFoundException{
-		System.out.println("admissionID " + admissionID);
 		Admission admission = admissionService.supervitory(admissionID);
 		return ResponseEntity.accepted().body(admission);
 	}
@@ -77,7 +76,7 @@ public class AdmissionController {
 	public ResponseEntity<Admission> addAdmission(@RequestBody AdmissionCreate admissionCreate) throws ResourceNameAlreadyExistException,
 	ResourceNotFoundByIdException{
 		Admission admission = admissionService.create(admissionCreate);
-		return new ResponseEntity<Admission>(admission, HttpStatus.OK);
+		return new ResponseEntity<>(admission, HttpStatus.OK);
 	}
 	
 	@PutMapping("{admissionID}")
@@ -85,7 +84,7 @@ public class AdmissionController {
 	public ResponseEntity<Admission> updateAdmission(@PathVariable("admissionID") Long id,  @RequestBody AdmissionCreate admissionCreate) throws ResourceNameAlreadyExistException,
 	ResourceNotFoundByIdException{
 		Admission admission = admissionService.update(id, admissionCreate);
-		return new ResponseEntity<Admission>(admission, HttpStatus.OK);
+		return new ResponseEntity<>(admission, HttpStatus.OK);
 	}
 	
 
@@ -100,10 +99,8 @@ public class AdmissionController {
 			@RequestParam(required = false, defaultValue = "") String cellPhone,
 			@RequestParam(required = false, defaultValue = "") String cnamNumber,
 			@RequestParam(required = false, defaultValue = "") String idCardNumber,
-			@RequestParam(required = false) Long practician,
 			@RequestParam(required = false) Long service,
 			@RequestParam(required = false) Long act,
-			@RequestParam(required = false) String facilityId,
 		    @RequestParam(required = false, defaultValue = "") String date,
 		    @RequestParam(required = true, defaultValue = "R") String admissionStatus,
 			@RequestParam(defaultValue = "id,desc") String[] sort, @RequestParam(defaultValue = "0") int page,
@@ -148,10 +145,9 @@ public class AdmissionController {
 		}
 
 		if( ObjectUtils.isNotEmpty(type) ) {
-			log.info("type {}", type);
 			pAdmissions = admissionService.findByType(type, admissionStatus,this.getCurrentUserId().getFacilityId(), paging);
 		}
-//		
+
 		if( ObjectUtils.isNotEmpty(service) ) {
 			pAdmissions = admissionService.findAdmissionsByService(service, admissionStatus,this.getCurrentUserId().getFacilityId(), paging);
 		} 
@@ -162,7 +158,6 @@ public class AdmissionController {
 	
 		List<Admission> lAdmissions = pAdmissions.getContent();
 
-		
 		List<Map<String, Object>> admission = this.getMapFromAdmissionList(lAdmissions);
 		response.put("items", admission);
 		response.put("currentPage", pAdmissions.getNumber());
@@ -197,7 +192,7 @@ public class AdmissionController {
 			admissionsMap.put("patientLastName", admissionDto.getPatient().getLastName());
 
 			admissionsMap.put("patientType", admissionDto.getPatient().getIsAssured());
-			admissionsMap.put("caution",admissionDto.getCaution());
+			admissionsMap.put("caution",admissionDto.getPatient().getSolde());
 			admissionsMap.put("admissionDate", admissionDto.getCreatedAt());
 			admissionsMap.put("act", admissionDto.getAct().getName());
 			admissionsMap.put("actId", admissionDto.getAct().getId());
@@ -207,7 +202,6 @@ public class AdmissionController {
 				admissionsMap.put("practician", admissionDto.getPractician().getUser().getLastName() + " " + admissionDto.getPractician().getUser().getFirstName());
 				admissionsMap.put("practicianId", admissionDto.getPractician().getId());
 			}
-			admissionsMap.put("createdAt", admissionDto.getCreatedAt());
 			admissionsMap.put("updatedAt", admissionDto.getUpdatedAt());
 			admissionsMap.put("createdByLogin", ObjectUtils.isEmpty(createdBy) ? "--" : createdBy.getLogin());
 			admissionsMap.put("createdByFirstName", ObjectUtils.isEmpty(createdBy) ? "--" : createdBy.getFirstName());
@@ -227,7 +221,8 @@ public class AdmissionController {
 		Map<String, Object> response = new HashMap<>();
 
 		Admission admission= admissionService.retrieve(id).orElse(null);
-		response.put("id", admission.getId());
+        assert admission != null;
+        response.put("id", admission.getId());
 		response.put("takeCare", admission.getTakeCare());
 		response.put("caution", admission.getCaution());
 		response.put("patientId", admission.getPatient().getId());
@@ -239,7 +234,6 @@ public class AdmissionController {
 		response.put("facilityName", admission.getFacility().getName());
 		response.put("facilityType", admission.getFacility().getFacilityType().getName());
 		response.put("admissionStatus", admission.getAdmissionStatus());
-		response.put("patientExternalId", admission.getPatient().getPatientExternalId());
 		response.put("patientName", admission.getPatient().getFirstName() + " " + admission.getPatient().getLastName());
 		response.put("patientType", admission.getPatient().getIsAssured());
 		response.put("act", admission.getAct().getName());
