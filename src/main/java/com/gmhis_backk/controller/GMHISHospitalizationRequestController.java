@@ -58,7 +58,6 @@ public class GMHISHospitalizationRequestController {
 
         Map<String, Object> hospitalizationSearchField = new HashMap<>();
 
-        hospitalizationSearchField.put("service", service);
         hospitalizationSearchField.put("sort", sort);
         hospitalizationSearchField.put("page", page);
         hospitalizationSearchField.put("size", size);

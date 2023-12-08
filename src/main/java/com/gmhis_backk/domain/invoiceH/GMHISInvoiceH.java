@@ -55,6 +55,11 @@ public class GMHISInvoiceH {
     @Column(name="cmu_part")
     private Double cmuPart;
 
+    private Double discount;
+
+    @Column(name="net_to_pay")
+    private Double netToPay;
+
     @Column(name="insurance_part")
     private Double insurancePart;
 

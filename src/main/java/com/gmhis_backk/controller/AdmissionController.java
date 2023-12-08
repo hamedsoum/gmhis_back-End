@@ -180,6 +180,7 @@ public class AdmissionController {
 			User updatedBy = ObjectUtils.isEmpty(admissionDto.getUpdatedBy()) ? new User() : userRepository.findById(admissionDto.getUpdatedBy()).orElse(null);
 			admissionsMap.put("id", admissionDto.getId());
 			admissionsMap.put("type", admissionDto.getType());
+			admissionsMap.put("createdAt", admissionDto.getCreatedAt());
 
 			admissionsMap.put("takeCare", admissionDto.getTakeCare());
 			admissionsMap.put("admissionNumber", admissionDto.getAdmissionNumber());
@@ -198,6 +199,7 @@ public class AdmissionController {
 			admissionsMap.put("actId", admissionDto.getAct().getId());
 			admissionsMap.put("actCost", (admissionDto.getAct().getCoefficient() * admissionDto.getAct().getActCode().getValue()));
 			admissionsMap.put("service", admissionDto.getSpeciality().getName());
+			admissionsMap.put("serviceID", admissionDto.getSpeciality().getId());
 			if (admissionDto.getPractician() != null) {
 				admissionsMap.put("practician", admissionDto.getPractician().getUser().getLastName() + " " + admissionDto.getPractician().getUser().getFirstName());
 				admissionsMap.put("practicianId", admissionDto.getPractician().getId());

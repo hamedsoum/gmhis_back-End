@@ -482,19 +482,19 @@ public class BillController {
 
 	@ApiOperation(value = "liste paginee de toutes les factures des assurances dans le système par Id de l'assurance")
 	@GetMapping("/BillHasInsure_p_list")
-	public ResponseEntity<Map<String, Object>> BillHasInsuredpaginatedList(
+	public ResponseEntity<Map<String, Object>> BillHasInsuredPaginatedList(
 	    @RequestParam(defaultValue = "id,desc") String[] sort, @RequestParam(defaultValue = "0") int page,
 		@RequestParam(defaultValue = "50") int size) throws ParseException {
 		Map<String, Object> response = new HashMap<>();
 		Sort.Direction dir = sort[1].equalsIgnoreCase("asc") ? dir = Sort.Direction.ASC : Sort.Direction.DESC;
-//
+
 		Pageable pageable = PageRequest.of(page, size, Sort.by(dir, sort[0]));
 		Page<BillHasInsured> pBills;
-//
+
 		pBills = billHasInsuredService.findBillsHasInsured(pageable);
 		
 		List<BillHasInsured> lBills = pBills.getContent();
-//
+
 		List<Map<String, Object>> bill = this.getMapFromBillHasInsuredList(lBills);
 		response.put("items", bill);
 		response.put("totalElements", pBills.getTotalElements());
@@ -521,6 +521,7 @@ public class BillController {
 			billsMap.put("id", billHasInsuredDto.getId());
 			billsMap.put("billNumber", billHasInsuredDto.getBill().getBillNumber());
 			billsMap.put("billDate", billHasInsuredDto.getBill().getCreatedAt());
+
 			billsMap.put("insurance", billHasInsuredDto.getInsurance().getName());
 			billsMap.put("insuranceID", billHasInsuredDto.getInsurance().getId());
 			billsMap.put("patientInsuranceNumber", billHasInsuredDto.getInsured().getCardNumber());

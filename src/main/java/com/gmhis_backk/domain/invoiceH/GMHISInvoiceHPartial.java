@@ -49,6 +49,10 @@ public class GMHISInvoiceHPartial {
 
     private Double insurancePart;
 
+    private Double discount;
+
+    private Double netToPay;
+
 }
 
 

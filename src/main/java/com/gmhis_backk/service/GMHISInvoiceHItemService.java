@@ -53,6 +53,7 @@ public class GMHISInvoiceHItemService {
 
     private GMHISInvoiceHItemPartial toPartial(GMHISInvoiceHItem quotationItem) {
         GMHISInvoiceHItemPartial invoiceHItemPartial = new GMHISInvoiceHItemPartial();
+        invoiceHItemPartial.setId(quotationItem.getId());
         invoiceHItemPartial.setActCode(quotationItem.getActCode());
         invoiceHItemPartial.setDateOp(quotationItem.getCreatedAt());
         invoiceHItemPartial.setActCodeValue(quotationItem.getActCodeValue());

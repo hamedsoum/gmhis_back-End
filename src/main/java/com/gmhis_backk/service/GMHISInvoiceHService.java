@@ -80,10 +80,11 @@ public class GMHISInvoiceHService {
         invoiceHPartial.setAffection(invoiceH.getAffection());
         invoiceHPartial.setIndication(invoiceH.getIndication());
         invoiceHPartial.setCmuPart(invoiceH.getCmuPart());
+        invoiceHPartial.setNetToPay(invoiceH.getNetToPay());
+        invoiceHPartial.setDiscount(invoiceH.getDiscount());
         invoiceHPartial.setInsurancePart(invoiceH.getInsurancePart());
         return   invoiceHPartial;
     }
-
 
     protected List<GMHISInvoiceHPartial> map(List<GMHISInvoiceH> invoiceHList) {
         List<GMHISInvoiceHPartial> invoiceHPartialList = new ArrayList<>();
@@ -114,12 +115,8 @@ public class GMHISInvoiceHService {
         invoiceH.setStatus("Impayé");
         invoiceH.setCode(generateinvoiceHNumber());
         invoiceH.setInvoiceNumber(generateinvoiceHNumber());
-        invoiceH.setModeratorTicket(invoiceCreate.getModeratorTicket());
-        invoiceH.setTotalAmount(invoiceCreate.getTotalAmount());
-        invoiceH.setAffection(invoiceCreate.getAffection());
-        invoiceH.setIndication(invoiceCreate.getIndication());
-        invoiceH.setCmuPart(invoiceCreate.getCmuPart());
-        invoiceH.setInsurancePart(invoiceCreate.getInsurancePart());
+        BeanUtils.copyProperties(invoiceCreate,invoiceH,"id");
+
         invoiceH.setCreatedAt(new Date());
         invoiceH.setCreatedBy(getCurrentUser().getId());
         GMHISInvoiceH invoiceHSaved = invoiceHRepository.save(invoiceH);
@@ -135,7 +132,7 @@ public class GMHISInvoiceHService {
 
     public GMHISInvoiceHPartial retrieve(UUID invoiceID) throws ResourceNotFoundByIdException{
         GMHISInvoiceH invoiceH = invoiceHRepository.findById(invoiceID)
-                .orElseThrow(() -> new ResourceNotFoundByIdException(" la facture est inexistante"));
+                .orElseThrow(() -> new ResourceNotFoundByIdException("la facture est inexistante"));
         return toPartial(invoiceH);
     }
 

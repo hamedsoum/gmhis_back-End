@@ -239,7 +239,7 @@ public class AdmissionServiceImpl implements AdmissionService{
 	public Page<Admission> findAdmissionsInQueue(Boolean takeCare, String facilityId, Pageable pageable){
 		Pratician practician = practicianService.findPracticianByUser(getCurrentUserId().getId()).orElse(null);
 		
-		if (practician == null) return repo.findAllAdmissionsInQueue(facilityId,pageable);
+		if (practician == null) return repo.findAllAdmissionsInQueue(takeCare,facilityId,pageable);
 		log.info("practicianID {}",  practician.getId());
 		return repo.findAdmissionsInQueue(takeCare,facilityId,practician.getId(),pageable);
 	}

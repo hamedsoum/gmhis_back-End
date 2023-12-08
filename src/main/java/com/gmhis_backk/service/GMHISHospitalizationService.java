@@ -9,11 +9,9 @@ import com.gmhis_backk.domain.User;
 import com.gmhis_backk.domain.hospitalization.GMHISHospitalization;
 import com.gmhis_backk.domain.hospitalization.GMHISHospitalizationCreate;
 import com.gmhis_backk.domain.hospitalization.GMHISHospitalizationPartial;
-import com.gmhis_backk.domain.hospitalization.request.GMHISHospitalizationRequest;
-import com.gmhis_backk.domain.hospitalization.request.GMHISHospitalizationRequestCreate;
-import com.gmhis_backk.domain.hospitalization.request.GMHISHospitalizationRequestPartial;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
 import com.gmhis_backk.repository.GMHISHospitalizationRepository;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,6 +26,7 @@ import java.util.*;
 
 @Transactional
 @Service
+@Log4j2
 public class GMHISHospitalizationService {
 
     private final PatientService patientService;
@@ -37,16 +36,18 @@ public class GMHISHospitalizationService {
 
     private  final GMHISHospitalizationRepository hospitalizationRepository;
 
+    private final GMHISProtocoleService protocoleService;
     GMHISHospitalizationService(
             final PatientService patientService,
             final PracticianService practicianService,
             final UserService userService,
-            final GMHISHospitalizationRepository hospitalizationRepository
-            ){
+            final GMHISHospitalizationRepository hospitalizationRepository,
+            final GMHISProtocoleService protocoleService){
         this.patientService = patientService;
         this.practicianService = practicianService;
         this.userService = userService;
         this.hospitalizationRepository = hospitalizationRepository;
+        this.protocoleService = protocoleService;
     }
 
     protected String generateHospitalizationNumber() {
@@ -104,7 +105,11 @@ public class GMHISHospitalizationService {
         hospitalization.setCreatedBy(getCurrentUser().getId());
         hospitalization.setStatus(GMHISHospitalizationStatus.IN_PROGRESS);
         hospitalization.setCreatedAt(new Date());
-        return toPartial(hospitalizationRepository.save(hospitalization));
+        GMHISHospitalizationPartial hospitalizationCreated = toPartial(hospitalizationRepository.save(hospitalization));
+
+        protocoleService.create(hospitalizationCreated.getId(), hospitalizationCreated.getProtocole());
+
+        return hospitalizationCreated;
     }
 
     public GMHISHospitalizationPartial retrieve(UUID hospitalizationID) throws ResourceNotFoundByIdException{
@@ -169,11 +174,19 @@ public class GMHISHospitalizationService {
         String[] sort = (String[]) hospitalizationSearch.get("sort");
         int size = (int) hospitalizationSearch.get("size");
 
+
         Sort.Direction dir = sort[1].equalsIgnoreCase("asc") ? dir = Sort.Direction.ASC : Sort.Direction.DESC;
         Pageable pageable = PageRequest.of(page, size, Sort.by(dir, sort[0]));
+
         Page<GMHISHospitalization> hospitalizationPage = null;
 
         hospitalizationPage = hospitalizationRepository.findAll(pageable);
+
+        if(hospitalizationSearch.get("patientID") != null) {
+            long patientID = (long) hospitalizationSearch.get("patientID");
+            hospitalizationPage = hospitalizationRepository.findHospitalizationBy(patientID, pageable);
+
+        }
 
         List<GMHISHospitalization> hospitalizationList = hospitalizationPage.getContent();
 

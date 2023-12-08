@@ -124,7 +124,6 @@ public class GMHISQuotationService {
         quotation.setQuotationNumber(generateQuotationNumber());
         quotation.setStatus(GMHISQuotationStatus.DRAFT);
         BeanUtils.copyProperties(quotationCreate,quotation,"id");
-
         quotation.setCreatedAt(new Date());
         quotation.setCreatedBy(getCurrentUser().getId());
         GMHISQuotation quotationSaved  = quotationRepository.save(quotation);

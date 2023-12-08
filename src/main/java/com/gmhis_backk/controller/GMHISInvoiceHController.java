@@ -71,7 +71,6 @@ public class GMHISInvoiceHController {
 
         Map<String, Object> searchField = new HashMap<>();
 
-        searchField.put("service", service);
         searchField.put("sort", sort);
         searchField.put("page", page);
         searchField.put("size", size);

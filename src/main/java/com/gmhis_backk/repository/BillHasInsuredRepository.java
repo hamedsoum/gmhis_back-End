@@ -19,7 +19,7 @@ public interface BillHasInsuredRepository extends JpaRepository<BillHasInsured, 
 	@Query(value = "SELECT b FROM BillHasInsured b WHERE b.bill.id = :BillID")
 	public List<BillHasInsured> findBillsHasInsuredByBillID(@Param("BillID") Long BillID);
 
-	@Query(value = "SELECT * FROM bill_has_insured WHERE admission_id IN ( SELECT admission_id FROM examination )", nativeQuery = true)
+	@Query(value = "SELECT * FROM bill_has_insured", nativeQuery = true)
 	public Page<BillHasInsured> findBillsHasInsured(Pageable pageable);
 
 	@Query(value = "SELECT b FROM BillHasInsured b WHERE b.insurance.id = :insurance")

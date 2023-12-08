@@ -26,6 +26,4 @@ public class GMHISinvoiceHItemCreate {
     private int insurancePercent;
 
     private Long practicianID;
-
-
 }

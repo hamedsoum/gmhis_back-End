@@ -32,4 +32,8 @@ public class GMHISInvoiceHCreate {
 
     private Double insurancePart;
 
+    private Double netToPay;
+
+    private Double discount;
+
 }
