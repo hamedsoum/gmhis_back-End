@@ -19,36 +19,36 @@ public interface CashRegisterManagementRepository extends JpaRepository<CashRegi
 	@Query("Select c FROM CashRegisterManagement c")
 	List<CashRegisterManagement> findAllCashRegisterManagement();
 	
-	@Query(value = "SELECT c FROM CashRegisterManagement c where c.cashRegister.id =:cashRegister")
+	@Query(value = "SELECT c FROM CashRegisterManagement c where c.cashRegister.id =:cashRegister  ORDER BY c.openingDate DESC")
 	Page<CashRegisterManagement> findAllCashRegisterManagementByCashRegister(@Param("cashRegister") Long cashRegister,  Pageable pageable);
 	
-	@Query(value = "SELECT c FROM CashRegisterManagement c where c.cashier.id =:cashier")
+	@Query(value = "SELECT c FROM CashRegisterManagement c where c.cashier.id =:cashier  ORDER BY c.openingDate DESC")
 	Page<CashRegisterManagement> findAllCashRegisterManagementByCashier(@Param("cashier") Long cashier,  Pageable pageable);
 	
-	@Query(value = "SELECT c FROM CashRegisterManagement c where c.state =:state")
+	@Query(value = "SELECT c FROM CashRegisterManagement c where c.state =:state ORDER BY c.openingDate DESC")
 	Page<CashRegisterManagement> findAllCashRegisterManagementByState(@Param("state") Boolean state,  Pageable pageable);
 	
-	@Query(value = "SELECT c FROM CashRegisterManagement c where c.cashRegister.id =:cashRegister AND c.cashier.id =:cashier")
+	@Query(value = "SELECT c FROM CashRegisterManagement c where c.cashRegister.id =:cashRegister AND c.cashier.id =:cashier ORDER BY c.openingDate DESC")
 	Page<CashRegisterManagement> findAllCashRegisterManagementByCashRegisterAndCashier(@Param("cashRegister") Long cashRegister, @Param("cashier") Long cashier,  Pageable pageable);
 	
-	@Query(value = "SELECT c FROM CashRegisterManagement c where c.cashRegister.id =:cashRegister AND c.state =:state")
+	@Query(value = "SELECT c FROM CashRegisterManagement c where c.cashRegister.id =:cashRegister AND c.state =:state ORDER BY c.openingDate DESC")
 	Page<CashRegisterManagement> findAllCashRegisterManagementByCashRegisterAndState(@Param("cashRegister") Long cashRegister, @Param("state") Boolean state,  Pageable pageable);
 	
-	@Query(value = "SELECT c FROM CashRegisterManagement c where c.cashier.id =:cashier AND c.state =:state")
+	@Query(value = "SELECT c FROM CashRegisterManagement c where c.cashier.id =:cashier AND c.state =:state ORDER BY c.openingDate DESC")
 	Page<CashRegisterManagement> findAllCashierManagementByCashierAndState(@Param("cashier") Long cashier, @Param("state") Boolean state,  Pageable pageable);
 	
 	@Query(value = "SELECT c FROM CashRegisterManagement c where c.cashRegister.id =:cashRegister AND c.cashier.id =:cashier AND c.state =:state")
 	Page<CashRegisterManagement> findAllCashRegisterManagementByCashRegisterAndCashierAndState(@Param("cashRegister") Long cashRegister, @Param("cashier") Long cashier, @Param("state") Boolean state,  Pageable pageable);
 	
-	@Query(value = "SELECT c FROM CashRegisterManagement c where c.cashRegister.id =:cashRegister AND c.state = true")
+	@Query(value = "SELECT c FROM CashRegisterManagement c where c.cashRegister.id =:cashRegister AND c.state = true ORDER BY c.openingDate DESC")
 	List<CashRegisterManagement> findAllCashRegisterManagementByCashRegisterAndStateOpenened(@Param("cashRegister") Long cashRegister);
 
-	@Query(value = "SELECT c FROM CashRegisterManagement c where c.cashier.id =:cashier AND c.state = true")
+	@Query(value = "SELECT c FROM CashRegisterManagement c where c.cashier.id =:cashier AND c.state = true ORDER BY c.openingDate DESC")
 	List<CashRegisterManagement> findAllCashierManagementByCashierAndStateOpened(@Param("cashier") Long cashier);
 	
-	@Query(value = "SELECT c FROM CashRegisterManagement c where c.cashier.id =:cashier")
+	@Query(value = "SELECT c FROM CashRegisterManagement c where c.cashier.id =:cashier AND c.state = true ORDER BY c.openingDate DESC")
 	CashRegisterManagement getCashierManagementByCashier(@Param("cashier") Long cashier);
 
-	@Query(value="SELECT c FROM CashRegisterManagement c WHERE c.cashier.id =:cashier AND c.state = true")
+	@Query(value="SELECT c FROM CashRegisterManagement c WHERE c.cashier.id =:cashier AND c.state = true  ORDER BY c.openingDate DESC")
 	public List<CashRegisterManagement> getOpenCaByCashier(@Param("cashier") Long cashier);
 }

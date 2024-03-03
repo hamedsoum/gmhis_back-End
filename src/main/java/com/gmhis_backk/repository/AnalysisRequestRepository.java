@@ -27,10 +27,10 @@ public interface AnalysisRequestRepository extends JpaRepository<AnalysisRequest
 	@Query(value = "select a from AnalysisRequest a where a.admission.admissionNumber like %:admissionNumber%")
 	public Page<AnalysisRequest> findAnalysisRequestsByAdmissionNumber(@Param("admissionNumber") String admissionNumber, Pageable pageable);
 
-	@Query(value = "select a from AnalysisRequest a ORDER BY a.createdAt DESC")
+	@Query(value = "select a from AnalysisRequest a WHERE a.bill.billStatus = 'C' ORDER BY a.createdAt DESC")
 	public Page<AnalysisRequest> findAllAnalysis(Pageable pageable);
 	
-	@Query(value = "select a from AnalysisRequest a where a.examenType=:examenType and a.facility.id=:facilityId ORDER BY a.createdAt")
+	@Query(value = "select a from AnalysisRequest a where a.examenType=:examenType and a.bill.billStatus = 'C' and a.facility.id=:facilityId ORDER BY a.createdAt")
 	public Page<AnalysisRequest> findAllAnalysisRequestsByFacility(@Param("examenType") Boolean examenType,@Param("facilityId") UUID facilityId, Pageable pageable);
 	
 	@Query(value = "select Count(a) from AnalysisRequest a where a.admission.id = :admissionId")

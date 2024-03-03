@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ import com.gmhis_backk.service.CashRegisterManagementService;
 
 import io.swagger.annotations.ApiOperation;
 
+@Log4j2
 @RestController
 @RequestMapping("/api/v1/cashRegisterManagement")
 public class CashRegisterManagementController {
@@ -45,14 +47,14 @@ public class CashRegisterManagementController {
 	@PostMapping()
 	public ResponseEntity<CashRegisterManagement> newCashRegisterManagement(@RequestBody CashRegisterManagementDto crmDto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException{
 				CashRegisterManagement cashRegisterManagement = cashRegisterManagementService.addCashRegisterManagement(crmDto);
-				return new ResponseEntity<CashRegisterManagement>(cashRegisterManagement, HttpStatus.OK) ;
+				return new ResponseEntity<>(cashRegisterManagement, HttpStatus.OK) ;
 	}
 	
 	@ApiOperation(value = "Modifier une activite de caisse")
 	@PutMapping("{id}")
 	public ResponseEntity<CashRegisterManagement> edit(@PathVariable("id") UUID id, @RequestBody CashRegisterManagementDto crmDto) throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException {
 		CashRegisterManagement updateCashRegisterManagement = cashRegisterManagementService.updateCashRegisterManagement(id, crmDto);
-		return new ResponseEntity<CashRegisterManagement>(updateCashRegisterManagement, HttpStatus.OK) ;
+		return new ResponseEntity<>(updateCashRegisterManagement, HttpStatus.OK) ;
 	}
 	
 
@@ -91,7 +93,8 @@ public class CashRegisterManagementController {
 		Pageable paging = PageRequest.of(page, size, Sort.by(dir, sort[0]));
 
 		Page<CashRegisterManagement> pageCRM ;
-		
+
+		log.info("Here");
 		if (ObjectUtils.isNotEmpty(cashRegister) && ObjectUtils.isEmpty(cashier) && StringUtils.isEmpty(state)) {
 			 pageCRM = cashRegisterManagementService.findAllCashRegistersMangementByCashRegister(Long.parseLong(cashRegister),paging);
 		}else if(ObjectUtils.isEmpty(cashRegister) && ObjectUtils.isNotEmpty(cashier) && StringUtils.isEmpty(state)) {
@@ -156,17 +159,21 @@ public class CashRegisterManagementController {
 	@ApiOperation("detail d'une activite de caisse ")
 	public  ResponseEntity<Map<String, Object>> getDetail(@PathVariable Long cashierID){
 		Map<String, Object> response = new HashMap<>();
+		log.info("Here");
 		CashRegisterManagement cashRegisterManagement = cashRegisterManagementService.getCashierManagementByCashierAndStateOpened(cashierID);
-		response.put("id",cashRegisterManagement.getId());
-		response.put("cashRegisterName",cashRegisterManagement.getCashRegister().getName());
-		response.put("cashRegister",cashRegisterManagement.getCashRegister().getId());
-		response.put("cashierName",cashRegisterManagement.getCashier().getFirstName() + " " + cashRegisterManagement.getCashier().getLastName());
-		response.put("cashier",cashRegisterManagement.getCashier().getId());
-		response.put("openingDate",cashRegisterManagement.getOpeningDate());
-		response.put("state",cashRegisterManagement.getState());
-		response.put("openingBalance",cashRegisterManagement.getOpeningBalance());
-		response.put("closingBalance",cashRegisterManagement.getClosingBalance());
-		response.put("cashRegisterBalance",cashRegisterManagement.getCashRegisterBalance());
+		if(cashRegisterManagement != null) {
+			response.put("id",cashRegisterManagement.getId());
+			response.put("cashRegisterName",cashRegisterManagement.getCashRegister().getName());
+			response.put("cashRegister",cashRegisterManagement.getCashRegister().getId());
+			response.put("cashierName",cashRegisterManagement.getCashier().getFirstName() + " " + cashRegisterManagement.getCashier().getLastName());
+			response.put("cashier",cashRegisterManagement.getCashier().getId());
+			response.put("openingDate",cashRegisterManagement.getOpeningDate());
+			response.put("state",cashRegisterManagement.getState());
+			response.put("openingBalance",cashRegisterManagement.getOpeningBalance());
+			response.put("closingBalance",cashRegisterManagement.getClosingBalance());
+			response.put("cashRegisterBalance",cashRegisterManagement.getCashRegisterBalance());
+		}
+
 		return new ResponseEntity<>(response,HttpStatus.OK);
 	}
 

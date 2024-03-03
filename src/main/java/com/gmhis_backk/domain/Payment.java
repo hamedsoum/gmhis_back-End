@@ -4,6 +4,7 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 
+import com.gmhis_backk.domain.invoiceH.GMHISInvoiceH;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,7 +29,7 @@ public class Payment implements Serializable {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 
-	private int amount;
+	private Double amount;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="created_at")
@@ -48,6 +49,10 @@ public class Payment implements Serializable {
 	@ManyToOne
 	@JoinColumn(name="bill_id")
 	private Bill bill;
+
+	@ManyToOne
+	@JoinColumn(name="invoiceH_id")
+	private GMHISInvoiceH invoiceH;
 
 	@ManyToOne
 	@JoinColumn(name="payment_type_id")

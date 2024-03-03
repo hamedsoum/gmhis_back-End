@@ -15,8 +15,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AnalysisRequestDTO {
-
-	private Long id;
+	private Long billId;
 	private Long admission;
 	private Boolean examenTytpe;
 	private String observation;

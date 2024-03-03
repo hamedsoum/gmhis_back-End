@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,6 +34,7 @@ import io.swagger.annotations.ApiOperation;
  *
  */
 
+@Log4j2
 @RestController
 @RequestMapping("/cashiers")
 public class CashierController {
@@ -66,7 +68,8 @@ public class CashierController {
 			@RequestParam(defaultValue = "id,desc") String[] sort,
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "25") int size) {
-	
+
+		log.info("cashier list");
 		HashMap<String, Object> cashierSearch = new HashMap<>();
 		
 		cashierSearch.put("active", active);

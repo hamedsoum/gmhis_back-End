@@ -29,11 +29,16 @@ public class AnalysisRequest implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	 @GeneratedValue(generator = "uuid2")
+	@GeneratedValue(generator = "uuid2")
    @GenericGenerator(name = "uuid2", strategy = "uuid2")
    @Column(name = "id", updatable = false, nullable = false, columnDefinition = "VARCHAR(36)")
    @Type(type = "uuid-char")
 	private UUID id;
+
+
+	@ManyToOne
+	@JoinColumn(name ="bill_id")
+	private Bill bill;
 
 	@Column(name="analysis_number")
 	private String analysisNumber;
@@ -77,7 +82,6 @@ public class AnalysisRequest implements Serializable {
 	@OneToMany(mappedBy = "analysisRequest")
 	private List<SampleItem> sampleItems;
 
-	
 	@Column(name = "examen_type")
 	private Boolean examenType;
 }

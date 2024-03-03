@@ -1,5 +1,6 @@
 package com.gmhis_backk.domain.hospitalization.protocole.service;
 
+import com.gmhis_backk.domain.GMHISName;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,4 +18,6 @@ public class GMHISProtocoleServicePartial {
     private String detail;
 
     private Date serviceDate;
+
+    private GMHISName nurse;
 }

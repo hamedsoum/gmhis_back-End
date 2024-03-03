@@ -252,7 +252,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 			if (user.getId() != 0) 	this.setUserRoleAndAuthorities(user);
 			
 			String[] roles = StringUtils.split(user.getRoleIds(), ",");
-			
+
 			if ((roles.length == 1 &&  Integer.parseInt(roles[0]) != 0) || roles.length != 1) 	this.setUserRoleAndAuthorities(user);
 		}
 
@@ -269,7 +269,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		String authorities = "aucun";
 		lAuthorities.removeAll(Arrays.asList("", null));
 
-		if (lAuthorities.size() != 0) {
+		if (!lAuthorities.isEmpty()) {
 			authorities = StringUtils.join(lAuthorities, ",");
 			List<String>  authoritiesListwithDup = Arrays.asList(StringUtils.split(authorities, ","));
 			List<String> authoritiesListwithoutDup = authoritiesListwithDup.stream().distinct().collect(Collectors.toList());

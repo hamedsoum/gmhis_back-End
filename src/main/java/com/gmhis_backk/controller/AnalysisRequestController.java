@@ -111,7 +111,6 @@ public class AnalysisRequestController {
 		Page<AnalysisRequest> p_analysisRequest = null; 
 		
 		if (ObjectUtils.isNotEmpty(examenType)) {
-			
 			p_analysisRequest = analysisRequestService.findAllAnalysisRequests(Boolean.parseBoolean(examenType) , paging);
 		}else {
 			p_analysisRequest = analysisRequestService.findAll(paging);

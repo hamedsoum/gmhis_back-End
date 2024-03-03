@@ -39,8 +39,8 @@ public class GMHISProtocoleService {
 
     GMHISProtocolePartial toPartial(GMHISProtocole protocole) {
         GMHISProtocolePartial protocolePartial = new GMHISProtocolePartial();
+        protocolePartial.setId(protocole.getId());
         protocolePartial.setDescription(protocole.getDescription());
-
         return protocolePartial;
     }
 
@@ -49,6 +49,7 @@ public class GMHISProtocoleService {
         GMHISHospitalization hospitalization = hospitalizationRepository.findById(hospitalizationID).orElse(null);
         GMHISProtocole protocole = new GMHISProtocole();
 
+        log.info("Here");
         if(hospitalization != null ) {
             protocole.setHospitalization(hospitalization);
         }

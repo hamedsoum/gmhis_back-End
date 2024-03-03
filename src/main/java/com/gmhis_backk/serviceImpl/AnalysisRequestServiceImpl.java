@@ -5,18 +5,15 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.gmhis_backk.domain.*;
+import com.gmhis_backk.service.BillService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gmhis_backk.AppUtils;
-import com.gmhis_backk.domain.Act;
 import com.gmhis_backk.domain.admission.Admission;
-import com.gmhis_backk.domain.AnalysisRequest;
-import com.gmhis_backk.domain.AnalysisRequestItem;
-import com.gmhis_backk.domain.User;
 import com.gmhis_backk.dto.AnalysisRequestDTO;
 import com.gmhis_backk.exception.domain.ResourceNameAlreadyExistException;
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
@@ -37,19 +34,25 @@ import com.gmhis_backk.service.AnalysisRequestService;
 @Transactional
 public class AnalysisRequestServiceImpl implements AnalysisRequestService {
 
-	@Autowired
-	private AnalysisRequestRepository analysisRequestRepository;
+	private final AnalysisRequestRepository analysisRequestRepository;
 	
-	@Autowired
-	private AnalysisRequestItemRepository analysisRequestItemRepository;
-	
-	@Autowired
-	private AdmissionService admissionService;
-	
-	@Autowired
-	private ActService actService;
-	
-	@Autowired private UserRepository userRepository;
+	private final AnalysisRequestItemRepository analysisRequestItemRepository;
+
+	private final AdmissionService admissionService;
+
+	private final ActService actService;
+
+	private final UserRepository userRepository;
+
+	private final BillService billService;
+	public AnalysisRequestServiceImpl(AnalysisRequestRepository analysisRequestRepository, AnalysisRequestItemRepository analysisRequestItemRepository, AdmissionService admissionService, ActService actService, UserRepository userRepository, BillService billService) {
+		this.analysisRequestRepository = analysisRequestRepository;
+		this.analysisRequestItemRepository = analysisRequestItemRepository;
+		this.admissionService = admissionService;
+		this.actService = actService;
+		this.userRepository = userRepository;
+		this.billService = billService;
+	}
 
 	protected  User getCurrentUserId() {
 		return this.userRepository.findUserByUsername(AppUtils.getUsername());
@@ -57,13 +60,15 @@ public class AnalysisRequestServiceImpl implements AnalysisRequestService {
 	
 	@Override
 	public AnalysisRequest saveAnalysisRequest(AnalysisRequestDTO analysDto)  throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException {
+
 		Admission admission =  admissionService.retrieve(analysDto.getAdmission()).orElse(null);
-		
-		if (admission == null) {
-			throw new ResourceNotFoundByIdException("aucune admission trouvée pour l'identifiant " );
-		}
-		
+		if (admission == null) throw new ResourceNotFoundByIdException("aucune admission trouvée pour l'identifiant " );
+
+		Bill bill = billService.findBillById(analysDto.getBillId()).orElse(null);
+		if(bill == null) throw new ResourceNotFoundByIdException("Facture inexistnte" );
+
 		AnalysisRequest analys = new AnalysisRequest();
+		analys.setBill(bill);
 		analys.setExamenType(analysDto.getExamenTytpe());
 		analys.setAnalysisNumber(getanalysisNumber());
 		analys.setAdmission(admission);

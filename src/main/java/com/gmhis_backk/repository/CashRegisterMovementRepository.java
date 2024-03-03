@@ -13,10 +13,10 @@ import com.gmhis_backk.domain.CashRegisterMovement;
 
 public interface CashRegisterMovementRepository extends JpaRepository<CashRegisterMovement, UUID> {
 	
-	@Query(value="SELECT c FROM CashRegisterMovement c WHERE c.prestationNumber  LIKE %:prestationNumber% ")
+	@Query(value="SELECT c FROM CashRegisterMovement c WHERE c.prestationNumber  LIKE %:prestationNumber% ORDER BY c.date DESC")
 	public Page<CashRegisterMovement> getCaPageByPrestationNumber(@Param("prestationNumber") String prestationNumber, Pageable page );
 	
-	@Query(value="SELECT c FROM CashRegisterMovement c WHERE c.cashRegister.id =:cashRegister")
+	@Query(value="SELECT c FROM CashRegisterMovement c WHERE c.cashRegister.id =:cashRegister ORDER BY c.date DESC")
 	public Page<CashRegisterMovement> getCaPageByCashRegister(@Param("cashRegister") Long cashRegister, Pageable page );
 	
 	@Query(value="SELECT c FROM CashRegisterMovement c WHERE c.user.id =:user ORDER BY c.date DESC")
@@ -25,7 +25,7 @@ public interface CashRegisterMovementRepository extends JpaRepository<CashRegist
 	@Query(value="SELECT c FROM CashRegisterMovement c ORDER BY c.date DESC")
 	public Page<CashRegisterMovement> getCas( Pageable page );
 	
-	@Query(value="SELECT c FROM CashRegisterMovement c WHERE c.cashRegister.id =:cashRegister AND c.prestationNumber =:prestationNumber")
+	@Query(value="SELECT c FROM CashRegisterMovement c WHERE c.cashRegister.id =:cashRegister AND c.prestationNumber =:prestationNumber ORDER BY c.date DESC")
 	public Page<CashRegisterMovement> getCaPageByCashRegisterAndPrestationNumber(@Param("cashRegister") Long cashRegister,@Param("prestationNumber") String prestationNumber, Pageable page );
 	
 }

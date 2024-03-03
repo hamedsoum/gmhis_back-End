@@ -42,10 +42,8 @@ public class CashRegisterMovementController {
 		CashRegisterMovement cashRegisterMovement = cashRegisterMovementService.addNewMovement(caDto);
 		return new ResponseEntity<CashRegisterMovement>(cashRegisterMovement, HttpStatus.OK);
 	}
-	
-	
-	
-	@ApiOperation(value="retorune la liste pagine des mouvment de caisse en fonction des champs de recherche")
+
+	@ApiOperation(value="retorune la liste pagine des mouvement de caisse")
 	@GetMapping()
 	public ResponseEntity<Map<String, Object>> getCaMovements(
 			@RequestParam(required = false, defaultValue = "") String prestationNumber,

@@ -14,6 +14,9 @@ import java.util.UUID;
 
 import javax.transaction.Transactional;
 
+import com.gmhis_backk.domain.invoiceH.GMHISInvoiceH;
+import com.gmhis_backk.repository.GMHISInvoiceHRepository;
+import com.gmhis_backk.service.*;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
@@ -61,20 +64,6 @@ import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
 import com.gmhis_backk.repository.BillHasInsuredRepository;
 import com.gmhis_backk.repository.FileDbRepository;
 import com.gmhis_backk.repository.UserRepository;
-import com.gmhis_backk.service.ActCodeService;
-import com.gmhis_backk.service.ActService;
-import com.gmhis_backk.service.AdmissionService;
-import com.gmhis_backk.service.BillHasInsuredService;
-import com.gmhis_backk.service.BillService;
-import com.gmhis_backk.service.CashRegisterManagementService;
-import com.gmhis_backk.service.CashRegisterMovementService;
-import com.gmhis_backk.service.CashRegisterService;
-import com.gmhis_backk.service.ConventionService;
-import com.gmhis_backk.service.InsuranceService;
-import com.gmhis_backk.service.InsuredService;
-import com.gmhis_backk.service.PaymentTypeService;
-import com.gmhis_backk.service.PracticianService;
-import com.gmhis_backk.service.UserService;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
@@ -137,7 +126,8 @@ public class BillController {
 	
 	@Autowired
 	private CashRegisterManagementService cashRegisterManagementService;
-	
+
+	private final GMHISInvoiceHRepository invoiceHRepository;
 	
 	 @Autowired
      private FileDbRepository fileRepository;
@@ -147,6 +137,10 @@ public class BillController {
 	private Bill bill = null;
 	private Insured insured = null;
 	private int actCosts = 0;
+
+	public BillController(GMHISInvoiceHRepository invoiceHRepository) {
+		this.invoiceHRepository = invoiceHRepository;
+	}
 
 	@ApiOperation(value = "Ajouter une facture ")
 	@PostMapping("/add")
@@ -702,9 +696,15 @@ public class BillController {
 	}
 
 	
-	private Payment setPaymentData(Payment payment, PaymentType paymentType, PaymentDTO paymentDto, CashRegister cashRegister) {
-		payment.setAmount(bill.getPatientPart());
-		payment.setBill(bill);
+	private Payment setPaymentData(Payment payment, PaymentType paymentType, PaymentDTO paymentDto, CashRegister cashRegister, GMHISInvoiceH invoiceH) {
+		if(bill != null) {
+			payment.setAmount( (double) bill.getPatientPart());
+			payment.setBill(bill);
+		}
+		if(invoiceH != null) {
+			payment.setAmount(invoiceH.getNetToPay());
+			payment.setInvoiceH(invoiceH);
+		}
 		payment.setCashRegister(cashRegister);
 		payment.setCreatedAt(new Date());
 		payment.setCreatedBy(this.getCurrentUserId().getId());
@@ -715,14 +715,22 @@ public class BillController {
 
 		return payment;
 	}
+	@Transactional
 	@ApiOperation(value = "Encaisser une facture ")
 	@PostMapping("/collect")
 	public ResponseEntity<String> collectBill(@RequestBody PaymentDTO paymentDto) throws ResourceNotFoundByIdException, ResourceNameAlreadyExistException {
-		
-		bill = billService.findBillById(paymentDto.getBill()).orElse(bill);
-		if (bill == null) throw new ResourceNotFoundByIdException("La facture n'existe pas en base !");
 
-		if (bill.getBillStatus().compareToIgnoreCase("B") == 0) throw new ResourceNotFoundByIdException("La facture dejà encaisser !");
+		GMHISInvoiceH invoiceH = null;
+		if(paymentDto.getBillID() != null) {
+			bill = billService.findBillById(paymentDto.getBillID()).orElse(bill);
+			if (bill == null) throw new ResourceNotFoundByIdException("La facture n'existe pas en base !");
+			if (bill.getBillStatus().compareToIgnoreCase("B") == 0) throw new ResourceNotFoundByIdException("La facture dejà encaisser !");
+		}
+
+		if(paymentDto.getInvoiceHID() != null) {
+			 invoiceH = invoiceHRepository.findById(paymentDto.getInvoiceHID()).orElse(null);
+			if (invoiceH == null) throw new ResourceNotFoundByIdException("La facture d'hospitalisation n'existe pas!");
+		}
 
 		CashRegister cashRegister = this.cashRegisterService.findCashRegisterById(paymentDto.getCashRegister()).orElse(null);
 		if (cashRegister == null) throw new ResourceNotFoundByIdException("La caisse n'existe pas en base !");
@@ -731,46 +739,66 @@ public class BillController {
 		if (paymentType == null) throw new ResourceNotFoundByIdException("Le type de payment n'existe pas en base !");
 					
         Payment payment = new Payment();
-		this.setPaymentData(payment, paymentType, paymentDto, cashRegister);
+		this.setPaymentData(payment, paymentType, paymentDto, cashRegister, invoiceH);
 			
-		payment = billService.savePayment(this.setPaymentData(payment, paymentType, paymentDto, cashRegister));
+		payment = billService.savePayment(this.setPaymentData(payment, paymentType, paymentDto, cashRegister,invoiceH));
 		CashRegisterManagement cashRegisterManagement  = cashRegisterManagementService.getCashierManagementByCashierAndStateOpened(this.getCurrentUserId().getId());
-		if (cashRegisterManagement == null) {
+		if (cashRegisterManagement == null || !cashRegisterManagement.getState()) {
 		throw new ResourceNotFoundByIdException(
 						"Vous n'etes pas autorisé a encaiser une facture !  \n veuillez démander à l'administrateur d'ouvrir une caisse à votre nom.");
 			}else {
 				CashRegisterManagementDto cashRegisterManagementDto = new CashRegisterManagementDto();	
-				//Revoir ce code
+				//TODO : Revoir ce code
 				cashRegisterManagementDto.setOpeningBalance(cashRegisterManagement.getOpeningBalance());
 				cashRegisterManagementDto.setCashRegisterBalance(cashRegisterManagement.getCashRegisterBalance() + payment.getAmount());
 				cashRegisterManagementDto.setCashier(this.getCurrentUserId().getId());
 				cashRegisterManagementDto.setCashRegister(payment.getCashRegister().getId());
 				cashRegisterManagementService.updateCashRegisterManagement(cashRegisterManagement.getId(), cashRegisterManagementDto);
-				// set the bill collected status
+				//TODO : set the bill collected status
+			if(paymentDto.getBillID() != null){
 				bill.setBillStatus("C");
 				billService.saveBill(bill);
+			}
+
+			if(invoiceH != null) {
+				invoiceH.setStatus("Payé");
+				invoiceHRepository.save(invoiceH);
+			}
+
 				CashRegisterMovementDto cashRegisterMovementDto = new CashRegisterMovementDto();
-				if (paymentDto.getAmountReturned() != 0 ) {
-					CashRegisterMovementDto cashRegisterForAmountReturnedMovementDto = new CashRegisterMovementDto();
-					cashRegisterForAmountReturnedMovementDto.setCashRegister(payment.getCashRegister().getId());
-					cashRegisterForAmountReturnedMovementDto.setDebit(paymentDto.getAmountReturned());
-					cashRegisterForAmountReturnedMovementDto.setDate(payment.getCreatedAt());
+				CashRegisterMovementDto cashRegisterForAmountReturnedMovementDto = new CashRegisterMovementDto();
+
+
+				if(bill != null) {
+					log.info("Here");
 					cashRegisterForAmountReturnedMovementDto.setPrestationNumber(payment.getBill().getBillNumber());
 					cashRegisterForAmountReturnedMovementDto.setLibelle("Monnaie Réglement  " + payment.getBill().getAdmission().getAct().getName() +" - " + payment.getBill().getAdmission().getSpeciality().getName());
-					cashRegisterForAmountReturnedMovementDto.setUserId(this.getCurrentUserId().getId());
-					cashRegisterMovementService.addNewMovement(cashRegisterForAmountReturnedMovementDto);
+					cashRegisterMovementDto.setPrestationNumber(payment.getBill().getBillNumber());
+					cashRegisterMovementDto.setLibelle("Réglement  " + payment.getBill().getAdmission().getAct().getName() + " -" + payment.getBill().getAdmission().getSpeciality().getName());
 				}
+				if(invoiceH != null) {
+					cashRegisterForAmountReturnedMovementDto.setPrestationNumber(payment.getInvoiceH().getInvoiceNumber());
+					cashRegisterForAmountReturnedMovementDto.setLibelle("Monnaie Réglement Hospitalisation " + payment.getInvoiceH().getAffection());
+					cashRegisterMovementDto.setPrestationNumber(payment.getInvoiceH().getInvoiceNumber());
+					cashRegisterMovementDto.setLibelle("Réglement Hospitalisation " + payment.getInvoiceH().getAffection());
+
+				}
+
+			if (paymentDto.getAmountReturned() != 0 ) {
+				cashRegisterForAmountReturnedMovementDto.setCashRegister(payment.getCashRegister().getId());
+				cashRegisterForAmountReturnedMovementDto.setDebit(paymentDto.getAmountReturned());
+				cashRegisterForAmountReturnedMovementDto.setDate(payment.getCreatedAt());
+				cashRegisterForAmountReturnedMovementDto.setUserId(this.getCurrentUserId().getId());
+				cashRegisterMovementService.addNewMovement(cashRegisterForAmountReturnedMovementDto);
+			}
+
 				cashRegisterMovementDto.setCashRegister(payment.getCashRegister().getId());
 				cashRegisterMovementDto.setCredit(payment.getAmount());
 				cashRegisterMovementDto.setDate(payment.getCreatedAt());
-				cashRegisterMovementDto.setPrestationNumber(payment.getBill().getBillNumber());
-				cashRegisterMovementDto.setLibelle("Réglement  " + payment.getBill().getAdmission().getAct().getName() + " -" + payment.getBill().getAdmission().getSpeciality().getName());
 				cashRegisterMovementDto.setUserId(this.getCurrentUserId().getId());
 				cashRegisterMovementService.addNewMovement(cashRegisterMovementDto);
 				
 			}
-				
-		
 
 		return new ResponseEntity<>(HttpStatus.OK);
 	}

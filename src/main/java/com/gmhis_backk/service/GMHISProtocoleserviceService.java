@@ -1,6 +1,7 @@
 package com.gmhis_backk.service;
 
 import com.gmhis_backk.AppUtils;
+import com.gmhis_backk.domain.GMHISName;
 import com.gmhis_backk.domain.User;
 import com.gmhis_backk.domain.hospitalization.protocole.GMHISProtocole;
 import com.gmhis_backk.domain.hospitalization.protocole.service.GMHISProtocoleService;
@@ -9,6 +10,7 @@ import com.gmhis_backk.domain.hospitalization.protocole.service.GMHISProtocoleSe
 import com.gmhis_backk.exception.domain.ResourceNotFoundByIdException;
 import com.gmhis_backk.repository.GMHISProtocoleRepository;
 import com.gmhis_backk.repository.GMHISProtocoleServiceRepository;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +21,7 @@ import java.util.UUID;
 
 @Service
 @Transactional
+@Log4j2
 public class GMHISProtocoleserviceService {
 
     private final GMHISProtocoleServiceRepository protocoleServiceRepository;
@@ -43,12 +46,16 @@ public class GMHISProtocoleserviceService {
         protocoleServicePartial.setDetail(service.getDetail());
         protocoleServicePartial.setServiceDate(service.getServiceDate());
         protocoleServicePartial.setId(service.getId());
+        User nurse = this.userService.findUserById(service.getCreatedBy());
+        protocoleServicePartial.setNurse(new GMHISName(nurse.getFirstName(), nurse.getLastName()));
         return protocoleServicePartial;
     }
 
     public void create(UUID protocoleID, GMHISProtocoleServiceCreate protocoleServiceCreate) throws ResourceNotFoundByIdException {
         GMHISProtocole protocole = protocoleRepository.findById(protocoleID).orElse(null);
         GMHISProtocoleService pService = new GMHISProtocoleService();
+
+        log.info("here");
 
         if(protocole != null ) {
             pService.setProtocole(protocole);

@@ -110,7 +110,7 @@ public class CashierService {
 	    Pageable pageable = PageRequest.of(page, size, Sort.by(dir, sort[0]));
 		Page<Cashier> pCashiers = null;
 
-		pCashiers = cashierRepository.findAll(getCurrentUser().getFacilityId(), pageable);
+		pCashiers = cashierRepository.findAll( pageable);
 		
 		List<Cashier> cashiers = pCashiers.getContent();
 		

@@ -40,7 +40,7 @@ public class CashRegisterManagementServiceImpl implements CashRegisterManagement
 	public CashRegisterManagement addCashRegisterManagement(CashRegisterManagementDto cashRegisterManagementDto)
 		throws ResourceNameAlreadyExistException, ResourceNotFoundByIdException {
 		
-		
+		log.info("Cash Register: {}", cashRegisterManagementDto.getCashRegister());
 		CashRegister cashRegister = cashRegisterService.findCashRegisterById(cashRegisterManagementDto.getCashRegister()).orElse(null);
 		if (cashRegister == null) 
 			throw new ResourceNotFoundByIdException("aucune caisse trouvé pour l'identifiant");
@@ -161,12 +161,12 @@ public class CashRegisterManagementServiceImpl implements CashRegisterManagement
 		List<CashRegisterManagement> cashierManagementList = cashRegisterManagementRepository.findAllCashierManagementByCashierAndStateOpened(cashier);
 		
 
-		if (cashRegisterManagementList.isEmpty()) {
+		if (!cashRegisterManagementList.isEmpty()) {
 			throw new ResourceNotFoundByIdException("Caisse deja en Activitée");
 		}
 		
-		if (cashierManagementList.isEmpty()) {
-			throw new ResourceNotFoundByIdException("caissier deja en activitee");
+		if (!cashierManagementList.isEmpty()) {
+			throw new ResourceNotFoundByIdException("Caissier(e) déja en activité");
 		}
 		
 	}
